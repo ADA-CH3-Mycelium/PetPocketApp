@@ -10,8 +10,9 @@ import SwiftData
 
 struct ContentView: View {
     var body: some View {
-        
+        EmptyStatePetList()
     }
+}
 
 //#Preview {
 //    ContentView()
