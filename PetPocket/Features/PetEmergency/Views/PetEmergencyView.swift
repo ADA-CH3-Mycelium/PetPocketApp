@@ -112,6 +112,10 @@ struct PetEmergencyView: View {
                     }
                 }
                 .padding(.horizontal)
+                
+                VetClinicCard()
+                    .padding(.horizontal)
+                    .padding(.top)
             }
         }
     }
@@ -241,5 +245,65 @@ struct ContactCard: View {
         .padding()
         .background(Color.orange.opacity(0.1))
         .clipShape(RoundedRectangle(cornerRadius: 16))
+    }
+}
+
+struct VetClinicCard: View {
+    var body: some View {
+        HStack(spacing: 0) {
+            Rectangle()
+                .fill(Color.green)
+                .frame(width: 6)
+            
+            VStack(alignment: .leading, spacing: 8) {
+                Text("Oakwood Veterinary Clinic")
+                    .font(.headline)
+                    .fontWeight(.semibold)
+                
+                Text("1240 Oakwood Ave, Brookside, NY 10012")
+                    .font(.subheadline)
+                    .foregroundStyle(.gray)
+                
+                Text("(555) 012-3456 • 24/7 Emergency Line")
+                    .font(.subheadline)
+                    .foregroundStyle(.gray)
+                
+                HStack(spacing: 12) {
+                    Button(action: {}) {
+                        HStack(spacing: 6) {
+                            Image(systemName: "map.fill")
+                            Text("Map")
+                        }
+                        .font(.subheadline)
+                        .fontWeight(.semibold)
+                        .foregroundStyle(.black)
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 10)
+                        .background(Color.gray.opacity(0.15))
+                        .clipShape(RoundedRectangle(cornerRadius: 12))
+                    }
+                    
+                    Button(action: {}) {
+                        HStack(spacing: 6) {
+                            Image(systemName: "phone.fill")
+                            Text("Call Vet")
+                        }
+                        .font(.subheadline)
+                        .fontWeight(.semibold)
+                        .foregroundStyle(.white)
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 10)
+                        .background(Color.red)
+                        .clipShape(RoundedRectangle(cornerRadius: 12))
+                    }
+                }
+                .padding(.top, 8)
+            }
+            .padding()
+            .frame(maxWidth: .infinity, alignment: .leading)
+        }
+        .background(Color.white)
+        .clipShape(RoundedRectangle(cornerRadius: 16))
+        .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
     }
 }
