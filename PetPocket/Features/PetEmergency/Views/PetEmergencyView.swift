@@ -57,6 +57,39 @@ struct PetEmergencyView: View {
             }
             .padding(.horizontal)
             .padding(.top, 8)
+            
+            Divider()
+                .padding(.horizontal)
+                .padding(.vertical, 8)
+
+            HStack(spacing: 8) {
+                Image(systemName: "cross.case.fill")
+                    .foregroundStyle(.black)
+                Text("First Aid Guides")
+                    .font(.headline)
+                    .fontWeight(.semibold)
+                Spacer()
+            }
+            .padding(.horizontal)
+            
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 12) {
+                    FirstAidCard(
+                        icon: "lungs.fill",
+                        iconColor: .red,
+                        title: "Choking",
+                        signs: "Signs: Pawing at mouth, pale gums, inability to breathe."
+                    )
+                    
+                    FirstAidCard(
+                        icon: "pills.fill",
+                        iconColor: .red,
+                        title: "Poisoning",
+                        signs: "Signs: Vomiting, drooling, unusual behavior."
+                    )
+                }
+                .padding(.horizontal)
+            }
         }
     }
 }
@@ -111,5 +144,37 @@ struct CategoryTab: View {
                 .font(.caption)
                 .foregroundStyle(isActive ? .red : .black)
         }
+    }
+}
+
+struct FirstAidCard: View {
+    var icon: String
+    var iconColor: Color
+    var title: String
+    var signs: String
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Image(systemName: icon)
+                .font(.title2)
+                .foregroundStyle(iconColor)
+            
+            Text(title)
+                .font(.headline)
+                .fontWeight(.semibold)
+            
+            Text(signs)
+                .font(.subheadline)
+                .foregroundStyle(.gray)
+                .lineLimit(2)
+        }
+        .padding()
+        .frame(width: 240, alignment: .leading)
+        .background(Color.white)
+        .clipShape(RoundedRectangle(cornerRadius: 16))
+        .overlay(
+            RoundedRectangle(cornerRadius: 16)
+                .stroke(Color.gray.opacity(0.2), lineWidth: 1)
+        )
     }
 }
