@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import MapKit
 
 struct PetEmergencyView: View {
     var body: some View {
@@ -297,6 +298,14 @@ struct VetClinicCard: View {
                         .clipShape(RoundedRectangle(cornerRadius: 12))
                     }
                 }
+                .padding(.top, 8)
+                
+                Map(initialPosition: .region(MKCoordinateRegion(
+                    center: CLLocationCoordinate2D(latitude: 40.7128, longitude: -74.0060),
+                    span: MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05)
+                )))
+                .frame(height: 150)
+                .clipShape(RoundedRectangle(cornerRadius: 12))
                 .padding(.top, 8)
             }
             .padding()
