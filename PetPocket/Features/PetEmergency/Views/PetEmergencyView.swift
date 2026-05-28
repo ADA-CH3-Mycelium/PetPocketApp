@@ -39,6 +39,24 @@ struct PetEmergencyView: View {
                 InfoCard(label: "SPECIES", value: "Dog")
             }
             .padding(.horizontal)
+            
+            HStack {
+                Text("Pet's Informations")
+                    .font(.headline)
+                    .fontWeight(.semibold)
+                Spacer()
+            }
+            .padding(.horizontal)
+            .padding(.top)
+            
+            HStack(spacing: 16) {
+                CategoryTab(icon: "fork.knife", label: "Food", isActive: false)
+                CategoryTab(icon: "leaf", label: "Waste", isActive: false)
+                CategoryTab(icon: "list.clipboard", label: "Care Notes", isActive: false)
+                CategoryTab(icon: "light.beacon.max", label: "Emergency", isActive: true)
+            }
+            .padding(.horizontal)
+            .padding(.top, 8)
         }
     }
 }
@@ -68,5 +86,30 @@ struct InfoCard: View {
         .padding()
         .background(Color.gray.opacity(0.15))
         .clipShape(RoundedRectangle(cornerRadius: 12))
+    }
+}
+
+struct CategoryTab: View {
+    var icon: String
+    var label: String
+    var isActive: Bool
+    
+    var body: some View {
+        VStack(spacing: 8) {
+            Image(systemName: icon)
+                .font(.title2)
+                .foregroundStyle(isActive ? .white : .black)
+                .frame(maxWidth: .infinity, minHeight: 70)
+                .background(isActive ? Color.red : Color.white)
+                .clipShape(RoundedRectangle(cornerRadius: 16))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 16)
+                        .stroke(Color.gray.opacity(0.3), lineWidth: 1)
+                )
+            
+            Text(label)
+                .font(.caption)
+                .foregroundStyle(isActive ? .red : .black)
+        }
     }
 }
