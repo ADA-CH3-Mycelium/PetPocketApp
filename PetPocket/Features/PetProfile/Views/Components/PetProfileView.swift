@@ -108,6 +108,7 @@ struct PetProfileView: View {
                 ForEach(pet.feedingMeals) { meal in
                     FeedingRoutineCard(meal: meal)
                 }
+                AddInformationCard()
             }
         }
     }
