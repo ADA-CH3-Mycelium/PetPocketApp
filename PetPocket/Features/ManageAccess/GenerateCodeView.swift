@@ -1,0 +1,131 @@
+//
+//  GenerateCodeView.swift
+//  PetPocket
+//
+//  Created by Cheisha Amanda on 28/05/26.
+//
+
+import SwiftUI
+
+struct GenerateCodeView: View {
+    @Environment(\.dismiss) var dismiss
+    @State private var codeString = "618 882"
+    @State private var copyStatusFeedback = "Copy"
+    
+    var body: some View {
+        NavigationStack {
+            ZStack {
+                PawPocketTheme.backgroundCream.ignoresSafeArea()
+                
+                VStack(spacing: 24) {
+                    VStack(spacing: 8) {
+                        Text("Connect with Pet Sitter")
+                            .font(.title2)
+                            .bold()
+                            .foregroundColor(PawPocketTheme.textDark)
+                        Text("Start sharing your pet's information with the sitter.")
+                            .font(.subheadline)
+                            .foregroundColor(PawPocketTheme.textSecondary)
+                    }
+                    .padding(.top, 1)
+                    
+                    // Central Numeric Key Area Card
+                    VStack(alignment: .leading, spacing: 12) {
+                        Text("Collaboration Code")
+                            .font(.caption)
+                            .bold()
+                            .foregroundColor(PawPocketTheme.textSecondary)
+                        
+                        HStack(spacing: 0) {
+                            Text(codeString)
+                                .font(.system(.title, design: .monospaced))
+                                .bold()
+                                .frame(maxWidth: .infinity)
+                                .padding()
+                                .background(Color.gray.opacity(0.05))
+                                .cornerRadius(10)
+                            
+                            // High-Accessibility Sized Action Button
+                            Button(action: {
+                                UIPasteboard.general.string = codeString
+                                copyStatusFeedback = "Copied!"
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                                    copyStatusFeedback = "Copy"
+                                }
+                            }) {
+                                VStack(spacing: 4) {
+                                    Image(systemName: "doc.on.doc.fill")
+                                    Text(copyStatusFeedback)
+                                        .font(.caption2)
+                                        .bold()
+                                }
+                                .foregroundColor(.white)
+                                .padding()
+                                .frame(width: 80, height: 68)
+                                .background(PawPocketTheme.accentOrange)
+                                .cornerRadius(10)
+                            }
+                            .padding(.leading, 8)
+                        }
+                        
+                        Text("Share the 6-digit code to the pet sitter.")
+                            .font(.caption)
+                            .foregroundColor(PawPocketTheme.textSecondary)
+                    }
+                    .padding()
+                    .background(PawPocketTheme.cardBackground)
+                    .cornerRadius(16)
+                    .shadow(color: Color.black.opacity(0.02), radius: 10)
+                    
+                    Spacer()
+                }
+                .padding()
+            }
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button {
+                        dismiss()
+                    } label: {
+                        Image(systemName: "xmark")
+                            .imageScale(.large)
+                            .bold(true)
+                            .foregroundColor(PawPocketTheme.primaryGreen.opacity(0.8))
+                            .frame(width: 36, height: 36)
+//                            .background(
+//                                ZStack {
+//                                    Circle()
+//                                        .fill(.ultraThinMaterial)
+//                                    
+//                                    Circle()
+//                                        .fill(
+//                                            LinearGradient(
+//                                                colors: [Color.white.opacity(0.6), Color.white.opacity(0.05)],
+//                                                startPoint: .topLeading,
+//                                                endPoint: .bottomTrailing
+//                                            )
+//                                        )
+//                                    
+//                                    Circle()
+//                                        .stroke(
+//                                            LinearGradient(
+//                                                colors: [Color.white.opacity(0.7), Color.white.opacity(0.2), Color.black.opacity(0.05)],
+//                                                startPoint: .topLeading,
+//                                                endPoint: .bottomTrailing
+//                                            ),
+//                                            lineWidth: 1
+//                                        )
+//                                }
+//                            )
+//                            .clipShape(Circle()) 
+//                            .shadow(color: Color.black.opacity(0.08), radius: 4, x: 0, y: 2)
+                    }
+//                    .buttonStyle(.plain)                    .frame(width: 44, height: 44)
+                }
+            }
+        }
+    }
+}
+
+#Preview {
+    GenerateCodeView()
+}
