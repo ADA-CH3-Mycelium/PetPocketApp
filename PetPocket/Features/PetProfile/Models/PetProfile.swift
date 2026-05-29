@@ -14,7 +14,7 @@ enum MediaAttachment {
 }
 
 // MARK: - Pet
-struct Pet: Identifiable {
+struct Pet2: Identifiable {
     let id: UUID
     var name: String
     var avatarImageName: String
@@ -84,8 +84,8 @@ struct FeedingMeal: Identifiable {
 }
 
 // MARK: - Mock Data
-extension Pet {
-    static let sampleCooper = Pet(
+extension Pet2 {
+    static let sampleCooper = Pet2(
         name: "Cooper",
         avatarImageName: "cooper_avatar",
         age: "3 years",

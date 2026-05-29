@@ -8,7 +8,7 @@ import SwiftUI
 // MARK: - Pet Header (Get to Know Me)
 
 struct PetHeaderView: View {
-    let pet: Pet
+    let pet: Pet3
     private let photoSize: CGFloat = 140
 
     var body: some View {

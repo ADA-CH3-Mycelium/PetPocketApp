@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct PetProfileView: View {
-    let pet: Pet
+    let pet: Pet2
 
 
     @State private var selectedTab: PetInfoTab = .food

@@ -19,10 +19,10 @@ extension Color {
 
 // MARK: - Pet
 
-struct Pet {
+struct Pet3 {
     let name, imageName, age, gender, breed, species: String
 
-    static let cooper = Pet(
+    static let cooper = Pet3(
         name: "Cooper", imageName: "cooper",
         age: "3 years", gender: "Male",
         breed: "Golden Retriever", species: "Dog"

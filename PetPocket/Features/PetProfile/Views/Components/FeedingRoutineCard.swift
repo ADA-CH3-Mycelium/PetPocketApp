@@ -91,8 +91,8 @@ struct FeedingRoutineCard: View {
 // MARK: - Preview
 #Preview {
     VStack(spacing: 12) {
-        FeedingRoutineCard(meal: Pet.sampleCooper.feedingMeals[0])
-        FeedingRoutineCard(meal: Pet.sampleCooper.feedingMeals[1])
+        FeedingRoutineCard(meal: Pet2.sampleCooper.feedingMeals[0])
+        FeedingRoutineCard(meal: Pet2.sampleCooper.feedingMeals[1])
     }
     .padding()
     .background(Color(.systemGroupedBackground))

@@ -35,10 +35,10 @@ struct PetEmergencyView: View {
                     ],
                     spacing: 12
                 ) {
-                    InfoCard(label: "AGE", value: "3 years")
-                    InfoCard(label: "GENDER", value: "Male")
-                    InfoCard(label: "BREED", value: "Golden Retriever")
-                    InfoCard(label: "SPECIES", value: "Dog")
+                    InfoCard2(label: "AGE", value: "3 years")
+                    InfoCard2(label: "GENDER", value: "Male")
+                    InfoCard2(label: "BREED", value: "Golden Retriever")
+                    InfoCard2(label: "SPECIES", value: "Dog")
                 }
                 .padding(.horizontal)
                 
@@ -126,7 +126,7 @@ struct PetEmergencyView: View {
     PetEmergencyView()
 }
 
-struct InfoCard: View {
+struct InfoCard2: View {
     var label: String
     var value: String
 

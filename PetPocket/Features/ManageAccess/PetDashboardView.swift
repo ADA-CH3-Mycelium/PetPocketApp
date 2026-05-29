@@ -56,13 +56,13 @@ struct PetDashboardView: View {
                         
                         HStack(spacing: 5) {
                             Spacer(minLength: 0)
-                            CategoryItem(icon: "fork.knife", label: "Food", isActive: true)
+                            CategoryItem2(icon: "fork.knife", label: "Food", isActive: true)
                             Spacer(minLength: 0)
-                            CategoryItem(icon: "leaf.fill", label: "Waste", isActive: false)
+                            CategoryItem2(icon: "leaf.fill", label: "Waste", isActive: false)
                             Spacer(minLength: 0)
-                            CategoryItem(icon: "list.bullet.clipboard.fill", label: "Care Notes", isActive: false)
+                            CategoryItem2(icon: "list.bullet.clipboard.fill", label: "Care Notes", isActive: false)
                             Spacer(minLength: 0)
-                            CategoryItem(icon: "exclamationmark.shield.fill", label: "Emergency", isActive: false, isAlert: true)
+                            CategoryItem2(icon: "exclamationmark.shield.fill", label: "Emergency", isActive: false, isAlert: true)
                             Spacer(minLength: 0)
                         }
                         .frame(maxWidth: .infinity)
@@ -186,7 +186,7 @@ struct StatCard: View {
     }
 }
 
-struct CategoryItem: View {
+struct CategoryItem2: View {
     let icon: String
     let label: String
     let isActive: Bool
