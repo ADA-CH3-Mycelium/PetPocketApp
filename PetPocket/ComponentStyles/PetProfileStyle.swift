@@ -58,7 +58,7 @@ struct TwCoColGrid: View {
             case .care:
                 CareView()
             case .emergency:
-                FoodView()
+                EmergencyView()
             }
 
         }

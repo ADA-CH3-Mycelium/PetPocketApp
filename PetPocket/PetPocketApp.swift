@@ -25,7 +25,7 @@ struct PetPocketApp: App {
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            PetDashboardView()
         }
         .modelContainer(sharedModelContainer)
     }

@@ -8,6 +8,15 @@
 
 import SwiftUI
 
+struct Collaborator: Identifiable {
+    var id: String { name }
+    let name: String
+    let role: String
+    let isActive: Bool
+    let imageName: String
+}
+
+
 struct ManageAccessView: View {
     @Environment(\.dismiss) var dismiss
     
@@ -18,7 +27,7 @@ struct ManageAccessView: View {
     
     var body: some View {
         ZStack {
-            PawPocketTheme.backgroundCream.ignoresSafeArea()
+            Color.background.ignoresSafeArea()
             
             ScrollView {
                 VStack(alignment: .leading, spacing: 20) {
@@ -27,19 +36,18 @@ struct ManageAccessView: View {
                         Text("Collaborator Network")
                             .font(.title3)
                             .bold()
-                            .foregroundColor(PawPocketTheme.textDark)
                         Text("Manage who has access to your pet's health logs, walking schedules, and medical reminders. Collaborators can view and update records in real-time.")
                             .font(.callout)
-                            .foregroundColor(PawPocketTheme.textSecondary)
+                            .foregroundColor(.secondary)
                     }
                     .padding()
-                    .background(PawPocketTheme.cardBackground)
+                    .background(.accent.opacity(0.1))
                     .cornerRadius(16)
                     
                     Text("CONNECTIONS")
                         .font(.caption)
                         .bold()
-                        .foregroundColor(PawPocketTheme.textSecondary)
+                        .foregroundColor(.secondary)
                     
                     // List of Connected Sitters
                     ForEach(collaborators) { person in
@@ -75,7 +83,6 @@ struct ManageAccessView: View {
                                         .frame(maxWidth: .infinity)
                                         .padding(.vertical, 10)
                                         .background(Color.gray.opacity(0.1))
-                                        .foregroundColor(PawPocketTheme.textDark)
                                         .cornerRadius(8)
                                 }
                                 
@@ -85,14 +92,14 @@ struct ManageAccessView: View {
                                         .bold()
                                         .frame(maxWidth: .infinity)
                                         .padding(.vertical, 10)
-                                        .background(person.isActive ? PawPocketTheme.accentOrange.opacity(0.2) : PawPocketTheme.primaryGreen)
-                                        .foregroundColor(person.isActive ? PawPocketTheme.accentOrange : .white)
+                                        .background(person.isActive ? .accentColor.opacity(0.2) : Color.primaryG)
+                                        .foregroundColor(person.isActive ? .accentColor : .white)
                                         .cornerRadius(8)
                                 }
                             }
                         }
                         .padding()
-                        .background(PawPocketTheme.cardBackground)
+                        .background(Color.accent.opacity(0.05))
                         .cornerRadius(16)
                     }
                     
@@ -103,7 +110,7 @@ struct ManageAccessView: View {
                         Text("Generate a secure temporary code to allow a new sitter or family member to sync with your pet's profile.")
                             .font(.caption)
                             .multilineTextAlignment(.center)
-                            .foregroundColor(PawPocketTheme.textSecondary)
+                            .foregroundColor(.secondary)
                         
                         Button(action: {}) {
                             Text("Generate New Code")
@@ -112,7 +119,7 @@ struct ManageAccessView: View {
                                 .foregroundColor(.white)
                                 .frame(maxWidth: .infinity)
                                 .padding()
-                                .background(PawPocketTheme.primaryGreen)
+                                .background(Color.primaryG)
                                 .cornerRadius(12)
                         }
                     }

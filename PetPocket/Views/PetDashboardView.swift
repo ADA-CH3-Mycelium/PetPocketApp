@@ -52,7 +52,7 @@ struct PetDashboardView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                PawPocketTheme.backgroundCream.ignoresSafeArea()
+                Color.background.ignoresSafeArea()
 
                 //ScrollView {
                 // Applying the explicit layout padding here cleanly covers the entire page structure

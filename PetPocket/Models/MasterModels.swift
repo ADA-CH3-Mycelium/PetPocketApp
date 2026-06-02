@@ -82,3 +82,15 @@ struct PetCardItem {
 }
 
 
+// MARK: - EMERGENCY VIEW
+// CONTACT CARD
+struct ContactCardItem: Identifiable, Hashable {
+    var id = UUID()
+    var initial: String {
+        String(name.prefix(1)).uppercased()
+    }
+    var name: String
+    var relationship: String
+    var note: String
+    var phone: String
+}
