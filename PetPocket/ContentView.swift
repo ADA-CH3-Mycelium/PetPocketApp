@@ -10,7 +10,8 @@ import SwiftData
 
 struct ContentView: View {
     var body: some View {
-        EmptyStatePetList()
+        PetProfileView(pet: .sampleCooper)
+            .background(Color("#FBF9F8").ignoresSafeArea())
     }
 }
 
