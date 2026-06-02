@@ -55,3 +55,17 @@ struct RoutineCardItem: Identifiable {
     }
     
 }
+
+
+struct AdditionalNotesCardItem: Identifiable {
+    let id: UUID
+    let description: String
+    
+    init(
+    id: UUID = UUID(),
+    description: String
+    ){
+        self.id = id
+        self.description = description
+    }
+}
