@@ -81,10 +81,6 @@ struct RoutineCard: View {
                     MediaThumbnailView(media: media)
                 }
             }
-            .padding(20)
-            .clipShape(RoundedRectangle(cornerRadius: 16))
-            .glassEffect(.regular.tint(.accent.opacity(0.01)),
-                         in: .rect(cornerRadius: 16))
         }
         .padding(20)
         .border(Color.accent.opacity(0.3), width: 0.75)
