@@ -1,0 +1,14 @@
+# Xcode build artifacts
+.DS_Store
+*.xcuserstate
+xcuserdata/
+*.xcscmblueprint
+*.moved-aside
+DerivedData/
+.build/
+
+# Supabase secrets — never commit real keys
+PetPocket/Secrets.swift
+
+# Swift Package Manager
+.swiftpm/

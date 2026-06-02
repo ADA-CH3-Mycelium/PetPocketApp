@@ -22,6 +22,7 @@ extension Color {
     static let ppBackground = Color(hex: "#FBF9F8")
     // MARK: - Brand: Greens
     static let ppForestGreen = Color(hex: "#41664F")
+    static let ppPrimaryG = Color(hex: "#41664F")
     // MARK: - Brand: Grays
     static let ppLightGray = Color(hex: "#F5F3F3")
     // MARK: - Brand: Emergency / Alert

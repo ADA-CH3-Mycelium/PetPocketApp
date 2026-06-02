@@ -22,8 +22,8 @@ struct Pet2: Identifiable {
     var gender: String
     var breed: String
     var species: String
-    var dietaryRestriction: DietaryRestriction?
-    var feedingMeals: [FeedingMeal]
+    var dietaryRestriction: DietaryRestriction2?
+    var feedingMeals: [FeedingMeal2]
 
     init(
         id: UUID = UUID(),
@@ -33,8 +33,8 @@ struct Pet2: Identifiable {
         gender: String,
         breed: String,
         species: String,
-        dietaryRestriction: DietaryRestriction? = nil,
-        feedingMeals: [FeedingMeal] = []
+        dietaryRestriction: DietaryRestriction2? = nil,
+        feedingMeals: [FeedingMeal2] = []
     ) {
         self.id = id
         self.name = name
@@ -49,13 +49,13 @@ struct Pet2: Identifiable {
 }
 
 // MARK: - DietaryRestriction
-struct DietaryRestriction {
+struct DietaryRestriction2 {
     var allergies: [String]
     var restricted: [String]
 }
 
 // MARK: - FeedingMeal
-struct FeedingMeal: Identifiable {
+struct FeedingMeal2: Identifiable {
     let id: UUID
     var mealName: String   
     var time: String
@@ -92,12 +92,12 @@ extension Pet2 {
         gender: "Male",
         breed: "Golden Retriever",
         species: "Dog",
-        dietaryRestriction: DietaryRestriction(
+        dietaryRestriction: DietaryRestriction2(
             allergies: ["Chicken"],
             restricted: ["Grapes", "Chocolate", "Onion"]
         ),
         feedingMeals: [
-            FeedingMeal(
+            FeedingMeal2(
                 mealName: "Breakfast",
                 time: "8:00 AM",
                 amount: "1 Cup Dry Kibble",
@@ -105,14 +105,14 @@ extension Pet2 {
                 iconName: "sunrise.fill",
                 media: MediaAttachment.photo("testphoto")
             ),
-            FeedingMeal(
+            FeedingMeal2(
                 mealName: "Lunch",
                 time: "1:00 PM",
                 amount: "1/2 Can Wet Food",
                 notes: "Use the Lamb & Rice formula. Serve at room temperature.",
                 iconName: "sun.max.fill"
             ),
-            FeedingMeal(
+            FeedingMeal2(
                 mealName: "Dinner",
                 time: "7:00 PM",
                 amount: "1 Cup Dry Kibble",

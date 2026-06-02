@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct FeedingRoutineCard: View {
-    let meal: FeedingMeal
+    let meal: FeedingMeal2
 
     @State private var swipeOffset: CGFloat = 0
     @State private var showClarify = false
