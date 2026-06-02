@@ -21,50 +21,52 @@ struct PetProfileView: View {
 
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 20) {
-
-                // MARK: Avatar + Name (centered)
-                HStack {
-                    Spacer()
-                    PetAvatarHeaderView(name: pet.name, imageName: pet.avatarImageName)
-                    Spacer()
-                }
-                .padding(.top, 8)
-
-                // MARK: Info Grid (Age, Gender, Breed, Species)
-                LazyVGrid(columns: infoColumns, spacing: 10) {
-                    InfoGridCard(label: "Age",     value: pet.age)
-                    InfoGridCard(label: "Gender",  value: pet.gender)
-                    InfoGridCard(label: "Breed",   value: pet.breed)
-                    InfoGridCard(label: "Species", value: pet.species)
-                }
-
-                // MARK: "Pet's Informations" Section
-                VStack(alignment: .leading, spacing: 14) {
-                    Text("Pet's Informations")
-                        .font(.headline)
-                        .fontWeight(.bold)
-
-                    PetInfoTabBarView(selectedTab: $selectedTab)
-                }
-
-                Divider()
-
-                // MARK: Tab Content (Food tab for now)
-                if selectedTab == .food {
-                    foodTabContent
-                } else {
-                    ContentUnavailableView(
-                        selectedTab.title,
-                        systemImage: selectedTab.iconName,
-                        description: Text("Coming soon")
-                    )
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 40)
-                }
-            }
-            .padding(.horizontal, 16)
-            .padding(.bottom, 40)
+            //            VStack(alignment: .leading, spacing: 20) {
+            //
+            //                // MARK: Avatar + Name (centered)
+            //                HStack {
+            //                    Spacer()
+            //                    PetAvatarHeaderView(name: pet.name, imageName: pet.avatarImageName)
+            //                    Spacer()
+            //                }
+            //                .padding(.top, 8)
+            //
+            //                // MARK: Info Grid (Age, Gender, Breed, Species)
+            //                LazyVGrid(columns: infoColumns, spacing: 10) {
+            //                    InfoGridCard(label: "Age",     value: pet.age)
+            //                    InfoGridCard(label: "Gender",  value: pet.gender)
+            //                    InfoGridCard(label: "Breed",   value: pet.breed)
+            //                    InfoGridCard(label: "Species", value: pet.species)
+            //                }
+            //
+            //                // MARK: "Pet's Informations" Section
+            //                VStack(alignment: .leading, spacing: 14) {
+            //                    Text("Pet's Informations")
+            //                        .font(.headline)
+            //                        .fontWeight(.bold)
+            //
+            //                    PetInfoTabBarView(selectedTab: $selectedTab)
+            //                }
+            //
+            //                Divider()
+            //
+            //                // MARK: Tab Content (Food tab for now)
+            //                if selectedTab == .food {
+            //                    foodTabContent
+            //                } else {
+            //                    ContentUnavailableView(
+            //                        selectedTab.title,
+            //                        systemImage: selectedTab.iconName,
+            //                        description: Text("Coming soon")
+            //                    )
+            //                    .frame(maxWidth: .infinity)
+            //                    .padding(.vertical, 40)
+            //                }
+            //            }
+            //            .padding(.horizontal, 16)
+            //            .padding(.bottom, 40)
+        
+            foodTabContent
         }
         .background(Color.ppBackground.ignoresSafeArea())
         .navigationBarTitleDisplayMode(.inline)

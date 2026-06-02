@@ -46,7 +46,7 @@ struct DietaryRestrictionBanner: View {
         .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: 14, style: .continuous)
-                .strokeBorder(Color.ppEmergencyRed.opacity(0.55), lineWidth: 1.5)
+                .strokeBorder(Color.ppEmergencyRed.opacity(0.35), lineWidth: 1.5)
         )
     }
 }
