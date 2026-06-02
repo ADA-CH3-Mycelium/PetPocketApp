@@ -82,16 +82,6 @@ struct AddedStatePetList: View {
                                     .frame(maxWidth: .infinity)
                                     .frame(height: 200)
                                     .clipped()
-
-                                Text("OWNING")
-                                    .font(.caption)
-                                    .fontWeight(.bold)
-                                    .foregroundColor(.white)
-                                    .padding(.horizontal, 10)
-                                    .padding(.vertical, 5)
-                                    .background(Color.primaryApp)
-                                    .clipShape(Capsule())
-                                    .padding(12)
                             }
 
                             HStack {
@@ -99,9 +89,6 @@ struct AddedStatePetList: View {
                                     Text("Cooper")
                                         .font(.system(size: 17, weight: .semibold))
                                         .foregroundColor(.primary)
-                                    Text("Golden Retriever")
-                                        .font(.subheadline)
-                                        .foregroundColor(.secondary)
                                 }
                                 Spacer()
                             }
@@ -121,16 +108,6 @@ struct AddedStatePetList: View {
                                     .frame(maxWidth: .infinity)
                                     .frame(height: 200)
                                     .clipped()
-
-                                Text("SITTING")
-                                    .font(.caption)
-                                    .fontWeight(.bold)
-                                    .foregroundColor(.white)
-                                    .padding(.horizontal, 10)
-                                    .padding(.vertical, 5)
-                                    .background(Color.onSecondary)
-                                    .clipShape(Capsule())
-                                    .padding(12)
                             }
 
                             VStack(spacing: 8) {
