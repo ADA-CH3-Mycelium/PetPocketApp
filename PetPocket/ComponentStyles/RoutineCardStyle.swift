@@ -59,7 +59,8 @@ struct RoutineCard: View {
                             MediaThumbnailView(media: media)
                         }
                     }
-                    //clarify button 
+                    
+                    //clarify button
                     ClarifyButtonStyle()
                     
                 }
