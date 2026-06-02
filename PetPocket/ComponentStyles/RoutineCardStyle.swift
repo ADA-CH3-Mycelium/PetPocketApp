@@ -32,6 +32,7 @@ struct RoutineCard: View {
     
     var body: some View {
             HStack() {
+                //LEFT
                 VStack(alignment: .leading, spacing: 5) {
                     HStack() {
                         
@@ -50,17 +51,22 @@ struct RoutineCard: View {
                 
                 Spacer()
                 
-                if item.media != nil {
-                    if let media = item.media {
-                        Spacer()
-                        MediaThumbnailView(media: media)
+                // RIGHT
+                VStack(alignment: .trailing, spacing: 5) {
+                    // is there media
+                    if item.media != nil {
+                        if let media = item.media {
+                            MediaThumbnailView(media: media)
+                        }
                     }
+                    //clarify button 
+                    ClarifyButtonStyle()
+                    
                 }
             }
             .padding(20)
-            .border(Color.accent.opacity(0.3), width: 0.75)
             .clipShape(RoundedRectangle(cornerRadius: 16))
-            .glassEffect(.regular.tint(.white.opacity(0.10)),
+            .glassEffect(.regular.tint(.accent.opacity(0.01)),
                          in: .rect(cornerRadius: 16))
         }
 }
