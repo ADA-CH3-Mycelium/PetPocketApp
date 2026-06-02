@@ -15,17 +15,16 @@ struct GenerateCodeView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                PawPocketTheme.backgroundCream.ignoresSafeArea()
+                Color.background.ignoresSafeArea()
                 
                 VStack(spacing: 24) {
                     VStack(spacing: 8) {
                         Text("Connect with Pet Sitter")
                             .font(.title2)
                             .bold()
-                            .foregroundColor(PawPocketTheme.textDark)
                         Text("Start sharing your pet's information with the sitter.")
                             .font(.subheadline)
-                            .foregroundColor(PawPocketTheme.textSecondary)
+                            .foregroundColor(.secondary)
                     }
                     .padding(.top, 1)
                     
@@ -34,7 +33,7 @@ struct GenerateCodeView: View {
                         Text("Collaboration Code")
                             .font(.caption)
                             .bold()
-                            .foregroundColor(PawPocketTheme.textSecondary)
+                            .foregroundColor(.secondary)
                         
                         HStack(spacing: 0) {
                             Text(codeString)
@@ -62,7 +61,7 @@ struct GenerateCodeView: View {
                                 .foregroundColor(.white)
                                 .padding()
                                 .frame(width: 80, height: 68)
-                                .background(PawPocketTheme.accentOrange)
+                                .background(.accent)
                                 .cornerRadius(10)
                             }
                             .padding(.leading, 8)
@@ -70,10 +69,10 @@ struct GenerateCodeView: View {
                         
                         Text("Share the 6-digit code to the pet sitter.")
                             .font(.caption)
-                            .foregroundColor(PawPocketTheme.textSecondary)
+                            .foregroundColor(.secondary)
                     }
                     .padding()
-                    .background(PawPocketTheme.cardBackground)
+                    .background(.accent.opacity(0.1))
                     .cornerRadius(16)
                     .shadow(color: Color.black.opacity(0.02), radius: 10)
                     
@@ -89,7 +88,7 @@ struct GenerateCodeView: View {
                         Image(systemName: "xmark")
                             .imageScale(.large)
                             .bold(true)
-                            .foregroundColor(PawPocketTheme.primaryGreen.opacity(0.8))
+                            .foregroundColor(Color.primaryG.opacity(0.8))
                             .frame(width: 36, height: 36)
 //                            .background(
 //                                ZStack {

@@ -23,14 +23,14 @@ private let mockMessages: [MockMessage] = [
         time: "14:02",
         text: "What kind of Kibble should I give to Cooper?",
         isMe: false,
-        avatarColor: Color(hex: "8FAF9F")
+        avatarColor: Color("8FAF9F")
     ),
     MockMessage(
         senderLabel: "ALEX (OWNER)",
         time: "14:05",
         text: "Eum dunno, anything fine please!",
         isMe: true,
-        avatarColor: Color(hex: "5C7A6E")
+        avatarColor: Color("5C7A6E")
     )
 ]
 
@@ -45,10 +45,10 @@ struct ClarifySheetView: View {
             HStack(alignment: .center, spacing: 12) {
                 ZStack {
                     RoundedRectangle(cornerRadius: 10, style: .continuous)
-                        .fill(Color.ppForestGreen.opacity(0.15))
+                        .fill(Color.primaryG.opacity(0.15))
                         .frame(width: 44, height: 44)
                     Image(systemName: "bubble.left.and.bubble.right.fill")
-                        .foregroundColor(.ppForestGreen)
+                        .foregroundColor(Color.primaryG)
                         .font(.system(size: 18))
                 }
 
@@ -111,7 +111,7 @@ struct ClarifySheetView: View {
                             .font(.system(size: 16, weight: .bold))
                             .foregroundColor(.white)
                             .padding(10)
-                            .background(Color.ppForestGreen)
+                            .background(Color.primaryG)
                             .clipShape(Circle())
                     }
                 }
@@ -126,7 +126,7 @@ struct ClarifySheetView: View {
                     .foregroundColor(.white)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 14)
-                    .background(Color.ppForestGreen)
+                    .background(Color.primaryG)
                     .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
                 }
             }
@@ -169,7 +169,7 @@ private struct ChatBubbleView: View {
                     .padding(.vertical, 10)
                     .background(
                         message.isMe
-                            ? Color.ppForestGreen
+                            ? Color.primaryG
                             : Color(.systemGray6)
                     )
                     .clipShape(
