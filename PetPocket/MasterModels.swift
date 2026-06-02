@@ -69,3 +69,16 @@ struct AdditionalNotesCardItem: Identifiable {
         self.description = description
     }
 }
+
+enum PetCardType {
+    case owning
+    case sitting(sitter: String, sitterImage: String, dateRange: String)
+}
+
+struct PetCardItem {
+    let name: String
+    let image: String
+    let type: PetCardType
+}
+
+

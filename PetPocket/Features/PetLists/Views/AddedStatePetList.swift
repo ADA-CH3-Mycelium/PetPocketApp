@@ -73,88 +73,21 @@ struct AddedStatePetList: View {
 
                     // Pet cards
                     VStack(spacing: 16) {
-                        // Card 1 — Owning
-                        VStack(spacing: 0) {
-                            ZStack(alignment: .topLeading) {
-                                Image("1PetImage")
-                                    .resizable()
-                                    .scaledToFill()
-                                    .frame(maxWidth: .infinity)
-                                    .frame(height: 200)
-                                    .clipped()
-                            }
+                        PetListCard(item: PetCardItem(
+                            name: "Cooper",
+                            image: "1PetImage",
+                            type: .owning
+                        ))
 
-                            HStack {
-                                VStack(alignment: .leading, spacing: 4) {
-                                    Text("Cooper")
-                                        .font(.system(size: 17, weight: .semibold))
-                                        .foregroundColor(.primary)
-                                }
-                                Spacer()
-                            }
-                            .padding(.horizontal, 16)
-                            .padding(.vertical, 14)
-                        }
-                        .background(Color(.systemBackground))
-                        .clipShape(RoundedRectangle(cornerRadius: 20))
-                        .shadow(color: .black.opacity(0.07), radius: 10, x: 0, y: 4)
-
-                        // Card 2 — Sitting
-                        VStack(spacing: 0) {
-                            ZStack(alignment: .topLeading) {
-                                Image("2PetImage")
-                                    .resizable()
-                                    .scaledToFill()
-                                    .frame(maxWidth: .infinity)
-                                    .frame(height: 200)
-                                    .clipped()
-                            }
-
-                            VStack(spacing: 8) {
-                                HStack {
-                                    Text("Luna")
-                                        .font(.system(size: 17, weight: .semibold))
-                                        .foregroundColor(.primary)
-
-                                    Spacer()
-
-                                    HStack(spacing: 6) {
-                                        Image("SarahPic")
-                                            .resizable()
-                                            .scaledToFill()
-                                            .frame(width: 22, height: 22)
-                                            .clipShape(Circle())
-
-                                        Text("Sarah")
-                                            .font(.subheadline)
-                                            .foregroundColor(.secondary)
-                                    }
-                                }
-
-                                HStack {
-                                    Text("Calico Cat")
-                                        .font(.subheadline)
-                                        .foregroundColor(.secondary)
-
-                                    Spacer()
-
-                                    HStack(spacing: 4) {
-                                        Image(systemName: "clock")
-                                            .font(.system(size: 12))
-                                            .foregroundColor(.secondary)
-                                        Text("2 days left")
-                                            .font(.caption)
-                                            .fontWeight(.medium)
-                                            .foregroundColor(.secondary)
-                                    }
-                                }
-                            }
-                            .padding(.horizontal, 16)
-                            .padding(.vertical, 14)
-                        }
-                        .background(Color(.systemBackground))
-                        .clipShape(RoundedRectangle(cornerRadius: 20))
-                        .shadow(color: .black.opacity(0.07), radius: 10, x: 0, y: 4)
+                        PetListCard(item: PetCardItem(
+                            name: "Luna",
+                            image: "2PetImage",
+                            type: .sitting(
+                                sitter: "Sarah",
+                                sitterImage: "SarahPic",
+                                dateRange: "Nov 5th - Nov 10th"
+                            )
+                        ))
                     }
                     .padding(.horizontal, 20)
                     .padding(.bottom, 32)
