@@ -148,6 +148,7 @@ struct PetListView: View {
                     ForEach(store.ownedPets) { pet in
                         NavigationLink(value: pet) {
                             PetListCard(item: PetItem(
+                                id: pet.id,
                                 name: pet.name,
                                 gender: pet.gender!,
                                 age: pet.ageDescription,
@@ -167,6 +168,7 @@ struct PetListView: View {
                         ForEach(store.sittingPets) { pet in
                             NavigationLink(value: pet) {
                                 PetListCard(item: PetItem(
+                                    id:pet.id,
                                     name: pet.name,
                                     gender: pet.gender!,
                                     age: pet.ageDescription,

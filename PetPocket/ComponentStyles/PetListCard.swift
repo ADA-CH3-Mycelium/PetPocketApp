@@ -1,5 +1,5 @@
 //
-//  OwnedPetCard.swift
+//  PetListCard.swift
 //  PetPocket
 //
 //  Created by Michel Pierce on 02/06/26.
@@ -81,15 +81,4 @@ struct PetListCard: View {
         .clipShape(RoundedRectangle(cornerRadius: 20))
         .shadow(color: .black.opacity(0.07), radius: 10, x: 0, y: 4)
     }
-}
-
-#Preview {
-    PetListCard(item: PetItem(
-        name: "Cooper",
-        gender: "Male",
-        age: "3",
-        breed: "Golden Retriever",
-        image: "1PetImage",
-        type: .owning
-    ))
 }
