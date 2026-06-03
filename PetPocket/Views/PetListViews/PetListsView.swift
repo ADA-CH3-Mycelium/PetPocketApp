@@ -14,6 +14,7 @@ struct PetListsView: View {
     
     var mockData : [PetItem] = [
         PetItem(
+            id: UUID(),
                     name: "Cooper",
                     gender: "Male",
                     age: "3",
@@ -22,6 +23,7 @@ struct PetListsView: View {
                     type: .owning
                 ),
         PetItem(
+            id: UUID(),
                     name: "Luna",
                     gender: "Male",
                     age: "4",

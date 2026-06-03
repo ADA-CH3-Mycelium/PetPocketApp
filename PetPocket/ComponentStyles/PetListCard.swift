@@ -85,6 +85,7 @@ struct PetListCard: View {
 
 #Preview {
     PetListCard(item: PetItem(
+        id: UUID(),
         name: "Cooper",
         gender: "Male",
         age: "3",

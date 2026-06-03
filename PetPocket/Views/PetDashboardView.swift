@@ -51,123 +51,126 @@ struct PetDashboardView: View {
     ]
 
     var body: some View {
-        NavigationStack {
-            ZStack {
-                Color.background.ignoresSafeArea()
+        ZStack {
+            Color.background.ignoresSafeArea()
 
-                //ScrollView {
-                // Applying the explicit layout padding here cleanly covers the entire page structure
-                VStack(alignment: .leading) {
-                    ZStack(alignment: .bottomLeading) {
-                        // PROFILE IMG
-                        Image(PetData.image)
-                            .resizable()
+            //ScrollView {
+            // Applying the explicit layout padding here cleanly covers the entire page structure
+            VStack(alignment: .leading) {
+                ZStack(alignment: .bottomLeading) {
+                    // PROFILE IMG
+                    Image(PetData.image)
+                        .resizable()
 
-                            .scaledToFill()
-                            .frame(width: 400, height: 500)
-                            .mask(
-                                LinearGradient(
-                                    gradient: Gradient(stops: [
-                                        .init(color: .black, location: 0.0),
-                                        .init(color: .black, location: 0.75),
-                                        .init(color: .clear, location: 1),
-                                    ]),
-                                    startPoint: .top,
-                                    endPoint: .bottom
-                                )
+                        .scaledToFill()
+                        .frame(width: 400, height: 500)
+                        .mask(
+                            LinearGradient(
+                                gradient: Gradient(stops: [
+                                    .init(color: .black, location: 0.0),
+                                    .init(color: .black, location: 0.75),
+                                    .init(color: .clear, location: 1),
+                                ]),
+                                startPoint: .top,
+                                endPoint: .bottom
                             )
+                        )
 
-                        // TEXT
-                        VStack(alignment: .leading) {
-                            Text("Hi, I'm")
-                                .font(.caption)
-                                .fontWeight(.semibold)
-                            //.foregroundColor(.gray)
-                            Text(PetData.name)
-                                .font(.largeTitle)
-                                .bold()
+                    // TEXT
+                    VStack(alignment: .leading) {
+                        Text("Hi, I'm")
+                            .font(.caption)
+                            .fontWeight(.semibold)
+                        //.foregroundColor(.gray)
+                        Text(PetData.name)
+                            .font(.largeTitle)
+                            .bold()
 
-                            Text("\(PetData.age) years old  • \(PetData.gender)  • \(PetData.breed)")
-                                .foregroundColor(.gray)
-                        }
-                        .padding(20)
-                        .offset(y: 30)
-
-                    }
-                    .offset(y: -100)
-
-                    // Categories
-
-                    VStack(alignment: .leading, spacing: 10) {
-                        Text("Here are my habits and needs 🐾")
-                            .font(.headline)
-
-                        TwCoColGrid(catItem: $catItem)
+                        Text(
+                            "\(PetData.age) years old  • \(PetData.gender)  • \(PetData.breed)"
+                        )
+                        .foregroundColor(.gray)
                     }
                     .padding(20)
-                    .offset(y: -65)
+                    .offset(y: 30)
+
                 }
-                .navigationBarTitleDisplayMode(.inline)
-                .toolbar {
-                    // clarify chat
-                    ToolbarItem(placement: .navigationBarTrailing) {
-                        Button(action: {
-                            showingChatPage = true
-                        }) {
-                            Image(systemName: "questionmark.bubble.fill")
-                                .imageScale(.large)
-                                .foregroundStyle(Color.primaryG)
-                        }
+                .offset(y: -100)
+
+                // Categories
+
+                VStack(alignment: .leading, spacing: 10) {
+                    Text("Here are my habits and needs 🐾")
+                        .font(.headline)
+
+                    TwCoColGrid(catItem: $catItem)
+                }
+                .padding(20)
+                .offset(y: -65)
+            }
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                // clarify chat
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button(action: {
+                        showingChatPage = true
+                    }) {
+                        Image(systemName: "questionmark.bubble.fill")
+                            .imageScale(.large)
+                            .foregroundStyle(Color.primaryG)
                     }
-                    
-                    // menu
-                    ToolbarItem(placement: .navigationBarTrailing) {
-                        Menu {
-                            Button(action: { showingManageAccess = true }) {
-                                Label(
-                                    "Manage access",
-                                    systemImage: "person.badge.key"
-                                )
-                            }
-                            Button(action: {}) {
-                                Label("Edit information", systemImage: "pencil")
-                            }
-                            Button(action: { showingGenerateCode = true }) {
-                                Label(
-                                    "Generate new code",
-                                    systemImage: "qrcode"
-                                )
-                            }
-                        } label: {
-                            Image(systemName: "ellipsis")
-                                .imageScale(.large)
-                                .rotationEffect(Angle(degrees: 90))
-                                .foregroundColor(Color.primaryG)
+                }
+
+                // menu
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Menu {
+                        Button(action: { showingManageAccess = true }) {
+                            Label(
+                                "Manage access",
+                                systemImage: "person.badge.key"
+                            )
                         }
+                        Button(action: {}) {
+                            Label("Edit information", systemImage: "pencil")
+                        }
+                        Button(action: { showingGenerateCode = true }) {
+                            Label(
+                                "Generate new code",
+                                systemImage: "qrcode"
+                            )
+                        }
+                    } label: {
+                        Image(systemName: "ellipsis")
+                            .imageScale(.large)
+                            .rotationEffect(Angle(degrees: 90))
+                            .foregroundColor(Color.primaryG)
                     }
-                    
                 }
-                .navigationDestination(isPresented: $showingManageAccess) {
-                    ManageAccessView()
-                }
-                .navigationDestination(isPresented: $showingChatPage) {
-                    ClarifySheetView()
-                }
-                .sheet(isPresented: $showingGenerateCode) {
-                    GenerateCodeView()
-                }
+
+            }
+            .navigationDestination(isPresented: $showingManageAccess) {
+                ManageAccessView()
+            }
+            .navigationDestination(isPresented: $showingChatPage) {
+                ClarifySheetView()
+            }
+            .sheet(isPresented: $showingGenerateCode) {
+                GenerateCodeView()
             }
         }
     }
 }
 
 #Preview {
-    PetDashboardView(PetData: PetItem(
-        name: "Cooper",
-        gender: "Male",
-        age: "3",
-        breed: "Golden Retriever",
-        image: "1PetImage",
-        type: .owning
-    ))
+    PetDashboardView(
+        PetData: PetItem(
+            id: UUID(),
+            name: "Cooper",
+            gender: "Male",
+            age: "3",
+            breed: "Golden Retriever",
+            image: "1PetImage",
+            type: .owning
+        )
+    )
 }
