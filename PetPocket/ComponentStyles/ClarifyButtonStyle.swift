@@ -9,17 +9,15 @@ import Foundation
 import SwiftUI
 
 struct ClarifyButtonStyle: View {
-    
+    var action: () -> Void = {}
+
     var body: some View {
-        Button(action: {
-        }) {
+        Button(action: action) {
             Image(systemName: "questionmark.bubble.fill")
                 .font(.caption2)
                 .fontWeight(.light)
                 .frame(width: 26, height: 26)
                 .glassEffect()
-//                .background(.accent)
-//                .clipShape(Circle())
         }
     }
 }

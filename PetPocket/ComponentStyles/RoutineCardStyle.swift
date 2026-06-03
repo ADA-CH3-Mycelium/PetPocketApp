@@ -76,6 +76,8 @@ struct RoutineCard: View {
     // reading environment colour mode
     @Environment(\.colorScheme) var colorScheme
 
+    @State private var showClarifySheet = false
+
     let item: RoutineCardItem
     let isEmergency: Bool
 
@@ -98,7 +100,7 @@ struct RoutineCard: View {
 
                 Text(item.description)
                     .font(.body)
-                    
+
             }
 
             Spacer()
@@ -112,7 +114,7 @@ struct RoutineCard: View {
                 }
 
                 if isEmergency != true {
-                    ClarifyButtonStyle()
+                    ClarifyButtonStyle(action: { showClarifySheet = true })
                         .offset(y: 2)
                 }
             }
@@ -123,6 +125,9 @@ struct RoutineCard: View {
             .regular.tint(colorScheme == .dark ? .clear : .white),
             in: .rect(cornerRadius: 16)
         )
+        .sheet(isPresented: $showClarifySheet) {
+            ClarifySheetView(routineTitle: item.title)
+        }
     }
 }
 // MARK: - Preview

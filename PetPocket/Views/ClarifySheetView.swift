@@ -16,6 +16,8 @@ struct ClarifySheetView: View {
     /// so the back button appears alongside the hamburger.
     var isInNavigationStack: Bool = false
 
+    var routineTitle: String? = nil
+
     @Environment(\.dismiss) var dismiss
     @State private var messageText = ""
     @State private var isSidebarOpen = false
@@ -28,11 +30,15 @@ struct ClarifySheetView: View {
         formatter.dateFormat = "HH:mm"
 
         return MessageModel(
-            senderLabel: msg.senderId == Profile.mockSarah.id ? "SARAH (SITTER)" : "ALEX (OWNER)",
+            senderLabel: msg.senderId == Profile.mockSarah.id
+                ? "SARAH (SITTER)" : "ALEX (OWNER)",
             time: formatter.string(from: msg.createdAt),
             text: msg.message,
             isMe: isMe,
-            avatarImage: Image(msg.senderId == Profile.mockSarah.id ? "SarahPic" : "AlexProfilePicture")
+            avatarImage: Image(
+                msg.senderId == Profile.mockSarah.id
+                    ? "SarahPic" : "AlexProfilePicture"
+            )
         )
     }
 
@@ -79,13 +85,16 @@ struct ClarifySheetView: View {
 
                     // Title
                     VStack(alignment: .leading, spacing: 2) {
-                        Text("Clarify: \(viewModel.currentThread?.title ?? "Loading")")
-                                .font(.headline)
-                                .fontWeight(.bold)
-                                .lineLimit(1)
-                            Text(viewModel.isCurrentUserSitter ? "Active Chat" : "Reply to Sarah")
-                                .font(.caption)
-                                .foregroundColor(.secondary)
+                        Text("Clarify: \(viewModel.currentThread?.title ?? routineTitle ?? "Loading")")
+                        .font(.headline)
+                        .fontWeight(.bold)
+                        .lineLimit(1)
+                        Text(
+                            viewModel.isCurrentUserSitter
+                                ? "Active Chat" : "Reply to Sarah"
+                        )
+                        .font(.caption)
+                        .foregroundColor(.secondary)
                     }
 
                     Spacer()
@@ -112,47 +121,69 @@ struct ClarifySheetView: View {
                 Divider()
 
                 // Messages
-                ScrollView {
+                if viewModel.shouldShowEmptyStateForOwner {
+                    // Empty state for owner
                     VStack(spacing: 16) {
-                        ForEach(viewModel.messages) { message in
-                            ChatBubbleView(message: messageModel(from: message))
-                        }
-                        //                        AttachmentSuggestionCard()
+                        Spacer()
+                        Image(systemName: "bubble.left.and.bubble.right")
+                            .font(.system(size: 48))
+                            .foregroundColor(.secondary.opacity(0.5))
+                        Text("No chat yet for this routine")
+                            .font(.headline)
+                            .foregroundColor(.secondary)
+                        Text("Wait for the sitter to start a\nconversation about this routine")
+                            .font(.subheadline)
+                            .foregroundColor(.secondary.opacity(0.7))
+                            .multilineTextAlignment(.center)
+                        Spacer()
                     }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .padding(16)
+                } else {
+                    ScrollView {
+                        VStack(spacing: 16) {
+                            ForEach(viewModel.messages) { message in
+                                ChatBubbleView(message: messageModel(from: message))
+                            }
+                        }
+                        .padding(16)
+                    }
                 }
 
                 Divider()
 
                 // Input bar
-                HStack(spacing: 12) {
-                    Button {
-                    } label: {
-                        Image(systemName: "paperclip")
-                            .font(.system(size: 20))
-                            .foregroundColor(.secondary)
+                if !viewModel.shouldShowEmptyStateForOwner{
+                    HStack(spacing: 12) {
+                        Button {
+                        } label: {
+                            Image(systemName: "paperclip")
+                                .font(.system(size: 20))
+                                .foregroundColor(.secondary)
+                        }
+                        
+                        TextField("Type a message...", text: $messageText)
+                            .padding(.horizontal, 14)
+                            .padding(.vertical, 10)
+                            .background(Color(.systemGray6))
+                            .clipShape(Capsule())
+                        
+                        Button {
+                            viewModel.sendMessage(messageText)
+                            messageText = ""
+                        } label: {
+                            Image(systemName: "arrow.up")
+                                .font(.system(size: 16, weight: .bold))
+                                .foregroundColor(.white)
+                                .padding(10)
+                                .background(Color.primaryG)
+                                .clipShape(Circle())
+                        }
                     }
-
-                    TextField("Type a message...", text: $messageText)
-                        .padding(.horizontal, 14)
-                        .padding(.vertical, 10)
-                        .background(Color(.systemGray6))
-                        .clipShape(Capsule())
-
-                    Button {
-                        viewModel.sendMessage(messageText)
-                        messageText = ""
-                    } label: {
-                        Image(systemName: "arrow.up")
-                            .font(.system(size: 16, weight: .bold))
-                            .foregroundColor(.white)
-                            .padding(10)
-                            .background(Color.primaryG)
-                            .clipShape(Circle())
-                    }
+                    
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 12)
                 }
-                .padding(.horizontal, 16)
-                .padding(.vertical, 12)
             }
             // Dim + close sidebar on tap
             .overlay {
@@ -180,6 +211,11 @@ struct ClarifySheetView: View {
                 .frame(width: 280)
                 .transition(.move(edge: .leading))
                 .zIndex(1)
+            }
+        }
+        .onAppear {
+            if let title = routineTitle {
+                viewModel.loadThread(routineTitle: title)
             }
         }
     }
