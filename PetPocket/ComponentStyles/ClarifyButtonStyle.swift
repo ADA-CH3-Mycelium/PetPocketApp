@@ -9,9 +9,11 @@ import Foundation
 import SwiftUI
 
 struct ClarifyButtonStyle: View {
+    @State private var navigate = false
     
     var body: some View {
         Button(action: {
+            navigate = true
         }) {
             Image(systemName: "questionmark.bubble.fill")
                 .font(.caption2)
@@ -20,6 +22,9 @@ struct ClarifyButtonStyle: View {
                 .glassEffect()
 //                .background(.accent)
 //                .clipShape(Circle())
+        }
+        .navigationDestination(isPresented: $navigate) {
+            ClarifySheetView(isInNavigationStack: true)
         }
     }
 }
