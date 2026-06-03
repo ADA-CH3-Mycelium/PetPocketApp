@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct CareView: View {
-    @Environment(PetDetailStore.self) private var detail
 
     var body: some View {
         ZStack {
@@ -17,25 +16,18 @@ struct CareView: View {
 
                 // routine
                 VStack(alignment: .leading, spacing: 10) {
-                    if detail.careItems.isEmpty {
-                        Text("No care notes added yet.")
-                            .font(.subheadline)
-                            .foregroundColor(.secondary)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                    } else {
-                        ForEach(detail.careItems) { item in
-                            RoutineCard(item: item, isEmergency: false)
-                        }
-                    }
+                    Text("No care notes added yet.")
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                        .frame(maxWidth: .infinity, alignment: .leading)
                 }
                 Spacer()
 
             }.padding(20)
         }
-
     }
 }
 
 #Preview {
-    CareView().environment(PetDetailStore(pet: .sample))
+    CareView()
 }

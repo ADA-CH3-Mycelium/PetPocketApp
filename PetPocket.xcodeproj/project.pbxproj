@@ -8,6 +8,11 @@
 
 /* Begin PBXBuildFile section */
 		D4B7C5B32FD0759C00599F25 /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = D4B7C5B22FD0759C00599F25 /* FirebaseMessaging */; };
+		D4F956992FD096BA00554A4B /* Auth in Frameworks */ = {isa = PBXBuildFile; productRef = D4F956982FD096BA00554A4B /* Auth */; };
+		D4F9569B2FD096BA00554A4B /* Functions in Frameworks */ = {isa = PBXBuildFile; productRef = D4F9569A2FD096BA00554A4B /* Functions */; };
+		D4F9569D2FD096BA00554A4B /* Realtime in Frameworks */ = {isa = PBXBuildFile; productRef = D4F9569C2FD096BA00554A4B /* Realtime */; };
+		D4F9569F2FD096BA00554A4B /* Storage in Frameworks */ = {isa = PBXBuildFile; productRef = D4F9569E2FD096BA00554A4B /* Storage */; };
+		D4F956A12FD096BA00554A4B /* Supabase in Frameworks */ = {isa = PBXBuildFile; productRef = D4F956A02FD096BA00554A4B /* Supabase */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -40,7 +45,12 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D4F9569B2FD096BA00554A4B /* Functions in Frameworks */,
+				D4F956992FD096BA00554A4B /* Auth in Frameworks */,
+				D4F956A12FD096BA00554A4B /* Supabase in Frameworks */,
 				D4B7C5B32FD0759C00599F25 /* FirebaseMessaging in Frameworks */,
+				D4F9569F2FD096BA00554A4B /* Storage in Frameworks */,
+				D4F9569D2FD096BA00554A4B /* Realtime in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -84,6 +94,11 @@
 			name = PetPocket;
 			packageProductDependencies = (
 				D4B7C5B22FD0759C00599F25 /* FirebaseMessaging */,
+				D4F956982FD096BA00554A4B /* Auth */,
+				D4F9569A2FD096BA00554A4B /* Functions */,
+				D4F9569C2FD096BA00554A4B /* Realtime */,
+				D4F9569E2FD096BA00554A4B /* Storage */,
+				D4F956A02FD096BA00554A4B /* Supabase */,
 			);
 			productName = PetPocket;
 			productReference = 7FDBD20C2FC7E1C30006BE09 /* PetPocket.app */;
@@ -115,6 +130,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				D4B7C5B12FD0759C00599F25 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+				D4F956972FD096BA00554A4B /* XCRemoteSwiftPackageReference "supabase-swift" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 7FDBD20D2FC7E1C30006BE09 /* Products */;
@@ -370,6 +386,14 @@
 				minimumVersion = 12.14.0;
 			};
 		};
+		D4F956972FD096BA00554A4B /* XCRemoteSwiftPackageReference "supabase-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/supabase/supabase-swift";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.5.1;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -377,6 +401,31 @@
 			isa = XCSwiftPackageProductDependency;
 			package = D4B7C5B12FD0759C00599F25 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseMessaging;
+		};
+		D4F956982FD096BA00554A4B /* Auth */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D4F956972FD096BA00554A4B /* XCRemoteSwiftPackageReference "supabase-swift" */;
+			productName = Auth;
+		};
+		D4F9569A2FD096BA00554A4B /* Functions */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D4F956972FD096BA00554A4B /* XCRemoteSwiftPackageReference "supabase-swift" */;
+			productName = Functions;
+		};
+		D4F9569C2FD096BA00554A4B /* Realtime */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D4F956972FD096BA00554A4B /* XCRemoteSwiftPackageReference "supabase-swift" */;
+			productName = Realtime;
+		};
+		D4F9569E2FD096BA00554A4B /* Storage */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D4F956972FD096BA00554A4B /* XCRemoteSwiftPackageReference "supabase-swift" */;
+			productName = Storage;
+		};
+		D4F956A02FD096BA00554A4B /* Supabase */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D4F956972FD096BA00554A4B /* XCRemoteSwiftPackageReference "supabase-swift" */;
+			productName = Supabase;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
