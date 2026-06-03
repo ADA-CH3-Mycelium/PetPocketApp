@@ -28,6 +28,13 @@ struct CategoryItem2: Identifiable, Hashable {
 
 }
 
+// category header
+struct CategoryHeaderItem: Identifiable, Hashable {
+    var id = UUID()
+    var icon: String
+    var label: String
+}
+
 // MARK: - ROUTINE CARD INFO
 
 struct RoutineCardItem: Identifiable {
