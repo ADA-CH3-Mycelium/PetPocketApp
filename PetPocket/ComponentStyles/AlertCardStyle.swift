@@ -31,10 +31,10 @@ struct AlertCardStyle: View {
         .padding()
         .frame(maxWidth: .infinity, alignment: .leading)
         .glassEffect(.regular.tint(Color.alertRed.opacity(0.1)), in: .rect(cornerRadius: 16))
-        .overlay(
-            RoundedRectangle(cornerRadius: 16)
-                .stroke(Color.alertRed.opacity(0.3), lineWidth: 1)
-        )
+//        .overlay(
+//            RoundedRectangle(cornerRadius: 16)
+//                .stroke(Color.alertRed.opacity(0.3), lineWidth: 1)
+//        )
     }
 
 }

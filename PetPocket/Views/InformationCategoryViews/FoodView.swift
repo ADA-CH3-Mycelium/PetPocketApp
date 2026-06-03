@@ -10,6 +10,11 @@ import SwiftUI
 struct FoodView: View {
     @State var isEditing: Bool = false
     
+    // headers
+    private let foodCategoryHeaders: [CategoryHeaderItem] = [
+        CategoryHeaderItem(icon: "clock.arrow.circlepath", label: "Daily Feeding Routine")
+    ]
+    
     var body: some View {
        
             ZStack {
@@ -26,20 +31,15 @@ struct FoodView: View {
                             VStack(alignment: .center, spacing: 10) {
 
                                 // header
-                                HStack {
-                                    Text("Daily Feeding Routine")
-                                        .font(.headline)
-
-                                    Spacer()
-                                }
+                                CategoryHeader(item: foodCategoryHeaders[0])
 
                                 // cards
                                 //                ForEach(mockData, id: \.self) { item in
                                 //                    RoutineCard(item: item)
                                 //                }
-                                RoutineCard(item: mockData[0])
-                                RoutineCard(item: mockData[1])
-                                RoutineCard(item: mockData[2])
+                                RoutineCard(item: mockData[0], isEmergency: false)
+                                RoutineCard(item: mockData[1], isEmergency: false)
+                                RoutineCard(item: mockData[2], isEmergency: false)
 
                                 //add btn
                                 if isEditing {

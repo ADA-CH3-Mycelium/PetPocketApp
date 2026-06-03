@@ -29,16 +29,18 @@ struct AddNotesStyle: View {
         }
         .frame(maxWidth: 350, maxHeight: 137)
         .clipped()
-        .clipShape(RoundedRectangle(cornerRadius: 24))
-        .overlay {
-            RoundedRectangle(cornerRadius: 24)
-                .strokeBorder(.separator, lineWidth: 0.5)
-        }
-        .background {
-            RoundedRectangle(cornerRadius: 24)
-                .fill(Color(.systemBackground))
-                .shadow(color: Color.primaryG, radius: 0, x: -4, y: 0)
-        }
+        .modifier(greenEdgeCard())
+//        .glassEffect(in: .rect(cornerRadius: 24))
+//        //.clipShape(RoundedRectangle(cornerRadius: 24))
+//        .overlay {
+//            RoundedRectangle(cornerRadius: 24)
+//                .strokeBorder(.separator, lineWidth: 0.5)
+//        }
+//        .background {
+//            RoundedRectangle(cornerRadius: 24)
+//                .fill(Color(.systemBackground))
+//                .shadow(color: Color.primaryG, radius: 0, x: -4, y: 0)
+//        }
     }
 }
 

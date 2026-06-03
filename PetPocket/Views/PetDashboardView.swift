@@ -174,6 +174,16 @@ struct PetDashboardView: View {
                 }
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
+                    // clarify chat
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        Button(action: {}) {
+                            Image(systemName: "questionmark.bubble.fill")
+                                .imageScale(.large)
+                                .foregroundStyle(Color.primaryG)
+                        }
+                    }
+                    
+                    // menu
                     ToolbarItem(placement: .navigationBarTrailing) {
                         Menu {
                             Button(action: { showingManageAccess = true }) {
@@ -198,6 +208,7 @@ struct PetDashboardView: View {
                                 .foregroundColor(Color.primaryG)
                         }
                     }
+                    
                 }
                 .navigationDestination(isPresented: $showingManageAccess) {
                     ManageAccessView()

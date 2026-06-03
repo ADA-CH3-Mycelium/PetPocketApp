@@ -85,7 +85,7 @@ struct EmptyStatePetList: View {
                         .foregroundColor(.white)
                         .padding(.horizontal, 28)
                         .padding(.vertical, 14)
-                        .background(Color(.primary))
+                        .background(Color.primaryG)
                         .clipShape(RoundedRectangle(cornerRadius: 14))
                     }
                     .padding(.top, 4)
