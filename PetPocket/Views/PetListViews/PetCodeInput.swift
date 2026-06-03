@@ -10,7 +10,10 @@ import SwiftUI
 struct PetCodeInput: View {
     @Environment(\.dismiss) private var dismiss
 
+    let store: PetStore
+
     @State private var code = ""
+    @State private var isJoining = false
 
     var body: some View {
         ScrollView {
@@ -73,11 +76,16 @@ struct PetCodeInput: View {
                 .shadow(color: .black.opacity(0.05), radius: 10, x: 0, y: 3)
 
                 // Join button
+<<<<<<< HEAD:PetPocket/Views/PetListViews/PetCodeInput.swift
                 Button(action: {
                     // Join action funciton here
                     dismiss()
                 }) {
                     Text("Join Pet Profile")
+=======
+                Button(action: { Task { await join() } }) {
+                    Text(isJoining ? "Joining…" : "Join Pet Profile")
+>>>>>>> supabase2:PetPocket/Features/PetLists/Views/PetCodeInput.swift
                         .font(.system(size: 16, weight: .semibold))
                         .frame(maxWidth: 220)
                         .foregroundColor(.white)
@@ -87,6 +95,15 @@ struct PetCodeInput: View {
                         .clipShape(RoundedRectangle(cornerRadius: 14))
                 }
                 .frame(maxWidth: .infinity, alignment: .center)
+                .disabled(isJoining || code.trimmingCharacters(in: .whitespaces).isEmpty)
+
+                if let error = store.errorMessage {
+                    Text(error)
+                        .font(.caption)
+                        .foregroundColor(.red)
+                        .multilineTextAlignment(.center)
+                        .frame(maxWidth: .infinity)
+                }
 
                 Spacer(minLength: 40)
 
@@ -135,15 +152,27 @@ struct PetCodeInput: View {
                 Text("PawPocket")
                     .font(.headline)
                     .fontWeight(.bold)
+<<<<<<< HEAD:PetPocket/Views/PetListViews/PetCodeInput.swift
                     .foregroundStyle(Color.primaryG)
                 
+=======
+                    .foregroundStyle(Color.primaryApp)
+
+>>>>>>> supabase2:PetPocket/Features/PetLists/Views/PetCodeInput.swift
             }
         }
+    }
+
+    private func join() async {
+        isJoining = true
+        let ok = await store.redeem(code: code)
+        isJoining = false
+        if ok { dismiss() }
     }
 }
 
 #Preview {
     NavigationStack {
-        PetCodeInput()
+        PetCodeInput(store: PetStore())
     }
 }

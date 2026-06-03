@@ -10,14 +10,13 @@ import SwiftData
 
 @main
 struct PetPocketApp: App {
-    var sharedModelContainer: ModelContainer = {
-        let schema = Schema([
-            Item.self,
-        ])
-        let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
+    @State private var auth = AuthManager.shared
 
+    var sharedModelContainer: ModelContainer = {
+        let schema = Schema([Item.self])
+        let config = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
         do {
-            return try ModelContainer(for: schema, configurations: [modelConfiguration])
+            return try ModelContainer(for: schema, configurations: [config])
         } catch {
             fatalError("Could not create ModelContainer: \(error)")
         }
@@ -25,8 +24,13 @@ struct PetPocketApp: App {
 
     var body: some Scene {
         WindowGroup {
-            PetListsView()
+            if auth.isAuthenticated {
+                PetListView()
+            } else {
+                AuthView()
+            }
         }
+        .environment(auth)
         .modelContainer(sharedModelContainer)
     }
 }
