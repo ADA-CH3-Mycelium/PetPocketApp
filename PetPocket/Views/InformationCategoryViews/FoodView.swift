@@ -12,57 +12,80 @@ struct FoodView: View {
     
     // headers
     private let foodCategoryHeaders: [CategoryHeaderItem] = [
-        CategoryHeaderItem(icon: "clock.arrow.circlepath", label: "Daily Feeding Routine")
+        CategoryHeaderItem(icon: "clock.arrow.circlepath", label: "Daily Feeding Routine"),
+        CategoryHeaderItem(icon: "text.pad.header", label: "Additional Notes"),
+        
+    ]
+    
+    //DB
+    var mockFoodAdditionalNotes : [AdditionalNotesCardItem] = [
+        AdditionalNotesCardItem(description: "gotta do a trick with him before he eats.")
     ]
     
     var body: some View {
        
+        
             ZStack {
-                        Color.background.ignoresSafeArea()
-                        VStack(alignment: .leading, spacing: 30) {
+                Color.background.ignoresSafeArea()
+                
+                ScrollView(.vertical, showsIndicators: false) {
 
-                            // ALLERGY WARNING
-                            AlertCardStyle(
-                                allergies: ["chocolate"],
-                                restricted: ["chicken", "fish", "shellfish"]
-                            )
-
-                            // ROUTINE
-                            VStack(alignment: .center, spacing: 10) {
-
-                                // header
-                                CategoryHeader(item: foodCategoryHeaders[0])
-
-                                // cards
-                                //                ForEach(mockData, id: \.self) { item in
-                                //                    RoutineCard(item: item)
-                                //                }
-                                RoutineCard(item: mockData[0], isEmergency: false)
-                                RoutineCard(item: mockData[1], isEmergency: false)
-                                RoutineCard(item: mockData[2], isEmergency: false)
-
-                                //add btn
-                                if isEditing {
-                                    Button(action: {
-                                                            print("add btn pressed")
-                                                        }) {
-                                                            Image(systemName: "plus")
-                                                                .font(.system(size: 24, weight: .semibold))
-                                                                //.foregroundColor(.white)
-                                                                .padding(10)
-                                                                .glassEffect()
-                                                        }
-                                }
-                                
-
-                                //AddInformationCard()
+                VStack(alignment: .leading, spacing: 30) {
+                    
+                    // ALLERGY WARNING
+                    AlertCardStyle(
+                        allergies: ["chocolate"],
+                        restricted: ["chicken", "fish", "shellfish"]
+                    )
+                    
+                    // ROUTINE
+                    VStack(alignment: .center, spacing: 10) {
+                        
+                        // header
+                        CategoryHeader(item: foodCategoryHeaders[0])
+                        
+                        // cards
+                        //                                                ForEach(mockData, id: \.self) { item in
+                        //                                                    RoutineCard(item: item)
+                        //                                                }
+                        RoutineCard(item: mockData[0], isEmergency: false)
+                        RoutineCard(item: mockData[1], isEmergency: false)
+                        RoutineCard(item: mockData[2], isEmergency: false)
+                        
+                        //add btn
+                        if isEditing {
+                            Button(action: {
+                                print("add btn pressed")
+                            }) {
+                                Image(systemName: "plus")
+                                    .font(.system(size: 24, weight: .semibold))
+                                //.foregroundColor(.white)
+                                    .padding(10)
+                                    .glassEffect()
                             }
-                            Spacer()
-
-                        }.padding(20)
+                        }
+                        
                     }
+                    
+                    // ADDITIONAL NOTES
+                    if mockFoodAdditionalNotes != [] {
+                        
+                        // header
+                        CategoryHeader(item: foodCategoryHeaders[1])
+                        
+                        ForEach(mockFoodAdditionalNotes) { item in
+                            AddNotesStyle(item: item)
+                        }
+                        
+                    }
+                    Spacer()
+                    
+                }.padding(20)
+            }
             .navigationTitle(Text("My Food Routine"))
             .navigationBarTitleDisplayMode(.inline)
+            
+        }
         
         
 

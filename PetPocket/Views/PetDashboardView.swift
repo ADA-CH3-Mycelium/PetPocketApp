@@ -12,47 +12,16 @@ struct PetDashboardView: View {
     @State private var showingManageAccess = false
     @State private var showingGenerateCode = false
 
-    // DB
-    @State var catItem: [CategoryItem2] = [
-        // FOOD
-        CategoryItem2(
-            icon: "fork.knife",
-            label: "Food",
-            isActive: false,
-            isAlert: false,
-            targetScreen: .food
-        ),
-        // WASTE
-        CategoryItem2(
-            icon: "leaf.fill",
-            label: "Waste",
-            isActive: false,
-            isAlert: false,
-            targetScreen: .waste
-        ),
-        // CARE
-        CategoryItem2(
-            icon: "heart.text.square.fill",
-            label: "Care Notes",
-            isActive: false,
-            isAlert: false,
-            targetScreen: .care
-        ),
-        // EMERGENCY
-        CategoryItem2(
-            icon: "exclamationmark.shield.fill",
-            label: "Emergency",
-            isActive: false,
-            isAlert: true,
-            targetScreen: .emergency
-        ),
-
-    ]
-
     var body: some View {
         NavigationStack {
             ZStack {
                 Color.background.ignoresSafeArea()
+                
+                Text("🐾")
+                    .font(.system(size: 130, weight: .bold, design: .rounded))
+                    .offset(x: 140, y: 350)
+                    .opacity(0.3)
+                
 
                 //ScrollView {
                 // Applying the explicit layout padding here cleanly covers the entire page structure
@@ -79,8 +48,8 @@ struct PetDashboardView: View {
                         // TEXT
                         VStack(alignment: .leading) {
                             Text("Hi, I'm")
-                                .font(.caption)
-                                .fontWeight(.semibold)
+                                .font(.body)
+                                //.fontWeight(.semibold)
                             //.foregroundColor(.gray)
                             Text("Cooper")
                                 .font(.largeTitle)
@@ -99,9 +68,9 @@ struct PetDashboardView: View {
 
                     VStack(alignment: .leading, spacing: 10) {
                         Text("Here are my habits and needs 🐾")
-                            .font(.headline)
+                            .font(.body)
 
-                        TwCoColGrid(catItem: $catItem)
+                        TwCoColGrid(catItem: catItem)
                     }
                     .padding(20)
                     .offset(y: -65)
