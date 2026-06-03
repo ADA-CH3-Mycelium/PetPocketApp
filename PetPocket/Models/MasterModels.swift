@@ -64,7 +64,7 @@ struct RoutineCardItem: Identifiable {
 }
 
 // MARK: - ADDITIONAL NOTES CARD
-struct AdditionalNotesCardItem: Identifiable, Hashable {
+struct AdditionalNotesCardItem: Identifiable {
     let id: UUID
     let description: String
     
@@ -77,6 +77,22 @@ struct AdditionalNotesCardItem: Identifiable, Hashable {
     }
 }
 
+enum PetCardType: Hashable {
+    case owning
+    case sitting(sitter: String, sitterImage: String, dateRange: String)
+}
+
+struct PetItem: Hashable, Identifiable {
+    let id = UUID()
+    let name: String
+    let gender: String
+    let age: String
+    let breed: String
+    let image: String
+    let type: PetCardType
+}
+
+
 // MARK: - EMERGENCY VIEW
 // CONTACT CARD
 struct ContactCardItem: Identifiable, Hashable {
@@ -88,4 +104,30 @@ struct ContactCardItem: Identifiable, Hashable {
     var relationship: String
     var note: String
     var phone: String
+}
+
+// VET CLINIC CARD
+struct VetClinicCardItem: Identifiable, Hashable {
+    var id = UUID()
+    var name: String
+    var address: String
+    var phone: String
+    var note: String
+}
+
+// MARK: - Message Modle
+
+struct MessageModel: Identifiable {
+    let id = UUID()
+    let senderLabel: String
+    let time: String
+    let text: String
+    let isMe: Bool
+    let avatarImage: Image
+}
+
+struct PastChat: Identifiable {
+    let id = UUID()
+    let title: String
+    let time: String
 }
