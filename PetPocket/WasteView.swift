@@ -33,6 +33,24 @@ struct WasteView: View {
 
             }.padding(20)
         }
+        .navigationBarTitleDisplayMode(.inline)
+        .tint(Color.primaryG)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Menu {
+                    Button(action: {}) {
+                        Label("Edit information", systemImage: "pencil")
+                    }
+                    
+                } label: {
+                    Image(systemName: "ellipsis")
+                        .imageScale(.large)
+                        .rotationEffect(Angle(degrees: 90))
+                        .foregroundColor(Color.primaryG)
+                }
+                
+            }
+        }
 
     }
 }

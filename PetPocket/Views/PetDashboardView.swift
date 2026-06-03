@@ -105,72 +105,6 @@ struct PetDashboardView: View {
                     }
                     .padding(20)
                     .offset(y: -65)
-
-                    //                        // Critical Dietary Restrictions Callout Layout Panel
-                    //                        VStack(alignment: .leading, spacing: 6) {
-                    //                            HStack {
-                    //                                Image(systemName: "exclamationmark.triangle.fill")
-                    //                                    .foregroundColor(PawPocketTheme.alertRed)
-                    //                                Text("CRITICAL DIETARY RESTRICTIONS")
-                    //                                    .font(.caption)
-                    //                                    .bold()
-                    //                                    .foregroundColor(PawPocketTheme.alertRed)
-                    //                            }
-                    //                            Text("ALLERGIES: No Chicken.")
-                    //                                .font(.headline)
-                    //                                .foregroundColor(PawPocketTheme.alertRed)
-                    //                            Text("RESTRICTED: Grapes, Chocolate, Onion.")
-                    //                                .font(.caption)
-                    //                                .foregroundColor(PawPocketTheme.textDark)
-                    //                        }
-                    //                        .padding()
-                    //                        .frame(maxWidth: .infinity, alignment: .leading)
-                    //                        .background(PawPocketTheme.alertRed.opacity(0.1))
-                    //                        .cornerRadius(12)
-                    //                        .overlay(
-                    //                            RoundedRectangle(cornerRadius: 12)
-                    //                                .stroke(PawPocketTheme.alertRed.opacity(0.3), lineWidth: 1)
-                    //                        )
-                    //
-                    //                        // Daily Routine List Header Section
-                    //                        HStack {
-                    //                            Text("Daily Feeding Routine")
-                    //                                .font(.headline)
-                    //                            Spacer()
-                    //                            Text("3 Meals / Day")
-                    //                                .font(.subheadline)
-                    //                                .foregroundColor(PawPocketTheme.textSecondary)
-                    //                        }
-                    //
-                    //                        // Breakfast Care Card Component
-                    //                        VStack(alignment: .leading, spacing: 8) {
-                    //                            HStack {
-                    //                                Label("Breakfast", systemImage: "sun.max.fill")
-                    //                                    .font(.headline)
-                    //                                    .foregroundColor(PawPocketTheme.accentOrange)
-                    //                                Spacer()
-                    //                                Text("8:00 AM")
-                    //                                    .font(.caption)
-                    //                                    .bold()
-                    //                                    .padding(.horizontal, 8)
-                    //                                    .padding(.vertical, 4)
-                    //                                    .background(PawPocketTheme.accentOrange.opacity(0.2))
-                    //                                    .cornerRadius(6)
-                    //                            }
-                    //                            Text("1 Cup Dry Kibble")
-                    //                                .font(.subheadline)
-                    //                                .bold()
-                    //                            Text("Mix with warm water to soften the grains. Add probiotic powder.")
-                    //                                .font(.callout)
-                    //                                .foregroundColor(PawPocketTheme.textSecondary)
-                    //                        }
-                    //                        .padding()
-                    //                        .background(PawPocketTheme.cardBackground)
-                    //                        .cornerRadius(16)
-                    //                        .shadow(color: Color.black.opacity(0.03), radius: 8, x: 0, y: 4)
-                    //                    }
-                    //                    .padding(.horizontal)                     .padding(.bottom, 20)
-                    //                }
                 }
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
@@ -206,8 +140,8 @@ struct PetDashboardView: View {
                     GenerateCodeView()
                 }
             }
-        }
-    }
+            .tint(Color.primaryG)
+        }    }
 }
 
 #Preview {
