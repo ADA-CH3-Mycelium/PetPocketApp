@@ -19,6 +19,7 @@ struct AddingNewPetForm: View {
     @State private var selectedImage: UIImage? = nil
     @State private var showImagePicker = false
 
+
     let genders = ["Male", "Female"]
 
     var body: some View {
@@ -95,7 +96,7 @@ struct AddingNewPetForm: View {
                                     .padding(.vertical, 10)
                                     .background(
                                         selectedGender == gender
-                                        ? Color.primaryApp
+                                        ? Color.primaryG
                                             : Color(.systemGray6)
                                     )
                                     .foregroundColor(
@@ -149,7 +150,8 @@ struct AddingNewPetForm: View {
 
                     // Save button
                     Button(action: {
-                        // Save action
+                        // disini untuk ngesave data
+                        dismiss()
                     }) {
                         Text("Save Pet")
                             .font(.system(size: 16, weight: .semibold))
@@ -157,7 +159,7 @@ struct AddingNewPetForm: View {
                             .foregroundColor(.white)
                             .padding(.horizontal, 28)
                             .padding(.vertical, 14)
-                            .background(Color.primaryApp)
+                            .background(Color.primaryG)
                             .clipShape(RoundedRectangle(cornerRadius: 14))
                     }
                     .frame(maxWidth: .infinity, alignment: .center)
@@ -178,10 +180,10 @@ struct AddingNewPetForm: View {
                     HStack(spacing: 4) {
                         Image(systemName: "chevron.left")
                             .font(.system(size: 16, weight: .semibold))
-                            .foregroundStyle(Color.primaryApp)
+                            .foregroundStyle(Color.primaryG)
                         Text("Back")
                             .font(.system(size: 16))
-                            .foregroundStyle(Color.primaryApp)
+                            .foregroundStyle(Color.primaryG)
                         
                     }
                     .foregroundColor(.accentColor)
@@ -191,7 +193,7 @@ struct AddingNewPetForm: View {
                 Text("PawPocket")
                     .font(.headline)
                     .fontWeight(.bold)
-                    .foregroundStyle(Color.primaryApp)
+                    .foregroundStyle(Color.primaryG)
                 
             }
         }

@@ -9,8 +9,10 @@
 import SwiftUI
 
 struct PetDashboardView: View {
+    let PetData: PetItem
     @State private var showingManageAccess = false
     @State private var showingGenerateCode = false
+    @State private var showingChatPage = false
 
     // DB
     @State var catItem: [CategoryItem2] = [
@@ -46,7 +48,6 @@ struct PetDashboardView: View {
             isAlert: true,
             targetScreen: .emergency
         ),
-
     ]
 
     var body: some View {
@@ -59,7 +60,7 @@ struct PetDashboardView: View {
                 VStack(alignment: .leading) {
                     ZStack(alignment: .bottomLeading) {
                         // PROFILE IMG
-                        Image("Dog")
+                        Image(PetData.image)
                             .resizable()
 
                             .scaledToFill()
@@ -82,11 +83,11 @@ struct PetDashboardView: View {
                                 .font(.caption)
                                 .fontWeight(.semibold)
                             //.foregroundColor(.gray)
-                            Text("Cooper")
+                            Text(PetData.name)
                                 .font(.largeTitle)
                                 .bold()
 
-                            Text("3 years old  • Male  • Golden Retriever")
+                            Text("\(PetData.age) years old  • \(PetData.gender)  • \(PetData.breed)")
                                 .foregroundColor(.gray)
                         }
                         .padding(20)
@@ -105,78 +106,14 @@ struct PetDashboardView: View {
                     }
                     .padding(20)
                     .offset(y: -65)
-
-                    //                        // Critical Dietary Restrictions Callout Layout Panel
-                    //                        VStack(alignment: .leading, spacing: 6) {
-                    //                            HStack {
-                    //                                Image(systemName: "exclamationmark.triangle.fill")
-                    //                                    .foregroundColor(PawPocketTheme.alertRed)
-                    //                                Text("CRITICAL DIETARY RESTRICTIONS")
-                    //                                    .font(.caption)
-                    //                                    .bold()
-                    //                                    .foregroundColor(PawPocketTheme.alertRed)
-                    //                            }
-                    //                            Text("ALLERGIES: No Chicken.")
-                    //                                .font(.headline)
-                    //                                .foregroundColor(PawPocketTheme.alertRed)
-                    //                            Text("RESTRICTED: Grapes, Chocolate, Onion.")
-                    //                                .font(.caption)
-                    //                                .foregroundColor(PawPocketTheme.textDark)
-                    //                        }
-                    //                        .padding()
-                    //                        .frame(maxWidth: .infinity, alignment: .leading)
-                    //                        .background(PawPocketTheme.alertRed.opacity(0.1))
-                    //                        .cornerRadius(12)
-                    //                        .overlay(
-                    //                            RoundedRectangle(cornerRadius: 12)
-                    //                                .stroke(PawPocketTheme.alertRed.opacity(0.3), lineWidth: 1)
-                    //                        )
-                    //
-                    //                        // Daily Routine List Header Section
-                    //                        HStack {
-                    //                            Text("Daily Feeding Routine")
-                    //                                .font(.headline)
-                    //                            Spacer()
-                    //                            Text("3 Meals / Day")
-                    //                                .font(.subheadline)
-                    //                                .foregroundColor(PawPocketTheme.textSecondary)
-                    //                        }
-                    //
-                    //                        // Breakfast Care Card Component
-                    //                        VStack(alignment: .leading, spacing: 8) {
-                    //                            HStack {
-                    //                                Label("Breakfast", systemImage: "sun.max.fill")
-                    //                                    .font(.headline)
-                    //                                    .foregroundColor(PawPocketTheme.accentOrange)
-                    //                                Spacer()
-                    //                                Text("8:00 AM")
-                    //                                    .font(.caption)
-                    //                                    .bold()
-                    //                                    .padding(.horizontal, 8)
-                    //                                    .padding(.vertical, 4)
-                    //                                    .background(PawPocketTheme.accentOrange.opacity(0.2))
-                    //                                    .cornerRadius(6)
-                    //                            }
-                    //                            Text("1 Cup Dry Kibble")
-                    //                                .font(.subheadline)
-                    //                                .bold()
-                    //                            Text("Mix with warm water to soften the grains. Add probiotic powder.")
-                    //                                .font(.callout)
-                    //                                .foregroundColor(PawPocketTheme.textSecondary)
-                    //                        }
-                    //                        .padding()
-                    //                        .background(PawPocketTheme.cardBackground)
-                    //                        .cornerRadius(16)
-                    //                        .shadow(color: Color.black.opacity(0.03), radius: 8, x: 0, y: 4)
-                    //                    }
-                    //                    .padding(.horizontal)                     .padding(.bottom, 20)
-                    //                }
                 }
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
                     // clarify chat
                     ToolbarItem(placement: .navigationBarTrailing) {
-                        Button(action: {}) {
+                        Button(action: {
+                            showingChatPage = true
+                        }) {
                             Image(systemName: "questionmark.bubble.fill")
                                 .imageScale(.large)
                                 .foregroundStyle(Color.primaryG)
@@ -213,6 +150,9 @@ struct PetDashboardView: View {
                 .navigationDestination(isPresented: $showingManageAccess) {
                     ManageAccessView()
                 }
+                .navigationDestination(isPresented: $showingChatPage) {
+                    ClarifySheetView()
+                }
                 .sheet(isPresented: $showingGenerateCode) {
                     GenerateCodeView()
                 }
@@ -222,5 +162,12 @@ struct PetDashboardView: View {
 }
 
 #Preview {
-    PetDashboardView()
+    PetDashboardView(PetData: PetItem(
+        name: "Cooper",
+        gender: "Male",
+        age: "3",
+        breed: "Golden Retriever",
+        image: "1PetImage",
+        type: .owning
+    ))
 }

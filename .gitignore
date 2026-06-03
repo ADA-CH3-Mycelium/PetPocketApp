@@ -1,4 +1,6 @@
 .DS_Store
 PetPocket.xcodeproj/xcuserdata
+**/xcuserdata/
+*/.xcuserdatad
 
 PetPocket/Secrets.swift

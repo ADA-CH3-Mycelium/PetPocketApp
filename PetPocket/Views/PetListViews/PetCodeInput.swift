@@ -55,7 +55,7 @@ struct PetCodeInput: View {
                                 Text("Paste")
                                     .font(.system(size: 15, weight: .medium))
                             }
-                            .foregroundColor(.primaryApp)
+                            .foregroundColor(.primaryG)
                             .padding(.horizontal, 14)
                             .padding(.vertical, 12)
                             .background(Color.accentColor.opacity(0.1))
@@ -74,7 +74,8 @@ struct PetCodeInput: View {
 
                 // Join button
                 Button(action: {
-                    // Join action
+                    // Join action funciton here
+                    dismiss()
                 }) {
                     Text("Join Pet Profile")
                         .font(.system(size: 16, weight: .semibold))
@@ -82,7 +83,7 @@ struct PetCodeInput: View {
                         .foregroundColor(.white)
                         .padding(.horizontal, 28)
                         .padding(.vertical, 14)
-                        .background(Color.primaryApp)
+                        .background(Color.primaryG)
                         .clipShape(RoundedRectangle(cornerRadius: 14))
                 }
                 .frame(maxWidth: .infinity, alignment: .center)
@@ -93,11 +94,11 @@ struct PetCodeInput: View {
                 VStack(alignment: .leading, spacing: 6) {
                     HStack(spacing: 8) {
                         Image(systemName: "questionmark.circle.fill")
-                            .foregroundColor(.primaryApp)
+                            .foregroundColor(.primaryG)
                         Text("Where do I find the code?")
                             .font(.subheadline)
                             .fontWeight(.semibold)
-                            .foregroundColor(.primaryApp)
+                            .foregroundColor(.primaryG)
                     }
 
                     Text("The pet owner can generate this code in their Pet Settings > Share Access. Codes are valid for 24 hours.")
@@ -121,10 +122,10 @@ struct PetCodeInput: View {
                     HStack(spacing: 4) {
                         Image(systemName: "chevron.left")
                             .font(.system(size: 16, weight: .semibold))
-                            .foregroundStyle(Color.primaryApp)
+                            .foregroundStyle(Color.primaryG)
                         Text("Back")
                             .font(.system(size: 16))
-                            .foregroundStyle(Color.primaryApp)
+                            .foregroundStyle(Color.primaryG)
                         
                     }
                     .foregroundColor(.accentColor)
@@ -134,7 +135,7 @@ struct PetCodeInput: View {
                 Text("PawPocket")
                     .font(.headline)
                     .fontWeight(.bold)
-                    .foregroundStyle(Color.primaryApp)
+                    .foregroundStyle(Color.primaryG)
                 
             }
         }
