@@ -22,7 +22,7 @@ struct TwCoColGrid: View {
 
         LazyVGrid(columns: cols, spacing: 20) {
             ForEach(catItem, id: \.self) { item in
-                let col = item.isAlert ? Color.alertRed : Color.primaryG
+//                let col = item.isAlert ? Color.alertRed : Color.primaryG
                 NavigationLink(value: item.targetScreen) {
                     ZStack( /*spacing: 10*/) {
                         Text(item.label)
@@ -35,14 +35,14 @@ struct TwCoColGrid: View {
 
                         Image(systemName: item.icon)
                             .font(.largeTitle)
-                            .foregroundColor(col.opacity(0.75))
+                            .foregroundColor(Color.primaryG.opacity(0.75))
                             .offset(x: 65, y: 25)
 
                     }
                     .frame(maxWidth: .infinity, minHeight: 80)
                     .clipShape(RoundedRectangle(cornerRadius: 16))
                     .glassEffect(
-                        .regular.tint(col.opacity(0.10)),
+                        .regular.tint(Color.primaryG.opacity(0.10)),
                         in: .rect(cornerRadius: 16)
                     )
 
