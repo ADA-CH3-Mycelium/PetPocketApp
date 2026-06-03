@@ -1,5 +1,5 @@
 //
-//  WasteView.swift
+//  CareView.swift
 //  PetPocket
 //
 //  Created by Cheisha Amanda on 02/06/26.
@@ -7,27 +7,28 @@
 
 import SwiftUI
 
-struct WasteView: View {
+struct CareView: View {
     var body: some View {
         ZStack {
             Color.background.ignoresSafeArea()
             VStack(alignment: .leading, spacing: 20) {
 
-                // Waste
+                // routine
                 VStack(alignment: .leading, spacing: 10) {
-                    RoutineCard(item: mockData[3])
-                    RoutineCard(item: mockData[4])
-                    RoutineCard(item: mockData[5])
+                    RoutineCard(item: mockData[6], isEmergency: false)
+                    RoutineCard(item: mockData[7], isEmergency: false)
                     
                     //add btn
                     Button(action: {
                         print("add btn pressed")
                     }) {Image(systemName: "plus")
                             .font(.system(size: 24, weight: .semibold))
+                            //.foregroundColor(.white)
                             .padding(10)
                             .glassEffect()
                     }
                     
+                    //AddInformationCard()
                 }
                 Spacer()
 
@@ -38,5 +39,5 @@ struct WasteView: View {
 }
 
 #Preview {
-    WasteView()
+    CareView()
 }

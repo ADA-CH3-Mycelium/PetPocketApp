@@ -67,4 +67,19 @@ struct TwCoColGrid: View {
 
 }
 
-// MARK: - ROUTINE CARDS
+// MARK: - Category Page Headers
+
+struct CategoryHeader: View {
+    let item: CategoryHeaderItem
+    
+    
+    var body: some View {
+        HStack(spacing: 2) {
+            Image(systemName: item.icon)
+            Text(item.label)
+                .font(.headline)
+                .fontWeight(.bold)
+            Spacer()
+        }
+    }
+}

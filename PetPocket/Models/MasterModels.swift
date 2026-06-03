@@ -18,6 +18,7 @@ enum ScreenViews: Hashable {
     case emergency
 }
 
+// category items
 struct CategoryItem2: Identifiable, Hashable {
     let id = UUID()
     let icon: String
@@ -26,6 +27,13 @@ struct CategoryItem2: Identifiable, Hashable {
     var isAlert: Bool = false
     let targetScreen: ScreenViews
 
+}
+
+// category header
+struct CategoryHeaderItem: Identifiable, Hashable {
+    var id = UUID()
+    var icon: String
+    var label: String
 }
 
 // MARK: - ROUTINE CARD INFO
@@ -56,7 +64,7 @@ struct RoutineCardItem: Identifiable {
     
 }
 
-
+// MARK: - ADDITIONAL NOTES CARD
 struct AdditionalNotesCardItem: Identifiable {
     let id: UUID
     let description: String
@@ -93,4 +101,13 @@ struct ContactCardItem: Identifiable, Hashable {
     var relationship: String
     var note: String
     var phone: String
+}
+
+// VET CLINIC CARD
+struct VetClinicCardItem: Identifiable, Hashable {
+    var id = UUID()
+    var name: String
+    var address: String
+    var phone: String
+    var note: String
 }
