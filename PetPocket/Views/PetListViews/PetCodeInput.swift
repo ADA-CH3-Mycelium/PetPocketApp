@@ -5,6 +5,8 @@
 //  Created by Michel Pierce on 28/05/26.
 //
 
+
+
 import SwiftUI
 
 struct PetCodeInput: View {
@@ -15,7 +17,7 @@ struct PetCodeInput: View {
     var body: some View {
         ScrollView {
             VStack(spacing: 20) {
-                // Header text
+                // Header
                 VStack(spacing: 6) {
                     Text("Connect with Pet Owner")
                         .font(.title2)
@@ -72,9 +74,9 @@ struct PetCodeInput: View {
                 .clipShape(RoundedRectangle(cornerRadius: 18))
                 .shadow(color: .black.opacity(0.05), radius: 10, x: 0, y: 3)
 
-                // Join button
+                // Join button (simple dismiss)
                 Button(action: {
-                    // Join action funciton here
+                    // TODO: join logic akan di-add pas full Supabase integration
                     dismiss()
                 }) {
                     Text("Join Pet Profile")
@@ -87,6 +89,7 @@ struct PetCodeInput: View {
                         .clipShape(RoundedRectangle(cornerRadius: 14))
                 }
                 .frame(maxWidth: .infinity, alignment: .center)
+                .disabled(code.trimmingCharacters(in: .whitespaces).isEmpty)
 
                 Spacer(minLength: 40)
 
@@ -126,7 +129,6 @@ struct PetCodeInput: View {
                         Text("Back")
                             .font(.system(size: 16))
                             .foregroundStyle(Color.primaryG)
-                        
                     }
                     .foregroundColor(.accentColor)
                 }
@@ -136,7 +138,6 @@ struct PetCodeInput: View {
                     .font(.headline)
                     .fontWeight(.bold)
                     .foregroundStyle(Color.primaryG)
-                
             }
         }
     }

@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct CareView: View {
+    @Environment(PetDetailStore.self) private var detail
+
     var body: some View {
         ZStack {
             Color.background.ignoresSafeArea()
@@ -15,20 +17,16 @@ struct CareView: View {
 
                 // routine
                 VStack(alignment: .leading, spacing: 10) {
-                    RoutineCard(item: mockData[6], isEmergency: false)
-                    RoutineCard(item: mockData[7], isEmergency: false)
-                    
-                    //add btn
-                    Button(action: {
-                        print("add btn pressed")
-                    }) {Image(systemName: "plus")
-                            .font(.system(size: 24, weight: .semibold))
-                            //.foregroundColor(.white)
-                            .padding(10)
-                            .glassEffect()
+                    if detail.careItems.isEmpty {
+                        Text("No care notes added yet.")
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                    } else {
+                        ForEach(detail.careItems) { item in
+                            RoutineCard(item: item, isEmergency: false)
+                        }
                     }
-                    
-                    //AddInformationCard()
                 }
                 Spacer()
 
@@ -39,5 +37,5 @@ struct CareView: View {
 }
 
 #Preview {
-    CareView()
+    CareView().environment(PetDetailStore(pet: .sample))
 }

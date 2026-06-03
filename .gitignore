@@ -3,4 +3,4 @@ PetPocket.xcodeproj/xcuserdata
 **/xcuserdata/
 */.xcuserdatad
 
-PetPocket/Secrets.swift
+PetPocket/Secrets.plist

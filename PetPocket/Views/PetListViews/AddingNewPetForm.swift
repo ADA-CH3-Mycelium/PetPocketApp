@@ -4,7 +4,6 @@
 //
 //  Created by Michel Pierce on 28/05/26.
 //
-
 import SwiftUI
 
 struct AddingNewPetForm: View {
@@ -14,20 +13,14 @@ struct AddingNewPetForm: View {
     @State private var petName = ""
     @State private var selectedGender = "Male"
     @State private var age = ""
-    @State private var species = ""
     @State private var breed = ""
-    @State private var selectedImage: UIImage? = nil
-    @State private var showImagePicker = false
-
 
     let genders = ["Male", "Female"]
 
     var body: some View {
         ScrollView {
             VStack(spacing: 20) {
-                // Card
                 VStack(spacing: 20) {
-                    // Title
                     VStack(spacing: 4) {
                         Text("Add New Pet")
                             .font(.title2)
@@ -40,28 +33,16 @@ struct AddingNewPetForm: View {
                     }
                     .frame(maxWidth: .infinity, alignment: .center)
 
-                    // Photo picker
-                    Button(action: { showImagePicker = true }) {
-                        ZStack {
-                            if let image = selectedImage {
-                                Image(uiImage: image)
-                                    .resizable()
-                                    .scaledToFill()
-                                    .frame(width: 96, height: 96)
-                                    .clipShape(Circle())
-                            } else {
-                                VStack(spacing: -16) {
-                                    Image("AddPetProfileImg")
-                                        .resizable()
-                                        .scaledToFit()
-                                        .frame(width: 128, height: 128)
-                                        .foregroundColor(.secondary)
-                                    Text("Add Photo")
-                                        .font(.caption)
-                                        .foregroundColor(.secondary)
-                                }
-                            }
-                        }
+                    // Photo placeholder
+                    VStack(spacing: -16) {
+                        Image("AddPetProfileImg")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 128, height: 128)
+                            .foregroundColor(.secondary)
+                        Text("Add Photo")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
                     }
                     .frame(maxWidth: .infinity, alignment: .center)
 
@@ -78,7 +59,7 @@ struct AddingNewPetForm: View {
                             .clipShape(RoundedRectangle(cornerRadius: 10))
                     }
 
-                    // Gender toggle
+                    // Gender
                     VStack(alignment: .leading, spacing: 6) {
                         Text("Gender")
                             .font(.subheadline)
@@ -108,31 +89,17 @@ struct AddingNewPetForm: View {
                         .clipShape(RoundedRectangle(cornerRadius: 10))
                     }
 
-                    // Age + Species
-                    HStack(spacing: 12) {
-                        VStack(alignment: .leading, spacing: 6) {
-                            Text("Age")
-                                .font(.subheadline)
-                                .fontWeight(.medium)
-                                .foregroundColor(.primary)
+                    // Age
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text("Age")
+                            .font(.subheadline)
+                            .fontWeight(.medium)
+                            .foregroundColor(.primary)
 
-                            TextField("e.g. 3 yrs", text: $age)
-                                .padding(12)
-                                .background(Color(.systemGray6))
-                                .clipShape(RoundedRectangle(cornerRadius: 10))
-                        }
-
-                        VStack(alignment: .leading, spacing: 6) {
-                            Text("Species")
-                                .font(.subheadline)
-                                .fontWeight(.medium)
-                                .foregroundColor(.primary)
-
-                            TextField("e.g. Dog", text: $species)
-                                .padding(12)
-                                .background(Color(.systemGray6))
-                                .clipShape(RoundedRectangle(cornerRadius: 10))
-                        }
+                        TextField("e.g. 3 yrs", text: $age)
+                            .padding(12)
+                            .background(Color(.systemGray6))
+                            .clipShape(RoundedRectangle(cornerRadius: 10))
                     }
 
                     // Breed
@@ -148,9 +115,9 @@ struct AddingNewPetForm: View {
                             .clipShape(RoundedRectangle(cornerRadius: 10))
                     }
 
-                    // Save button
+                    // Save button (simple dismiss)
                     Button(action: {
-                        // disini untuk ngesave data
+                        // TODO: save logic akan di-add pas full Supabase integration
                         dismiss()
                     }) {
                         Text("Save Pet")
@@ -184,7 +151,6 @@ struct AddingNewPetForm: View {
                         Text("Back")
                             .font(.system(size: 16))
                             .foregroundStyle(Color.primaryG)
-                        
                     }
                     .foregroundColor(.accentColor)
                 }
@@ -194,7 +160,6 @@ struct AddingNewPetForm: View {
                     .font(.headline)
                     .fontWeight(.bold)
                     .foregroundStyle(Color.primaryG)
-                
             }
         }
     }
@@ -205,3 +170,4 @@ struct AddingNewPetForm: View {
         AddingNewPetForm()
     }
 }
+

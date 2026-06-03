@@ -8,24 +8,27 @@
 import SwiftUI
 
 struct FoodView: View {
+    @Environment(PetDetailStore.self) private var detail
     @State var isEditing: Bool = false
-    
+
     // headers
     private let foodCategoryHeaders: [CategoryHeaderItem] = [
         CategoryHeaderItem(icon: "clock.arrow.circlepath", label: "Daily Feeding Routine")
     ]
-    
+
     var body: some View {
-       
+
             ZStack {
                         Color.background.ignoresSafeArea()
                         VStack(alignment: .leading, spacing: 30) {
 
                             // ALLERGY WARNING
-                            AlertCardStyle(
-                                allergies: ["chocolate"],
-                                restricted: ["chicken", "fish", "shellfish"]
-                            )
+                            if !detail.allergies.isEmpty || !detail.restricted.isEmpty {
+                                AlertCardStyle(
+                                    allergies: detail.allergies,
+                                    restricted: detail.restricted
+                                )
+                            }
 
                             // ROUTINE
                             VStack(alignment: .center, spacing: 10) {
@@ -34,12 +37,16 @@ struct FoodView: View {
                                 CategoryHeader(item: foodCategoryHeaders[0])
 
                                 // cards
-                                //                ForEach(mockData, id: \.self) { item in
-                                //                    RoutineCard(item: item)
-                                //                }
-                                RoutineCard(item: mockData[0], isEmergency: false)
-                                RoutineCard(item: mockData[1], isEmergency: false)
-                                RoutineCard(item: mockData[2], isEmergency: false)
+                                if detail.meals.isEmpty {
+                                    Text("No feeding routine added yet.")
+                                        .font(.subheadline)
+                                        .foregroundColor(.secondary)
+                                        .frame(maxWidth: .infinity, alignment: .leading)
+                                } else {
+                                    ForEach(detail.meals) { item in
+                                        RoutineCard(item: item, isEmergency: false)
+                                    }
+                                }
 
                                 //add btn
                                 if isEditing {
@@ -70,5 +77,5 @@ struct FoodView: View {
 }
 
 #Preview {
-    FoodView()
+    FoodView().environment(PetDetailStore(pet: .sample))
 }

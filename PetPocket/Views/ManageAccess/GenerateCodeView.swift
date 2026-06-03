@@ -9,9 +9,10 @@ import SwiftUI
 
 struct GenerateCodeView: View {
     @Environment(\.dismiss) var dismiss
-    @State private var codeString = "618 882"
+
+    @State private var codeString = "------"
     @State private var copyStatusFeedback = "Copy"
-    
+
     var body: some View {
         NavigationStack {
             ZStack {
@@ -28,7 +29,7 @@ struct GenerateCodeView: View {
                     }
                     .padding(.top, 1)
                     
-                    // Central Numeric Key Area Card
+                    // Code card
                     VStack(alignment: .leading, spacing: 12) {
                         Text("Collaboration Code")
                             .font(.caption)
@@ -44,7 +45,6 @@ struct GenerateCodeView: View {
                                 .background(Color.gray.opacity(0.05))
                                 .cornerRadius(10)
                             
-                            // High-Accessibility Sized Action Button
                             Button(action: {
                                 UIPasteboard.general.string = codeString
                                 copyStatusFeedback = "Copied!"
@@ -67,7 +67,7 @@ struct GenerateCodeView: View {
                             .padding(.leading, 8)
                         }
                         
-                        Text("Share the 6-digit code to the pet sitter.")
+                        Text("Share the 6-digit code to the pet sitter. Valid for 48 hours.")
                             .font(.caption)
                             .foregroundColor(.secondary)
                     }
@@ -75,11 +75,12 @@ struct GenerateCodeView: View {
                     .background(.accent.opacity(0.1))
                     .cornerRadius(16)
                     .shadow(color: Color.black.opacity(0.02), radius: 10)
-                    
+
                     Spacer()
                 }
                 .padding()
             }
+            .onAppear { generateLocalCode() }
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button {
@@ -90,38 +91,18 @@ struct GenerateCodeView: View {
                             .bold(true)
                             .foregroundColor(Color.primaryG.opacity(0.8))
                             .frame(width: 36, height: 36)
-//                            .background(
-//                                ZStack {
-//                                    Circle()
-//                                        .fill(.ultraThinMaterial)
-//                                    
-//                                    Circle()
-//                                        .fill(
-//                                            LinearGradient(
-//                                                colors: [Color.white.opacity(0.6), Color.white.opacity(0.05)],
-//                                                startPoint: .topLeading,
-//                                                endPoint: .bottomTrailing
-//                                            )
-//                                        )
-//                                    
-//                                    Circle()
-//                                        .stroke(
-//                                            LinearGradient(
-//                                                colors: [Color.white.opacity(0.7), Color.white.opacity(0.2), Color.black.opacity(0.05)],
-//                                                startPoint: .topLeading,
-//                                                endPoint: .bottomTrailing
-//                                            ),
-//                                            lineWidth: 1
-//                                        )
-//                                }
-//                            )
-//                            .clipShape(Circle()) 
-//                            .shadow(color: Color.black.opacity(0.08), radius: 4, x: 0, y: 2)
                     }
-//                    .buttonStyle(.plain)                    .frame(width: 44, height: 44)
                 }
             }
         }
+    }
+
+    /// Generate dummy 6-digit code locally.
+    /// Real implementation akan call Supabase generate access code endpoint.
+    private func generateLocalCode() {
+        guard codeString == "------" else { return }
+        let code = (0..<6).map { _ in String(Int.random(in: 0...9)) }.joined()
+        codeString = code
     }
 }
 
