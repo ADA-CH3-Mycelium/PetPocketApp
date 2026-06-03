@@ -90,6 +90,28 @@ extension ClarifyThread {
         createdAt: Date(),
         updatedAt: Date()
     )
+    
+    static let mockEveryFourHour = ClarifyThread(
+        id: UUID(uuidString: "bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb")!,
+        petId: UUID(),
+        category: "waste",
+        title: "Every 4 Hour",
+        createdBy: Profile.mockSarah.id,
+        isResolved: false,
+        createdAt: Date(),
+        updatedAt: Date()
+    )
+    
+    static let mockFearTriggers = ClarifyThread(
+        id: UUID(uuidString: "cccccccc-cccc-cccc-cccc-cccccccccccc")!,
+        petId: UUID(),
+        category: "care",
+        title: "Fear Triggers",
+        createdBy: Profile.mockSarah.id,
+        isResolved: false,
+        createdAt: Date(),
+        updatedAt: Date()
+    )
 }
 
 extension ClarifyMessage {

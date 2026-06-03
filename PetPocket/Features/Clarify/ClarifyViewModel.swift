@@ -31,7 +31,11 @@ class ClarifyViewModel {
 
         messages = ClarifyMessage.mockMessages
 
-        openThreadsInPet = [ClarifyThread.mockBreakfast]
+        openThreadsInPet = [
+                ClarifyThread.mockBreakfast,
+                ClarifyThread.mockEveryFourHour,
+                ClarifyThread.mockFearTriggers
+            ]
     }
 
     func sendMessage(_ text: String) {
@@ -69,6 +73,11 @@ class ClarifyViewModel {
 
         openThreadsInPet.removeAll { $0.id == thread.id }
     }
+    
+    func selectThread(_ thread: ClarifyThread) {
+            currentThread = thread
+            messages = ClarifyMessage.mockMessages.filter { $0.threadId == thread.id }
+        }
 
     var isCurrentUserSitter: Bool {
         guard let thread = currentThread,

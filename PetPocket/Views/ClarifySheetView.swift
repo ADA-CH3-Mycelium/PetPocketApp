@@ -202,12 +202,20 @@ struct ClarifySheetView: View {
 
             // ── Sidebar panel ────────────────────────────────────────
             if isSidebarOpen {
-                SidebarView(threads: viewModel.openThreadsInPet) {
-                    withAnimation(.spring(response: 0.35, dampingFraction: 0.8))
-                    {
-                        isSidebarOpen = false
-                    }
-                }
+                SidebarView(
+                        threads: viewModel.openThreadsInPet,
+                        onClose: {
+                            withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) {
+                                isSidebarOpen = false
+                            }
+                        },
+                        onSelect: { thread in
+                            viewModel.selectThread(thread)
+                            withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) {
+                                isSidebarOpen = false
+                            }
+                        }
+                    )
                 .frame(width: 280)
                 .transition(.move(edge: .leading))
                 .zIndex(1)
@@ -226,6 +234,7 @@ struct ClarifySheetView: View {
 private struct SidebarView: View {
     let threads: [ClarifyThread]
     let onClose: () -> Void
+    let onSelect: (ClarifyThread) -> Void
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -255,6 +264,7 @@ private struct SidebarView: View {
                 VStack(spacing: 0) {
                     ForEach(threads) { thread in
                         Button {
+                            onSelect(thread)
                         } label: {
                             HStack(spacing: 12) {
                                 VStack(alignment: .leading, spacing: 3) {
