@@ -157,16 +157,8 @@ struct AddingNewPetForm: View {
                     }
 
                     // Save button
-<<<<<<< HEAD:PetPocket/Views/PetListViews/AddingNewPetForm.swift
-                    Button(action: {
-                        // disini untuk ngesave data
-                        dismiss()
-                    }) {
-                        Text("Save Pet")
-=======
                     Button(action: { Task { await save() } }) {
                         Text(isSaving ? "Saving…" : "Save Pet")
->>>>>>> supabase2:PetPocket/Features/PetLists/Views/AddingNewPetForm.swift
                             .font(.system(size: 16, weight: .semibold))
                             .frame(maxWidth: 220)
                             .foregroundColor(.white)
@@ -214,11 +206,7 @@ struct AddingNewPetForm: View {
                 Text("PawPocket")
                     .font(.headline)
                     .fontWeight(.bold)
-<<<<<<< HEAD:PetPocket/Views/PetListViews/AddingNewPetForm.swift
                     .foregroundStyle(Color.primaryG)
-                
-=======
-                    .foregroundStyle(Color.primaryApp)
 
             }
             ToolbarItem(placement: .topBarTrailing) {
@@ -228,7 +216,6 @@ struct AddingNewPetForm: View {
                         .foregroundStyle(Color.primaryApp)
                 }
                 .disabled(isSaving || petName.trimmingCharacters(in: .whitespaces).isEmpty)
->>>>>>> supabase2:PetPocket/Features/PetLists/Views/AddingNewPetForm.swift
             }
         }
     }

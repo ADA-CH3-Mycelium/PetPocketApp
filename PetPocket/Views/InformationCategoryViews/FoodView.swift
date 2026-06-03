@@ -8,10 +8,8 @@
 import SwiftUI
 
 struct FoodView: View {
-    @Environment(PetDetailStore.self) private var detail
     @State var isEditing: Bool = false
-    @Environment(\.dismiss) private var dismiss
-
+    
     // headers
     private let foodCategoryHeaders: [CategoryHeaderItem] = [
         CategoryHeaderItem(icon: "clock.arrow.circlepath", label: "Daily Feeding Routine"),
@@ -23,54 +21,47 @@ struct FoodView: View {
     var mockFoodAdditionalNotes : [AdditionalNotesCardItem] = [
         AdditionalNotesCardItem(description: "gotta do a trick with him before he eats.")
     ]
-
+    
     var body: some View {
-
+       
+        
             ZStack {
-                        Color.background.ignoresSafeArea()
-                        VStack(alignment: .leading, spacing: 30) {
+                Color.background.ignoresSafeArea()
+                
+                ScrollView(.vertical, showsIndicators: false) {
 
-                            // ALLERGY WARNING
-                            if !detail.allergies.isEmpty || !detail.restricted.isEmpty {
-                                AlertCardStyle(
-                                    allergies: detail.allergies,
-                                    restricted: detail.restricted
-                                )
-                            }
-
-                            // ROUTINE
-                            VStack(alignment: .center, spacing: 10) {
-
-                                // header
-                                CategoryHeader(item: foodCategoryHeaders[0])
-
-                                // cards
-                                if detail.meals.isEmpty {
-                                    Text("No feeding routine added yet.")
-                                        .font(.subheadline)
-                                        .foregroundColor(.secondary)
-                                        .frame(maxWidth: .infinity, alignment: .leading)
-                                } else {
-                                    ForEach(detail.meals) { item in
-                                        RoutineCard(item: item, isEmergency: false)
-                                    }
-                                }
-
-                                //add btn
-                                if isEditing {
-                                    Button(action: {
-                                                            print("add btn pressed")
-                                                        }) {
-                                                            Image(systemName: "plus")
-                                                                .font(.system(size: 24, weight: .semibold))
-                                                                //.foregroundColor(.white)
-                                                                .padding(10)
-                                                                .glassEffect()
-                                                        }
-                                }
-                                
-
-                                //AddInformationCard()
+                VStack(alignment: .leading, spacing: 30) {
+                    
+                    // ALLERGY WARNING
+                    AlertCardStyle(
+                        allergies: ["chocolate"],
+                        restricted: ["chicken", "fish", "shellfish"]
+                    )
+                    
+                    // ROUTINE
+                    VStack(alignment: .center, spacing: 10) {
+                        
+                        // header
+                        CategoryHeader(item: foodCategoryHeaders[0])
+                        
+                        // cards
+                        //                                                ForEach(mockData, id: \.self) { item in
+                        //                                                    RoutineCard(item: item)
+                        //                                                }
+                        RoutineCard(item: mockData[0], isEmergency: false)
+                        RoutineCard(item: mockData[1], isEmergency: false)
+                        RoutineCard(item: mockData[2], isEmergency: false)
+                        
+                        //add btn
+                        if isEditing {
+                            Button(action: {
+                                print("add btn pressed")
+                            }) {
+                                Image(systemName: "plus")
+                                    .font(.system(size: 24, weight: .semibold))
+                                //.foregroundColor(.white)
+                                    .padding(10)
+                                    .glassEffect()
                             }
                         }
                         
@@ -102,5 +93,5 @@ struct FoodView: View {
 }
 
 #Preview {
-    FoodView().environment(PetDetailStore(pet: .sample))
+    FoodView()
 }

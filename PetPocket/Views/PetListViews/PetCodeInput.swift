@@ -76,16 +76,8 @@ struct PetCodeInput: View {
                 .shadow(color: .black.opacity(0.05), radius: 10, x: 0, y: 3)
 
                 // Join button
-<<<<<<< HEAD:PetPocket/Views/PetListViews/PetCodeInput.swift
-                Button(action: {
-                    // Join action funciton here
-                    dismiss()
-                }) {
-                    Text("Join Pet Profile")
-=======
                 Button(action: { Task { await join() } }) {
                     Text(isJoining ? "Joining…" : "Join Pet Profile")
->>>>>>> supabase2:PetPocket/Features/PetLists/Views/PetCodeInput.swift
                         .font(.system(size: 16, weight: .semibold))
                         .frame(maxWidth: 220)
                         .foregroundColor(.white)
@@ -152,13 +144,7 @@ struct PetCodeInput: View {
                 Text("PawPocket")
                     .font(.headline)
                     .fontWeight(.bold)
-<<<<<<< HEAD:PetPocket/Views/PetListViews/PetCodeInput.swift
                     .foregroundStyle(Color.primaryG)
-                
-=======
-                    .foregroundStyle(Color.primaryApp)
-
->>>>>>> supabase2:PetPocket/Features/PetLists/Views/PetCodeInput.swift
             }
         }
     }

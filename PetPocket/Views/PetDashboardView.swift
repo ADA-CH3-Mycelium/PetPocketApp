@@ -13,15 +13,15 @@ struct PetDashboardView: View {
     @State private var showingManageAccess = false
     @State private var showingGenerateCode = false
     @State private var showingChatPage = false
-
+    
     let pet: PetRow
     @State private var detail: PetDetailStore
-
+    
     init(pet: PetRow) {
         self.pet = pet
         _detail = State(initialValue: PetDetailStore(pet: pet))
     }
-
+    
     // DB
     @State var catItem: [CategoryItem2] = [
         // FOOD
@@ -57,7 +57,7 @@ struct PetDashboardView: View {
             targetScreen: .emergency
         ),
     ]
-
+    
     var body: some View {
         NavigationStack {
             ZStack {
@@ -68,7 +68,7 @@ struct PetDashboardView: View {
                     .offset(x: 140, y: 350)
                     .opacity(0.3)
                 
-
+                
                 //ScrollView {
                 // Applying the explicit layout padding here cleanly covers the entire page structure
                 VStack(alignment: .leading) {
@@ -76,7 +76,7 @@ struct PetDashboardView: View {
                         // PROFILE IMG
                         Image(PetData.image)
                             .resizable()
-
+                        
                             .scaledToFill()
                             .frame(width: 400, height: 500)
                             .mask(
@@ -90,40 +90,32 @@ struct PetDashboardView: View {
                                     endPoint: .bottom
                                 )
                             )
-
+                        
                         // TEXT
                         VStack(alignment: .leading) {
                             Text("Hi, I'm")
                                 .font(.body)
-                                //.fontWeight(.semibold)
+                            //.fontWeight(.semibold)
                             //.foregroundColor(.gray)
-<<<<<<< HEAD
-                            Text(PetData.name)
-                                .font(.largeTitle)
-                                .bold()
-
-                            Text("\(PetData.age) years old  • \(PetData.gender)  • \(PetData.breed)")
-=======
                             Text(pet.name)
                                 .font(.largeTitle)
                                 .bold()
-
+                            
                             Text(subtitle)
->>>>>>> supabase2
                                 .foregroundColor(.gray)
                         }
                         .padding(20)
                         .offset(y: 30)
-
+                        
                     }
                     .offset(y: -100)
-
+                    
                     // Categories
-
+                    
                     VStack(alignment: .leading, spacing: 10) {
                         Text("Here are my habits and needs 🐾")
                             .font(.body)
-
+                        
                         TwCoColGrid(catItem: catItem)
                     }
                     .padding(20)
@@ -183,8 +175,12 @@ struct PetDashboardView: View {
             .task { await detail.loadIfNeeded() }
         }
     }
-
-<<<<<<< HEAD
-#Preview {
-    PetDashboardView()
+    
+    private var subtitle: String {
+        [pet.ageDescription, pet.gender, pet.breed]
+            .compactMap { $0 }
+            .filter { !$0.isEmpty }
+            .joined(separator: "  •  ")
+    }
+    
 }

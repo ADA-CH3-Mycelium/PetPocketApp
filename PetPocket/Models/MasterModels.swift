@@ -64,7 +64,7 @@ struct RoutineCardItem: Identifiable {
 }
 
 // MARK: - ADDITIONAL NOTES CARD
-struct AdditionalNotesCardItem: Identifiable {
+struct AdditionalNotesCardItem: Identifiable, Equatable {
     let id: UUID
     let description: String
     
