@@ -13,6 +13,8 @@ struct RegisterView: View {
     @State private var email = ""
     @State private var password = ""
     @State private var confirmPassword = ""
+    @State private var navigateToLogin = false
+    
 
     var body: some View {
 
@@ -52,7 +54,9 @@ struct RegisterView: View {
                         text: $confirmPassword
                     )
 
-                    PrimaryButton(title: "Sign up") {}
+                    PrimaryButton(title: "Sign up") {
+                        navigateToLogin = true
+                    }
                     
                     HStack {
                         Text("Already have an account?")
@@ -64,6 +68,9 @@ struct RegisterView: View {
 
             }
             .padding(20)
+        }
+        .navigationDestination(isPresented: $navigateToLogin) {
+            LoginView()
         }
     }
 }

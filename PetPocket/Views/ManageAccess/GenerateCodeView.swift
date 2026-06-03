@@ -10,7 +10,7 @@ import SwiftUI
 struct GenerateCodeView: View {
     @Environment(\.dismiss) var dismiss
 
-    let petId: UUID
+//    let petId: UUID
 
     @State private var codeString = "------"
     @State private var copyStatusFeedback = "Copy"
@@ -18,7 +18,6 @@ struct GenerateCodeView: View {
     @State private var errorMessage: String?
 
     var body: some View {
-        NavigationStack {
             ZStack {
                 Color.background.ignoresSafeArea()
                 
@@ -93,7 +92,9 @@ struct GenerateCodeView: View {
                 }
                 .padding()
             }
-            .task { await generate() }
+            .task {
+//                await generate()
+            }
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button {
@@ -135,22 +136,22 @@ struct GenerateCodeView: View {
 //                    .buttonStyle(.plain)                    .frame(width: 44, height: 44)
                 }
             }
-        }
+        
     }
 
-    private func generate() async {
-        guard codeString == "------" else { return }   // only once
-        isGenerating = true
-        errorMessage = nil
-        do {
-            codeString = try await PetRepository.shared.generateAccessCode(petId: petId)
-        } catch {
-            errorMessage = error.localizedDescription
-        }
-        isGenerating = false
-    }
+//    private func generate() async {
+//        guard codeString == "------" else { return }   // only once
+//        isGenerating = true
+//        errorMessage = nil
+//        do {
+//            codeString = try await PetRepository.shared.generateAccessCode(petId: petId)
+//        } catch {
+//            errorMessage = error.localizedDescription
+//        }
+//        isGenerating = false
+//    }
 }
 
 #Preview {
-    GenerateCodeView(petId: UUID())
+    GenerateCodeView()
 }

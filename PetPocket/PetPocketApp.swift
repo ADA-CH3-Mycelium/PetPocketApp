@@ -11,7 +11,7 @@ import SwiftData
 @main
 struct PetPocketApp: App {
     @State private var auth = AuthManager.shared
-
+    
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([Item.self])
         let config = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
@@ -21,14 +21,15 @@ struct PetPocketApp: App {
             fatalError("Could not create ModelContainer: \(error)")
         }
     }()
-
+    
     var body: some Scene {
         WindowGroup {
-            if auth.isAuthenticated {
-                PetListView()
-            } else {
-                AuthView()
-            }
+//                if auth.isAuthenticated {
+//                    PetListView()
+//                } else {
+                    //                AuthView()
+                    LoginView()
+//                }
         }
         .environment(auth)
         .modelContainer(sharedModelContainer)
