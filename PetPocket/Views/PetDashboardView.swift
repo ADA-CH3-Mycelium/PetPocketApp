@@ -9,7 +9,6 @@
 import SwiftUI
 
 struct PetDashboardView: View {
-    let PetData: PetItem
     @State private var showingManageAccess = false
     @State private var showingGenerateCode = false
     @State private var showingChatPage = false
@@ -74,7 +73,7 @@ struct PetDashboardView: View {
                 VStack(alignment: .leading) {
                     ZStack(alignment: .bottomLeading) {
                         // PROFILE IMG
-                        Image(PetData.image)
+                        Image(pet.photoUrl!)
                             .resizable()
                         
                             .scaledToFill()

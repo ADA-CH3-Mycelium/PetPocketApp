@@ -147,9 +147,12 @@ struct PetListView: View {
                 VStack(spacing: 16) {
                     ForEach(store.ownedPets) { pet in
                         NavigationLink(value: pet) {
-                            PetListCard(item: PetCardItem(
+                            PetListCard(item: PetItem(
                                 name: pet.name,
-                                image: "1PetImage",
+                                gender: pet.gender!,
+                                age: pet.ageDescription,
+                                breed: pet.breed!,
+                                image: pet.photoUrl!,
                                 type: .owning
                             ))
                         }
@@ -163,11 +166,17 @@ struct PetListView: View {
                             .padding(.top, 8)
                         ForEach(store.sittingPets) { pet in
                             NavigationLink(value: pet) {
-                                PetListCard(item: PetCardItem(
+                                PetListCard(item: PetItem(
                                     name: pet.name,
-                                    image: "2PetImage",
-                                    type: .owning
-                                ))
+                                    gender: pet.gender!,
+                                    age: pet.ageDescription,
+                                    breed: pet.breed!,
+                                    image: pet.photoUrl!,
+                                    type: .sitting(
+                                        sitter: "Sarah",
+                                        sitterImage: "SarahPic",
+                                        dateRange: "Nov 5th - Nov 10th"
+                                    )))
                             }
                             .buttonStyle(.plain)
                         }
