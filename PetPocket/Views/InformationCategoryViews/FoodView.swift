@@ -10,6 +10,7 @@ import SwiftUI
 struct FoodView: View {
     @Environment(PetDetailStore.self) private var detail
     @State var isEditing: Bool = false
+    @Environment(\.dismiss) private var dismiss
 
     // headers
     private let foodCategoryHeaders: [CategoryHeaderItem] = [
