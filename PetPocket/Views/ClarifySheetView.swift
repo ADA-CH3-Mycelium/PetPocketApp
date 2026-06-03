@@ -7,90 +7,126 @@
 
 import SwiftUI
 
-// MARK: - Mock Data
-private struct MockMessage: Identifiable {
-    let id = UUID()
-    let senderLabel: String
-    let time: String
-    let text: String
-    let isMe: Bool
-    let avatarColor: Color
-}
-
-private let mockMessages: [MockMessage] = [
-    MockMessage(
+private let mockMessages: [MessageModel] = [
+    MessageModel(
         senderLabel: "SARAH (SITTER)",
         time: "14:02",
         text: "What kind of Kibble should I give to Cooper?",
         isMe: false,
-        avatarColor: Color("8FAF9F")
+        avatarImage: Image("SarahPic")
     ),
-    MockMessage(
+    MessageModel(
         senderLabel: "ALEX (OWNER)",
         time: "14:05",
         text: "Eum dunno, anything fine please!",
         isMe: true,
-        avatarColor: Color("5C7A6E")
+        avatarImage: Image("AlexProfilePicture")
     )
 ]
 
-// MARK: - Main Sheet
+private let pastChats: [PastChat] = [
+    PastChat(title: "Morning Walk Routine",    time: "Yesterday, 09:14"),
+    PastChat(title: "Dinner Meal Routine",     time: "Mon, 19:30"),
+    PastChat(title: "Vet Visit Instructions",  time: "Sun, 11:05"),
+    PastChat(title: "Playtime Schedule",       time: "Sat, 15:22"),
+    PastChat(title: "Medication Reminder",     time: "Fri, 08:00"),
+]
+
+// MARK: - Main View
+
 struct ClarifySheetView: View {
-    let mealName: String
+//    let mealName: String
+//      for this use local cache
+    /// Pass `true` when this view is pushed onto a NavigationStack
+    /// so the back button appears alongside the hamburger.
+    var isInNavigationStack: Bool = false
+
     @Environment(\.dismiss) var dismiss
     @State private var messageText = ""
+    @State private var isSidebarOpen = false
 
     var body: some View {
-        VStack(spacing: 0) {
-            HStack(alignment: .center, spacing: 12) {
-                ZStack {
-                    RoundedRectangle(cornerRadius: 10, style: .continuous)
-                        .fill(Color.primaryG.opacity(0.15))
-                        .frame(width: 44, height: 44)
-                    Image(systemName: "bubble.left.and.bubble.right.fill")
-                        .foregroundColor(Color.primaryG)
-                        .font(.system(size: 18))
-                }
+        ZStack(alignment: .leading) {
 
-                VStack(alignment: .leading, spacing: 2) {
-                    Text("Clarify: \(mealName) Routine")
-                        .font(.headline)
-                        .fontWeight(.bold)
-                    Text("Active Chat with Sarah")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                }
+            // ── Main chat panel ──────────────────────────────────────
+            VStack(spacing: 0) {
 
-                Spacer()
+                // Top bar
+                HStack(alignment: .center, spacing: 10) {
 
-                Button { dismiss() } label: {
-                    Image(systemName: "xmark")
-                        .font(.system(size: 14, weight: .semibold))
-                        .foregroundColor(.secondary)
-                        .padding(8)
-                        .background(Color(.systemGray5))
-                        .clipShape(Circle())
-                }
-            }
-            .padding(.horizontal, 16)
-            .padding(.vertical, 14)
+                    // Left side: optional Back + Hamburger
+                    HStack(spacing: 4) {
+                        if isInNavigationStack {
+                            Button { dismiss() } label: {
+                                Image(systemName: "chevron.left")
+                                    .font(.system(size: 16, weight: .semibold))
+                                    .foregroundColor(Color.primaryG)
+                            }
+                        }
 
-            Divider()
-
-            ScrollView {
-                VStack(spacing: 16) {
-                    ForEach(mockMessages) { message in
-                        ChatBubbleView(message: message)
+                        Button {
+                            withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) {
+                                isSidebarOpen.toggle()
+                            }
+                        } label: {
+                            VStack(spacing: 4) {
+                                ForEach(0..<3, id: \.self) { _ in
+                                    RoundedRectangle(cornerRadius: 2)
+                                        .fill(Color.primaryG)
+                                        .frame(width: 20, height: 2.5)
+                                }
+                            }
+                            .frame(width: 36, height: 36)
+                            .background(Color.primaryG.opacity(0.12))
+                            .clipShape(Circle())
+                        }
                     }
 
-                    AttachmentSuggestionCard()
+                    // Title
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("Clarify: Morning Routine")
+                            .font(.headline)
+                            .fontWeight(.bold)
+                            .lineLimit(1)
+                        Text("Active Chat with Sarah")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+
+                    Spacer()
+
+                    // Right: Mark as Resolved
+                    Button {
+                        dismiss()
+                    } label: {
+                            Image(systemName: "checkmark")
+                            .font(.system(size: 20))
+                        .foregroundColor(.white)
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 7)
+                        .background(Color.primaryG)
+                        .clipShape(Circle())
+                    }
                 }
-                .padding(16)
-            }
+                .padding(.horizontal, 16)
+                .padding(.vertical, 14)
 
-            Divider()
+                Divider()
 
-            VStack(spacing: 12) {
+                // Messages
+                ScrollView {
+                    VStack(spacing: 16) {
+                        ForEach(mockMessages) { message in
+                            ChatBubbleView(message: message)
+                        }
+//                        AttachmentSuggestionCard()
+                    }
+                    .padding(16)
+                }
+
+                Divider()
+
+                // Input bar
                 HStack(spacing: 12) {
                     Button {} label: {
                         Image(systemName: "paperclip")
@@ -98,13 +134,11 @@ struct ClarifySheetView: View {
                             .foregroundColor(.secondary)
                     }
 
-
                     TextField("Type a message...", text: $messageText)
                         .padding(.horizontal, 14)
                         .padding(.vertical, 10)
                         .background(Color(.systemGray6))
                         .clipShape(Capsule())
-
 
                     Button {} label: {
                         Image(systemName: "arrow.up")
@@ -115,37 +149,118 @@ struct ClarifySheetView: View {
                             .clipShape(Circle())
                     }
                 }
-
-
-                Button {} label: {
-                    HStack(spacing: 8) {
-                        Image(systemName: "checkmark.circle.fill")
-                        Text("Mark as Resolved")
-                            .fontWeight(.semibold)
-                    }
-                    .foregroundColor(.white)
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 14)
-                    .background(Color.primaryG)
-                    .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+                .padding(.horizontal, 16)
+                .padding(.vertical, 12)
+            }
+            // Dim + close sidebar on tap
+            .overlay {
+                if isSidebarOpen {
+                    Color.black.opacity(0.25)
+                        .ignoresSafeArea()
+                        .onTapGesture {
+                            withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) {
+                                isSidebarOpen = false
+                            }
+                        }
                 }
             }
-            .padding(.horizontal, 16)
-            .padding(.vertical, 12)
+
+            // ── Sidebar panel ────────────────────────────────────────
+            if isSidebarOpen {
+                SidebarView(pastChats: pastChats) {
+                    withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) {
+                        isSidebarOpen = false
+                    }
+                }
+                .frame(width: 280)
+                .transition(.move(edge: .leading))
+                .zIndex(1)
+            }
         }
     }
 }
 
+// MARK: - Sidebar
+
+private struct SidebarView: View {
+    let pastChats: [PastChat]
+    let onClose: () -> Void
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 0) {
+
+            // Sidebar header
+            HStack {
+                Text("Past Chats")
+                    .font(.title3)
+                    .fontWeight(.bold)
+                Spacer()
+                Button(action: onClose) {
+                    Image(systemName: "xmark")
+                        .font(.system(size: 13, weight: .semibold))
+                        .foregroundColor(.secondary)
+                        .padding(7)
+                        .background(Color(.systemGray5))
+                        .clipShape(Circle())
+                }
+            }
+            .padding(.horizontal, 16)
+            .padding(.top, 20)
+            .padding(.bottom, 12)
+
+            Divider()
+
+            ScrollView {
+                VStack(spacing: 0) {
+                    ForEach(pastChats) { chat in
+                        Button {} label: {
+                            HStack(spacing: 12) {
+                                VStack(alignment: .leading, spacing: 3) {
+                                    Text(chat.title)
+                                        .font(.subheadline)
+                                        .fontWeight(.medium)
+                                        .foregroundColor(.primary)
+                                        .lineLimit(1)
+                                    Text(chat.time)
+                                        .font(.caption)
+                                        .foregroundColor(.secondary)
+                                }
+
+                                Spacer()
+
+                                Image(systemName: "chevron.right")
+                                    .font(.system(size: 11))
+                                    .foregroundColor(Color(.systemGray3))
+                            }
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 12)
+                        }
+
+                        Divider()
+                            .padding(.leading, 64)
+                    }
+                }
+                .padding(.top, 4)
+            }
+
+            Spacer()
+        }
+        .background(Color(.systemBackground))
+        .shadow(color: .black.opacity(0.12), radius: 16, x: 4, y: 0)
+    }
+}
+
 // MARK: - Chat Bubble
+
 private struct ChatBubbleView: View {
-    let message: MockMessage
+    let message: MessageModel
 
     var body: some View {
         HStack(alignment: .bottom, spacing: 8) {
             if !message.isMe {
-                Circle()
-                    .fill(message.avatarColor)
+                message.avatarImage
                     .frame(width: 32, height: 32)
+                    .clipShape(Circle())
             } else {
                 Spacer()
             }
@@ -161,28 +276,22 @@ private struct ChatBubbleView: View {
                         .foregroundColor(.secondary)
                 }
 
-
                 Text(message.text)
                     .font(.subheadline)
                     .foregroundColor(message.isMe ? .white : .primary)
                     .padding(.horizontal, 14)
                     .padding(.vertical, 10)
                     .background(
-                        message.isMe
-                            ? Color.primaryG
-                            : Color(.systemGray6)
+                        message.isMe ? Color.primaryG : Color(.systemGray6)
                     )
-                    .clipShape(
-                        RoundedRectangle(cornerRadius: 16, style: .continuous)
-                    )
+                    .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
             }
             .frame(maxWidth: 260, alignment: message.isMe ? .trailing : .leading)
 
             if message.isMe {
-
-                Circle()
-                    .fill(message.avatarColor)
+                message.avatarImage
                     .frame(width: 32, height: 32)
+                    .clipShape(Circle())
             } else {
                 Spacer()
             }
@@ -191,6 +300,7 @@ private struct ChatBubbleView: View {
 }
 
 // MARK: - Attachment Suggestion Card
+
 private struct AttachmentSuggestionCard: View {
     var body: some View {
         HStack(spacing: 12) {
@@ -215,3 +325,14 @@ private struct AttachmentSuggestionCard: View {
     }
 }
 
+// MARK: - Preview
+
+#Preview("Sheet (no nav stack)") {
+    ClarifySheetView(isInNavigationStack: false)
+}
+
+#Preview("Inside NavigationStack") {
+    NavigationStack {
+        ClarifySheetView(isInNavigationStack: true)
+    }
+}

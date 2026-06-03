@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct PetListCard: View {
-    let item: PetCardItem
+    let item: PetItem
     
     var body: some View {
         VStack(spacing: 0) {
@@ -84,8 +84,11 @@ struct PetListCard: View {
 }
 
 #Preview {
-    PetListCard(item: PetCardItem(
+    PetListCard(item: PetItem(
         name: "Cooper",
+        gender: "Male",
+        age: "3",
+        breed: "Golden Retriever",
         image: "1PetImage",
         type: .owning
     ))

@@ -78,13 +78,17 @@ struct AdditionalNotesCardItem: Identifiable {
     }
 }
 
-enum PetCardType {
+enum PetCardType: Hashable {
     case owning
     case sitting(sitter: String, sitterImage: String, dateRange: String)
 }
 
-struct PetCardItem {
+struct PetItem: Hashable, Identifiable {
+    let id = UUID()
     let name: String
+    let gender: String
+    let age: String
+    let breed: String
     let image: String
     let type: PetCardType
 }
@@ -110,4 +114,21 @@ struct VetClinicCardItem: Identifiable, Hashable {
     var address: String
     var phone: String
     var note: String
+}
+
+// MARK: - Message Modle
+
+struct MessageModel: Identifiable {
+    let id = UUID()
+    let senderLabel: String
+    let time: String
+    let text: String
+    let isMe: Bool
+    let avatarImage: Image
+}
+
+struct PastChat: Identifiable {
+    let id = UUID()
+    let title: String
+    let time: String
 }
