@@ -7,14 +7,11 @@
 
 import SwiftUI
 import SwiftData
-import FirebaseCore
 
 @main
 struct PetPocketApp: App {
     
-    init() {
-            FirebaseApp.configure()
-        }
+    @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
