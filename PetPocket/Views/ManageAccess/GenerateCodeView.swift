@@ -9,9 +9,14 @@ import SwiftUI
 
 struct GenerateCodeView: View {
     @Environment(\.dismiss) var dismiss
-    @State private var codeString = "618 882"
+
+    let petId: UUID
+
+    @State private var codeString = "------"
     @State private var copyStatusFeedback = "Copy"
-    
+    @State private var isGenerating = false
+    @State private var errorMessage: String?
+
     var body: some View {
         NavigationStack {
             ZStack {
@@ -67,19 +72,28 @@ struct GenerateCodeView: View {
                             .padding(.leading, 8)
                         }
                         
-                        Text("Share the 6-digit code to the pet sitter.")
+                        Text(isGenerating
+                             ? "Generating a fresh code…"
+                             : "Share the 6-digit code to the pet sitter. Valid for 48 hours.")
                             .font(.caption)
                             .foregroundColor(.secondary)
+
+                        if let errorMessage {
+                            Text(errorMessage)
+                                .font(.caption)
+                                .foregroundColor(.red)
+                        }
                     }
                     .padding()
                     .background(.accent.opacity(0.1))
                     .cornerRadius(16)
                     .shadow(color: Color.black.opacity(0.02), radius: 10)
-                    
+
                     Spacer()
                 }
                 .padding()
             }
+            .task { await generate() }
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button {
@@ -123,8 +137,20 @@ struct GenerateCodeView: View {
             }
         }
     }
+
+    private func generate() async {
+        guard codeString == "------" else { return }   // only once
+        isGenerating = true
+        errorMessage = nil
+        do {
+            codeString = try await PetRepository.shared.generateAccessCode(petId: petId)
+        } catch {
+            errorMessage = error.localizedDescription
+        }
+        isGenerating = false
+    }
 }
 
 #Preview {
-    GenerateCodeView()
+    GenerateCodeView(petId: UUID())
 }

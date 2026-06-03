@@ -12,6 +12,14 @@ struct PetDashboardView: View {
     @State private var showingManageAccess = false
     @State private var showingGenerateCode = false
 
+    let pet: PetRow
+    @State private var detail: PetDetailStore
+
+    init(pet: PetRow) {
+        self.pet = pet
+        _detail = State(initialValue: PetDetailStore(pet: pet))
+    }
+
     // DB
     @State var catItem: [CategoryItem2] = [
         // FOOD
@@ -82,11 +90,11 @@ struct PetDashboardView: View {
                                 .font(.caption)
                                 .fontWeight(.semibold)
                             //.foregroundColor(.gray)
-                            Text("Cooper")
+                            Text(pet.name)
                                 .font(.largeTitle)
                                 .bold()
 
-                            Text("3 years old  • Male  • Golden Retriever")
+                            Text(subtitle)
                                 .foregroundColor(.gray)
                         }
                         .padding(20)
@@ -214,13 +222,18 @@ struct PetDashboardView: View {
                     ManageAccessView()
                 }
                 .sheet(isPresented: $showingGenerateCode) {
-                    GenerateCodeView()
+                    GenerateCodeView(petId: pet.id)
                 }
             }
+            .environment(detail)
+            .task { await detail.loadIfNeeded() }
         }
     }
-}
 
-#Preview {
-    PetDashboardView()
+    private var subtitle: String {
+        [pet.ageDescription, pet.gender, pet.breed]
+            .compactMap { $0 }
+            .filter { !$0.isEmpty }
+            .joined(separator: "  •  ")
+    }
 }

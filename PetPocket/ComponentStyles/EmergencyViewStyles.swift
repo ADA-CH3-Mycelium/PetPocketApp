@@ -38,7 +38,7 @@ struct ContactCard: View {
     var body: some View {
         HStack(spacing: 12) {
             // initial bubble
-            Text(mockContact[0].initial)
+            Text(contact.initial)
                 .font(.title2)
                 .fontWeight(.semibold)
                 .foregroundStyle(.white)

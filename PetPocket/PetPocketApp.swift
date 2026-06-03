@@ -25,7 +25,7 @@ struct PetPocketApp: App {
     var body: some Scene {
         WindowGroup {
             if auth.isAuthenticated {
-                EmptyStatePetList()
+                PetListView()
             } else {
                 AuthView()
             }

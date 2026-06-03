@@ -6,10 +6,13 @@
 //
 
 import SwiftUI
+import PhotosUI
 
 struct AddingNewPetForm: View {
 
     @Environment(\.dismiss) private var dismiss
+
+    let store: PetStore
 
     @State private var petName = ""
     @State private var selectedGender = "Male"
@@ -17,7 +20,9 @@ struct AddingNewPetForm: View {
     @State private var species = ""
     @State private var breed = ""
     @State private var selectedImage: UIImage? = nil
-    @State private var showImagePicker = false
+    @State private var pickedItem: PhotosPickerItem? = nil
+    @State private var imageData: Data? = nil
+    @State private var isSaving = false
 
     let genders = ["Male", "Female"]
 
@@ -40,7 +45,7 @@ struct AddingNewPetForm: View {
                     .frame(maxWidth: .infinity, alignment: .center)
 
                     // Photo picker
-                    Button(action: { showImagePicker = true }) {
+                    PhotosPicker(selection: $pickedItem, matching: .images, photoLibrary: .shared()) {
                         ZStack {
                             if let image = selectedImage {
                                 Image(uiImage: image)
@@ -61,6 +66,9 @@ struct AddingNewPetForm: View {
                                 }
                             }
                         }
+                    }
+                    .onChange(of: pickedItem) { _, newItem in
+                        Task { await loadPicked(newItem) }
                     }
                     .frame(maxWidth: .infinity, alignment: .center)
 
@@ -148,10 +156,8 @@ struct AddingNewPetForm: View {
                     }
 
                     // Save button
-                    Button(action: {
-                        // Save action
-                    }) {
-                        Text("Save Pet")
+                    Button(action: { Task { await save() } }) {
+                        Text(isSaving ? "Saving…" : "Save Pet")
                             .font(.system(size: 16, weight: .semibold))
                             .frame(maxWidth: 220)
                             .foregroundColor(.white)
@@ -162,6 +168,14 @@ struct AddingNewPetForm: View {
                     }
                     .frame(maxWidth: .infinity, alignment: .center)
                     .padding(.top, 4)
+                    .disabled(isSaving || petName.trimmingCharacters(in: .whitespaces).isEmpty)
+
+                    if let error = store.errorMessage {
+                        Text(error)
+                            .font(.caption)
+                            .foregroundColor(.red)
+                            .multilineTextAlignment(.center)
+                    }
                 }
                 .padding(20)
                 .background(Color(.systemBackground))
@@ -192,14 +206,60 @@ struct AddingNewPetForm: View {
                     .font(.headline)
                     .fontWeight(.bold)
                     .foregroundStyle(Color.primaryApp)
-                
+
             }
+            ToolbarItem(placement: .topBarTrailing) {
+                Button(action: { Task { await save() } }) {
+                    Text(isSaving ? "Saving…" : "Save")
+                        .fontWeight(.semibold)
+                        .foregroundStyle(Color.primaryApp)
+                }
+                .disabled(isSaving || petName.trimmingCharacters(in: .whitespaces).isEmpty)
+            }
+        }
+    }
+
+    private func save() async {
+        isSaving = true
+        let ok = await store.addPet(
+            name: petName.trimmingCharacters(in: .whitespaces),
+            gender: selectedGender,
+            ageText: age,
+            species: species,
+            breed: breed,
+            imageData: imageData
+        )
+        isSaving = false
+        if ok { dismiss() }
+    }
+
+    /// Loads the picked photo, downscales it, and keeps JPEG data for upload.
+    private func loadPicked(_ item: PhotosPickerItem?) async {
+        guard let item,
+              let data = try? await item.loadTransferable(type: Data.self),
+              let uiImage = UIImage(data: data) else { return }
+        let resized = uiImage.downscaled(maxDimension: 1024)
+        selectedImage = resized
+        imageData = resized.jpegData(compressionQuality: 0.8)
+    }
+}
+
+private extension UIImage {
+    /// Aspect-fit downscale so the longest side <= maxDimension. No upscaling.
+    func downscaled(maxDimension: CGFloat) -> UIImage {
+        let longest = max(size.width, size.height)
+        guard longest > maxDimension else { return self }
+        let scale = maxDimension / longest
+        let newSize = CGSize(width: size.width * scale, height: size.height * scale)
+        let renderer = UIGraphicsImageRenderer(size: newSize)
+        return renderer.image { _ in
+            draw(in: CGRect(origin: .zero, size: newSize))
         }
     }
 }
 
 #Preview {
     NavigationStack {
-        AddingNewPetForm()
+        AddingNewPetForm(store: PetStore())
     }
 }
