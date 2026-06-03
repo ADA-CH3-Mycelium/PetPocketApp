@@ -13,7 +13,14 @@ struct FoodView: View {
 
     // headers
     private let foodCategoryHeaders: [CategoryHeaderItem] = [
-        CategoryHeaderItem(icon: "clock.arrow.circlepath", label: "Daily Feeding Routine")
+        CategoryHeaderItem(icon: "clock.arrow.circlepath", label: "Daily Feeding Routine"),
+        CategoryHeaderItem(icon: "text.pad.header", label: "Additional Notes"),
+        
+    ]
+    
+    //DB
+    var mockFoodAdditionalNotes : [AdditionalNotesCardItem] = [
+        AdditionalNotesCardItem(description: "gotta do a trick with him before he eats.")
     ]
 
     var body: some View {
@@ -64,12 +71,29 @@ struct FoodView: View {
 
                                 //AddInformationCard()
                             }
-                            Spacer()
-
-                        }.padding(20)
+                        }
+                        
                     }
+                    
+                    // ADDITIONAL NOTES
+                    if mockFoodAdditionalNotes != [] {
+                        
+                        // header
+                        CategoryHeader(item: foodCategoryHeaders[1])
+                        
+                        ForEach(mockFoodAdditionalNotes) { item in
+                            AddNotesStyle(item: item)
+                        }
+                        
+                    }
+                    Spacer()
+                    
+                }.padding(20)
+            }
             .navigationTitle(Text("My Food Routine"))
             .navigationBarTitleDisplayMode(.inline)
+            
+        }
         
         
 

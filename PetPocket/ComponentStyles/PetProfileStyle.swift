@@ -10,9 +10,45 @@ import SwiftUI
 
 // MARK: - PET PROFILE VIEW
 
+// VAR
+var catItem: [CategoryItem2] = [
+    // FOOD
+    CategoryItem2(
+        icon: "fork.knife",
+        label: "Food",
+        isActive: false,
+        isAlert: false,
+        targetScreen: .food
+    ),
+    // WASTE
+    CategoryItem2(
+        icon: "leaf.fill",
+        label: "Waste",
+        isActive: false,
+        isAlert: false,
+        targetScreen: .waste
+    ),
+    // CARE
+    CategoryItem2(
+        icon: "heart.text.square.fill",
+        label: "Care Notes",
+        isActive: false,
+        isAlert: false,
+        targetScreen: .care
+    ),
+    // EMERGENCY
+    CategoryItem2(
+        icon: "exclamationmark.shield.fill",
+        label: "Emergency",
+        isActive: false,
+        isAlert: true,
+        targetScreen: .emergency
+    )
+    ]
+
 // TWO COL GRID
 struct TwCoColGrid: View {
-    @Binding var catItem: [CategoryItem2]
+    var catItem: [CategoryItem2]
     let cols = [
         GridItem(.flexible(), spacing: 20),
         GridItem(.flexible(), spacing: 20),
@@ -22,9 +58,27 @@ struct TwCoColGrid: View {
 
         LazyVGrid(columns: cols, spacing: 20) {
             ForEach(catItem, id: \.self) { item in
+                // colour
 //                let col = item.isAlert ? Color.alertRed : Color.primaryG
                 NavigationLink(value: item.targetScreen) {
-                    ZStack( /*spacing: 10*/) {
+                    ZStack() {
+                        //Color.black.opacity(0.2)
+                        RadialGradient(
+                            gradient: Gradient(colors: [Color.primaryG, .clear]),
+                            center: .bottomTrailing,
+                            startRadius: 0,
+                            endRadius: 300
+                                               
+                        ).opacity(0.95)
+
+                        // icon
+                        Image(systemName: item.icon)
+                            .font(.system(size: 80))
+                            .foregroundColor(Color.primaryG.opacity(0.5))
+                            .blendMode(.hardLight)
+                            .offset(x: 70, y: 25)
+                        
+                        // text label
                         Text(item.label)
                             .font(.body)
                             .foregroundColor(
@@ -39,7 +93,8 @@ struct TwCoColGrid: View {
                             .offset(x: 65, y: 25)
 
                     }
-                    .frame(maxWidth: .infinity, minHeight: 80)
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 100)
                     .clipShape(RoundedRectangle(cornerRadius: 16))
                     .glassEffect(
                         .regular.tint(Color.primaryG.opacity(0.10)),
@@ -65,6 +120,13 @@ struct TwCoColGrid: View {
 
     }
 
+}
+
+#Preview {
+    ZStack {
+        Color.background.ignoresSafeArea()
+        TwCoColGrid(catItem: catItem)
+    }
 }
 
 // MARK: - Category Page Headers

@@ -14,33 +14,21 @@ struct AddNotesStyle: View {
     var body: some View {
         ZStack(alignment: .topLeading) {
             Text("\u{201C}")
+                .frame(height:20)
                 .font(.system(size: 237, weight: .bold, design: .serif))
+                .lineHeight(.loose)
                 .foregroundStyle(Color.primaryG)
-                .offset(x: -12, y: 10)
+                .offset(x: -12, y: 98)
                 .opacity(0.15)
             
             Text(item.description)
-                .font(.body)
                 .italic(true)
-                .foregroundStyle(.primary)
-                .lineSpacing(4)
-                .padding(.top, 110)
-                .padding(.horizontal, 24)
+                .padding(.vertical, 40)
+                .padding(.horizontal, 20)
         }
-        .frame(maxWidth: 350, maxHeight: 137)
+        .fixedSize(horizontal: false, vertical: true)
         .clipped()
         .modifier(greenEdgeCard())
-//        .glassEffect(in: .rect(cornerRadius: 24))
-//        //.clipShape(RoundedRectangle(cornerRadius: 24))
-//        .overlay {
-//            RoundedRectangle(cornerRadius: 24)
-//                .strokeBorder(.separator, lineWidth: 0.5)
-//        }
-//        .background {
-//            RoundedRectangle(cornerRadius: 24)
-//                .fill(Color(.systemBackground))
-//                .shadow(color: Color.primaryG, radius: 0, x: -4, y: 0)
-//        }
     }
 }
 
@@ -48,4 +36,5 @@ struct AddNotesStyle: View {
     AddNotesStyle(
         item: AdditionalNotesCardItem(description: "Oliver will pace at night if his favorite blanket isn't in his crate. Please check the laundry if missing.")
     )
+    AddNotesStyle(item: AdditionalNotesCardItem(description: "need to do tricks before meal."))
 }

@@ -62,6 +62,12 @@ struct PetDashboardView: View {
         NavigationStack {
             ZStack {
                 Color.background.ignoresSafeArea()
+                
+                Text("🐾")
+                    .font(.system(size: 130, weight: .bold, design: .rounded))
+                    .offset(x: 140, y: 350)
+                    .opacity(0.3)
+                
 
                 //ScrollView {
                 // Applying the explicit layout padding here cleanly covers the entire page structure
@@ -88,8 +94,8 @@ struct PetDashboardView: View {
                         // TEXT
                         VStack(alignment: .leading) {
                             Text("Hi, I'm")
-                                .font(.caption)
-                                .fontWeight(.semibold)
+                                .font(.body)
+                                //.fontWeight(.semibold)
                             //.foregroundColor(.gray)
 <<<<<<< HEAD
                             Text(PetData.name)
@@ -116,9 +122,9 @@ struct PetDashboardView: View {
 
                     VStack(alignment: .leading, spacing: 10) {
                         Text("Here are my habits and needs 🐾")
-                            .font(.headline)
+                            .font(.body)
 
-                        TwCoColGrid(catItem: $catItem)
+                        TwCoColGrid(catItem: catItem)
                     }
                     .padding(20)
                     .offset(y: -65)
@@ -180,20 +186,5 @@ struct PetDashboardView: View {
 
 <<<<<<< HEAD
 #Preview {
-    PetDashboardView(PetData: PetItem(
-        name: "Cooper",
-        gender: "Male",
-        age: "3",
-        breed: "Golden Retriever",
-        image: "1PetImage",
-        type: .owning
-    ))
-=======
-    private var subtitle: String {
-        [pet.ageDescription, pet.gender, pet.breed]
-            .compactMap { $0 }
-            .filter { !$0.isEmpty }
-            .joined(separator: "  •  ")
-    }
->>>>>>> supabase2
+    PetDashboardView()
 }
