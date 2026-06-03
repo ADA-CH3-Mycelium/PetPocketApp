@@ -58,8 +58,7 @@ struct PetDashboardView: View {
     ]
     
     var body: some View {
-        NavigationStack {
-            ZStack {
+        ZStack {
                 Color.background.ignoresSafeArea()
                 
                 Text("🐾")
@@ -72,23 +71,37 @@ struct PetDashboardView: View {
                 // Applying the explicit layout padding here cleanly covers the entire page structure
                 VStack(alignment: .leading) {
                     ZStack(alignment: .bottomLeading) {
-                        // PROFILE IMG
-                        Image(pet.photoUrl!)
-                            .resizable()
-                        
-                            .scaledToFill()
-                            .frame(width: 400, height: 500)
-                            .mask(
-                                LinearGradient(
-                                    gradient: Gradient(stops: [
-                                        .init(color: .black, location: 0.0),
-                                        .init(color: .black, location: 0.75),
-                                        .init(color: .clear, location: 1),
-                                    ]),
-                                    startPoint: .top,
-                                    endPoint: .bottom
-                                )
+                        // PROFILE IMG — loads from Supabase Storage URL, placeholder if nil
+                        Group {
+                            if let urlString = pet.photoUrl, let url = URL(string: urlString) {
+                                AsyncImage(url: url) { phase in
+                                    switch phase {
+                                    case .success(let image):
+                                        image
+                                            .resizable()
+                                            .scaledToFill()
+                                    case .failure, .empty:
+                                        petPhotoPlaceholder
+                                    @unknown default:
+                                        petPhotoPlaceholder
+                                    }
+                                }
+                            } else {
+                                petPhotoPlaceholder
+                            }
+                        }
+                        .frame(width: 400, height: 500)
+                        .mask(
+                            LinearGradient(
+                                gradient: Gradient(stops: [
+                                    .init(color: .black, location: 0.0),
+                                    .init(color: .black, location: 0.75),
+                                    .init(color: .clear, location: 1),
+                                ]),
+                                startPoint: .top,
+                                endPoint: .bottom
                             )
+                        )
                         
                         // TEXT
                         VStack(alignment: .leading) {
@@ -108,6 +121,7 @@ struct PetDashboardView: View {
                         
                     }
                     .offset(y: -100)
+
                     
                     // Categories
                     
@@ -166,13 +180,24 @@ struct PetDashboardView: View {
                 .navigationDestination(isPresented: $showingChatPage) {
                     ClarifySheetView()
                 }
+                .navigationDestination(for: ScreenViews.self) { screen in
+                    switch screen {
+                    case .food:
+                        FoodView().environment(detail)
+                    case .waste:
+                        WasteView().environment(detail)
+                    case .care:
+                        CareView().environment(detail)
+                    case .emergency:
+                        EmergencyView().environment(detail)
+                    }
+                }
                 .sheet(isPresented: $showingGenerateCode) {
                     GenerateCodeView(petId: pet.id)
                 }
-            }
-            .environment(detail)
-            .task { await detail.loadIfNeeded() }
         }
+        .environment(detail)
+        .task { await detail.loadIfNeeded() }
     }
     
     private var subtitle: String {
@@ -180,6 +205,22 @@ struct PetDashboardView: View {
             .compactMap { $0 }
             .filter { !$0.isEmpty }
             .joined(separator: "  •  ")
+    }
+
+    private var petPhotoPlaceholder: some View {
+        Rectangle()
+            .fill(
+                LinearGradient(
+                    colors: [Color.primaryG.opacity(0.3), Color.primaryG.opacity(0.1)],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+            )
+            .overlay(
+                Image(systemName: "pawprint.fill")
+                    .font(.system(size: 80))
+                    .foregroundColor(Color.primaryG.opacity(0.4))
+            )
     }
     
 }

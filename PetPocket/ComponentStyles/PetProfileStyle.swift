@@ -104,18 +104,6 @@ struct TwCoColGrid: View {
                 }
             }
 
-        }.navigationDestination(for: ScreenViews.self) { screen in
-            switch screen {
-            case .food:
-                FoodView()
-            case .waste:
-                WasteView()
-            case .care:
-                CareView()
-            case .emergency:
-                EmergencyView()
-            }
-
         }
 
     }

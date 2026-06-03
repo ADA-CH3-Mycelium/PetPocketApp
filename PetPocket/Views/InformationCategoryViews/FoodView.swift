@@ -8,90 +8,69 @@
 import SwiftUI
 
 struct FoodView: View {
+    @Environment(PetDetailStore.self) private var detail
     @State var isEditing: Bool = false
-    
+
     // headers
     private let foodCategoryHeaders: [CategoryHeaderItem] = [
         CategoryHeaderItem(icon: "clock.arrow.circlepath", label: "Daily Feeding Routine"),
         CategoryHeaderItem(icon: "text.pad.header", label: "Additional Notes"),
-        
     ]
-    
-    //DB
-    var mockFoodAdditionalNotes : [AdditionalNotesCardItem] = [
-        AdditionalNotesCardItem(description: "gotta do a trick with him before he eats.")
-    ]
-    
-    var body: some View {
-       
-        
-            ZStack {
-                Color.background.ignoresSafeArea()
-                
-                ScrollView(.vertical, showsIndicators: false) {
 
+    var body: some View {
+        ZStack {
+            Color.background.ignoresSafeArea()
+
+            ScrollView(.vertical, showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 30) {
-                    
-                    // ALLERGY WARNING
-                    AlertCardStyle(
-                        allergies: ["chocolate"],
-                        restricted: ["chicken", "fish", "shellfish"]
-                    )
-                    
-                    // ROUTINE
+
+                    // ALLERGY WARNING — hidden when pet has no dietary restrictions
+                    if !detail.allergies.isEmpty || !detail.restricted.isEmpty {
+                        AlertCardStyle(
+                            allergies: detail.allergies,
+                            restricted: detail.restricted
+                        )
+                    }
+
+                    // DAILY FEEDING ROUTINE
                     VStack(alignment: .center, spacing: 10) {
-                        
-                        // header
                         CategoryHeader(item: foodCategoryHeaders[0])
-                        
-                        // cards
-                        //                                                ForEach(mockData, id: \.self) { item in
-                        //                                                    RoutineCard(item: item)
-                        //                                                }
-                        RoutineCard(item: mockData[0], isEmergency: false)
-                        RoutineCard(item: mockData[1], isEmergency: false)
-                        RoutineCard(item: mockData[2], isEmergency: false)
-                        
-                        //add btn
+
+                        if detail.meals.isEmpty {
+                            Text("No feeding routine added yet.")
+                                .font(.subheadline)
+                                .foregroundColor(.secondary)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                        } else {
+                            ForEach(detail.meals) { meal in
+                                RoutineCard(item: meal, isEmergency: false)
+                            }
+                        }
+
+                        // add btn (editing mode placeholder — Phase 3 write-back)
                         if isEditing {
                             Button(action: {
                                 print("add btn pressed")
                             }) {
                                 Image(systemName: "plus")
                                     .font(.system(size: 24, weight: .semibold))
-                                //.foregroundColor(.white)
                                     .padding(10)
                                     .glassEffect()
                             }
                         }
-                        
                     }
-                    
-                    // ADDITIONAL NOTES
-                    if mockFoodAdditionalNotes != [] {
-                        
-                        // header
-                        CategoryHeader(item: foodCategoryHeaders[1])
-                        
-                        ForEach(mockFoodAdditionalNotes) { item in
-                            AddNotesStyle(item: item)
-                        }
-                        
-                    }
+
                     Spacer()
-                    
+
                 }.padding(20)
             }
             .navigationTitle(Text("My Food Routine"))
             .navigationBarTitleDisplayMode(.inline)
-            
         }
-        
-        
-
     }
 }
 
 #Preview {
     FoodView()
+        .environment(PetDetailStore(pet: .sample))
 }

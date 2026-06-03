@@ -43,15 +43,34 @@ struct PetRepository {
             .value
     }
 
-    /// Pets the user can see but does not own (i.e. shared with them as sitter).
+    /// Pets the user has been explicitly granted sitter access to via pet_access.
     func fetchSittingPets() async throws -> [PetRow] {
         let uid = try await currentUserId()
-        let all: [PetRow] = try await client
-            .from("pets")
-            .select()
+
+        // Step 1: get the pet IDs this user is an active sitter for
+        struct AccessRow: Decodable {
+            let petId: UUID
+            enum CodingKeys: String, CodingKey { case petId = "pet_id" }
+        }
+        let granted: [AccessRow] = try await client
+            .from("pet_access")
+            .select("pet_id")
+            .eq("sitter_id", value: uid.uuidString)
+            .eq("is_active", value: true)
             .execute()
             .value
-        return all.filter { $0.ownerId != uid }
+
+        guard !granted.isEmpty else { return [] }
+
+        // Step 2: fetch only those specific pets
+        let ids = granted.map { $0.petId.uuidString }
+        return try await client
+            .from("pets")
+            .select()
+            .in("id", values: ids)
+            .order("created_at", ascending: true)
+            .execute()
+            .value
     }
 
     @discardableResult

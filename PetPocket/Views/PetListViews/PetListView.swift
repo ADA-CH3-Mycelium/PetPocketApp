@@ -54,15 +54,15 @@ struct PetListView: View {
     // MARK: Header
     private var header: some View {
         HStack(alignment: .center, spacing: 12) {
+            // Initials avatar — replaced hardcoded AlexProfilePicture
+            // (profiles table has no photo_url yet; swap to AsyncImage when available)
             Circle()
-                .fill(Color(.systemGray4))
+                .fill(Color.primaryG.opacity(0.2))
                 .frame(width: 50, height: 50)
                 .overlay(
-                    Image("AlexProfilePicture")
-                        .resizable()
-                        .scaledToFill()
-                        .frame(width: 50, height: 50)
-                        .clipShape(Circle())
+                    Text(profileInitials)
+                        .font(.system(size: 18, weight: .semibold))
+                        .foregroundColor(.primaryG)
                 )
 
             Text(greeting)
@@ -75,6 +75,16 @@ struct PetListView: View {
         .padding(.horizontal, 20)
         .padding(.top, 16)
         .padding(.bottom, 20)
+    }
+
+    private var profileInitials: String {
+        let name = store.profileName
+        guard !name.isEmpty else { return "?" }
+        let parts = name.split(separator: " ")
+        if parts.count >= 2 {
+            return String(parts[0].prefix(1) + parts[1].prefix(1)).uppercased()
+        }
+        return String(name.prefix(1)).uppercased()
     }
 
     private var greeting: String {
@@ -150,10 +160,10 @@ struct PetListView: View {
                             PetListCard(item: PetItem(
                                 id: pet.id,
                                 name: pet.name,
-                                gender: pet.gender!,
+                                gender: pet.gender ?? "",
                                 age: pet.ageDescription,
-                                breed: pet.breed!,
-                                image: pet.photoUrl!,
+                                breed: pet.breed ?? "",
+                                photoUrl: pet.photoUrl,
                                 type: .owning
                             ))
                         }
@@ -168,17 +178,20 @@ struct PetListView: View {
                         ForEach(store.sittingPets) { pet in
                             NavigationLink(value: pet) {
                                 PetListCard(item: PetItem(
-                                    id:pet.id,
+                                    id: pet.id,
                                     name: pet.name,
-                                    gender: pet.gender!,
+                                    gender: pet.gender ?? "",
                                     age: pet.ageDescription,
-                                    breed: pet.breed!,
-                                    image: pet.photoUrl!,
+                                    breed: pet.breed ?? "",
+                                    photoUrl: pet.photoUrl,
+                                    // Sitter owner info — will be replaced in Phase 5
+                                    // when ManageAccess fetches real owner profiles
                                     type: .sitting(
-                                        sitter: "Sarah",
-                                        sitterImage: "SarahPic",
-                                        dateRange: "Nov 5th - Nov 10th"
-                                    )))
+                                        sitter: "Owner",
+                                        sitterImage: "",
+                                        dateRange: ""
+                                    )
+                                ))
                             }
                             .buttonStyle(.plain)
                         }
