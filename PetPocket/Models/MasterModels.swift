@@ -18,7 +18,6 @@ enum ScreenViews: Hashable {
     case emergency
 }
 
-// category items
 struct CategoryItem2: Identifiable, Hashable {
     let id = UUID()
     let icon: String
@@ -65,7 +64,7 @@ struct RoutineCardItem: Identifiable {
 }
 
 // MARK: - ADDITIONAL NOTES CARD
-struct AdditionalNotesCardItem: Identifiable {
+struct AdditionalNotesCardItem: Identifiable, Equatable {
     let id: UUID
     let description: String
     
@@ -84,21 +83,21 @@ enum PetCardType: Hashable {
 }
 
 struct PetItem: Hashable, Identifiable {
-    let id: UUID
+    let id : UUID
     let name: String
     let gender: String
     let age: String
     let breed: String
-    let image: String
+    let photoUrl: String?   // nil when no photo uploaded yet
     let type: PetCardType
     
-    init(id: UUID, name: String, gender: String, age: String, breed: String, image: String, type: PetCardType) {
+    init(id: UUID, name: String, gender: String, age: String, breed: String, photoUrl: String?, type: PetCardType) {
         self.id = id
         self.name = name
         self.gender = gender
         self.age = age
         self.breed = breed
-        self.image = image
+        self.photoUrl = photoUrl
         self.type = type
     }
 }

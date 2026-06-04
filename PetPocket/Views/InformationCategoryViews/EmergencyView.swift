@@ -9,24 +9,8 @@ import MapKit
 import SwiftUI
 
 struct EmergencyView: View {
-    // mock data
-    // first aid data
-    private var mockFirstAidData: [RoutineCardItem] = [
-        RoutineCardItem(
-            title: "Choking",
-            time: "",
-            description:
-                "Signs: Pawing at mouth, pale gums, inability to breathe.",
-            icon: "lungs.fill"
-        ),
-        RoutineCardItem(
-            title: "Poisoning",
-            time: "",
-            description: "Signs: Vomiting, drooling, unusual behavior.",
-            icon: "pills.fill"
-        ),
-    ]
-    
+    @Environment(PetDetailStore.self) private var detail
+
     // headers
     private let emergencyCategoryHeaders: [CategoryHeaderItem] = [
         CategoryHeaderItem(icon: "cross.vial.fill", label: "First Aid Guides"),
@@ -41,40 +25,42 @@ struct EmergencyView: View {
                 VStack(spacing: 30) {
 
                     // First Aid Guide
-                    VStack(alignment: .leading, spacing: 10) {
-                        CategoryHeader(item: emergencyCategoryHeaders[0])
+                    if !detail.firstAid.isEmpty {
+                        VStack(alignment: .leading, spacing: 10) {
+                            CategoryHeader(item: emergencyCategoryHeaders[0])
 
-                        ScrollView(.horizontal, showsIndicators: false) {
-                            HStack(spacing: 15) {
-                                RoutineCard(item: mockFirstAidData[0], isEmergency: true)
-                                    .frame(width: 240)
-
-                                RoutineCard(item: mockFirstAidData[1], isEmergency: true)
-                                    .frame(width: 240)
-
-                            }
-
-                        }.scrollClipDisabled()
+                            ScrollView(.horizontal, showsIndicators: false) {
+                                HStack(spacing: 15) {
+                                    ForEach(detail.firstAid) { item in
+                                        RoutineCard(item: item, isEmergency: true)
+                                            .frame(width: 240)
+                                    }
+                                }
+                            }.scrollClipDisabled()
+                        }
                     }
 
                     // Contacts
-                    VStack(alignment: .leading, spacing: 10){
-                        CategoryHeader(item: emergencyCategoryHeaders[2])
-                        
-                        VStack(spacing: 12) {
-                            ForEach(mockContact, id: \.self) { contact in
-                                ContactCard(contact: contact)
+                    if !detail.contacts.isEmpty {
+                        VStack(alignment: .leading, spacing: 10){
+                            CategoryHeader(item: emergencyCategoryHeaders[1])
+
+                            VStack(spacing: 12) {
+                                ForEach(detail.contacts, id: \.self) { contact in
+                                    ContactCard(contact: contact)
+                                }
                             }
                         }
-                    } 
-                    
+                    }
+
                     // clinic
-                    VStack {
-                        CategoryHeader(item: emergencyCategoryHeaders[2])
-                        ForEach(mockVetClinicItem) { item in
-                            VetClinicCard(item: item)
+                    if !detail.clinics.isEmpty {
+                        VStack {
+                            CategoryHeader(item: emergencyCategoryHeaders[2])
+                            ForEach(detail.clinics) { item in
+                                VetClinicCard(item: item)
+                            }
                         }
-                        
                     }
 
                 }.padding(20)
@@ -82,10 +68,26 @@ struct EmergencyView: View {
         }
         .navigationTitle("Emergency Guidelines")
         .navigationBarTitleDisplayMode(.inline)
-
+        .tint(Color.primaryG)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Menu {
+                    Button(action: {}) {
+                        Label("Edit information", systemImage: "pencil")
+                    }
+                    
+                } label: {
+                    Image(systemName: "ellipsis")
+                        .imageScale(.large)
+                        .rotationEffect(Angle(degrees: 90))
+                        .foregroundColor(Color.primaryG)
+                }
+                
+            }
+        }
     }
 }
 
 #Preview {
-    EmergencyView()
+    EmergencyView().environment(PetDetailStore(pet: .sample))
 }

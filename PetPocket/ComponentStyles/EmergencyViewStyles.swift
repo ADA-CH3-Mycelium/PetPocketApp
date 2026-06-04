@@ -38,14 +38,12 @@ struct ContactCard: View {
     var body: some View {
         HStack(spacing: 12) {
             // initial bubble
-            Text(mockContact[0].initial)
+            Text(contact.initial)
                 .font(.title2)
                 .fontWeight(.semibold)
-                .foregroundStyle(.white)
+                .foregroundStyle(Color.primaryG)
                 .frame(width: 44, height: 44)
                 .glassEffect()
-                .background(Color.primaryG)
-                .clipShape(Circle())
 
             // text
             VStack(alignment: .leading, spacing: 2) {
@@ -69,11 +67,10 @@ struct ContactCard: View {
 
             // call btn
             Image(systemName: "phone.fill")
-                .foregroundStyle(Color.green)
+                .foregroundColor(Color.green)
                 .frame(width: 44, height: 44)
                 .glassEffect()
-//                .background(Color.green)
-//                .clipShape(Circle())
+
         }
         .padding()
         .glassEffect(

@@ -9,15 +9,25 @@ import Foundation
 import SwiftUI
 
 struct ClarifyButtonStyle: View {
-    var action: () -> Void = {}
+    var action: (() -> Void)? = nil
+    @State private var navigate = false
 
     var body: some View {
-        Button(action: action) {
+        Button(action: {
+            if let action {
+                action()
+            } else {
+                navigate = true
+            }
+        }) {
             Image(systemName: "questionmark.bubble.fill")
                 .font(.caption2)
                 .fontWeight(.light)
                 .frame(width: 26, height: 26)
                 .glassEffect()
+        }
+        .navigationDestination(isPresented: $navigate) {
+            ClarifySheetView(isInNavigationStack: true)
         }
     }
 }
