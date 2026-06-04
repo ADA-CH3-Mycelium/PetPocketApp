@@ -85,7 +85,9 @@ struct ClarifySheetView: View {
 
                     // Title
                     VStack(alignment: .leading, spacing: 2) {
-                        Text("Clarify: \(viewModel.currentThread?.title ?? routineTitle ?? "Loading")")
+                        Text(
+                            "Clarify: \(viewModel.currentThread?.title ?? routineTitle ?? "Loading")"
+                        )
                         .font(.headline)
                         .fontWeight(.bold)
                         .lineLimit(1)
@@ -131,10 +133,12 @@ struct ClarifySheetView: View {
                         Text("No chat yet for this routine")
                             .font(.headline)
                             .foregroundColor(.secondary)
-                        Text("Wait for the sitter to start a\nconversation about this routine")
-                            .font(.subheadline)
-                            .foregroundColor(.secondary.opacity(0.7))
-                            .multilineTextAlignment(.center)
+                        Text(
+                            "Wait for the sitter to start a\nconversation about this routine"
+                        )
+                        .font(.subheadline)
+                        .foregroundColor(.secondary.opacity(0.7))
+                        .multilineTextAlignment(.center)
                         Spacer()
                     }
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -143,7 +147,9 @@ struct ClarifySheetView: View {
                     ScrollView {
                         VStack(spacing: 16) {
                             ForEach(viewModel.messages) { message in
-                                ChatBubbleView(message: messageModel(from: message))
+                                ChatBubbleView(
+                                    message: messageModel(from: message)
+                                )
                             }
                         }
                         .padding(16)
@@ -153,7 +159,7 @@ struct ClarifySheetView: View {
                 Divider()
 
                 // Input bar
-                if !viewModel.shouldShowEmptyStateForOwner{
+                if !viewModel.shouldShowEmptyStateForOwner {
                     HStack(spacing: 12) {
                         Button {
                         } label: {
@@ -161,13 +167,13 @@ struct ClarifySheetView: View {
                                 .font(.system(size: 20))
                                 .foregroundColor(.secondary)
                         }
-                        
+
                         TextField("Type a message...", text: $messageText)
                             .padding(.horizontal, 14)
                             .padding(.vertical, 10)
                             .background(Color(.systemGray6))
                             .clipShape(Capsule())
-                        
+
                         Button {
                             viewModel.sendMessage(messageText)
                             messageText = ""
@@ -180,7 +186,7 @@ struct ClarifySheetView: View {
                                 .clipShape(Circle())
                         }
                     }
-                    
+
                     .padding(.horizontal, 16)
                     .padding(.vertical, 12)
                 }
@@ -203,19 +209,23 @@ struct ClarifySheetView: View {
             // ── Sidebar panel ────────────────────────────────────────
             if isSidebarOpen {
                 SidebarView(
-                        threads: viewModel.openThreadsInPet,
-                        onClose: {
-                            withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) {
-                                isSidebarOpen = false
-                            }
-                        },
-                        onSelect: { thread in
-                            viewModel.selectThread(thread)
-                            withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) {
-                                isSidebarOpen = false
-                            }
+                    threads: viewModel.openThreadsInPet,
+                    onClose: {
+                        withAnimation(
+                            .spring(response: 0.35, dampingFraction: 0.8)
+                        ) {
+                            isSidebarOpen = false
                         }
-                    )
+                    },
+                    onSelect: { thread in
+                        viewModel.selectThread(thread)
+                        withAnimation(
+                            .spring(response: 0.35, dampingFraction: 0.8)
+                        ) {
+                            isSidebarOpen = false
+                        }
+                    }
+                )
                 .frame(width: 280)
                 .transition(.move(edge: .leading))
                 .zIndex(1)
@@ -225,6 +235,9 @@ struct ClarifySheetView: View {
             if let title = routineTitle {
                 viewModel.loadThread(routineTitle: title)
             }
+        }
+        .task {
+            await viewModel.loadCurrentUser()
         }
     }
 }
