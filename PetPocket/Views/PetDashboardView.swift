@@ -178,7 +178,7 @@ struct PetDashboardView: View {
                     ManageAccessView()
                 }
                 .navigationDestination(isPresented: $showingChatPage) {
-                    ClarifySheetView(pet: pet)
+                    ClarifySheetView(pet: pet, isInNavigationStack: true)
                 }
                 .navigationDestination(for: ScreenViews.self) { screen in
                     switch screen {

@@ -21,11 +21,18 @@ class ClarifyViewModel {
     var openThreadsInPet: [ClarifyThread] = []
     var isLoading: Bool = false
     var errorMessage: String?
+    var profileCache: [UUID: Profile] = [:]
     
     init(pet: PetRow? = nil, category: ClarifyCategory? = nil) {
         self.pet = pet
         self.category = category
         
+    }
+    
+    init(pet: PetRow, thread: ClarifyThread) {
+        self.pet = pet
+        self.category = nil
+        self.currentThread = thread
     }
     
     @MainActor
@@ -86,36 +93,34 @@ class ClarifyViewModel {
         return isCurrentUserOwner && currentThread == nil
     }
     
-    func sendMessage(_ text: String) {
-        guard let thread = currentThread, let user = currentUser else {
-            print("⚠️ Cannot send: no active thread or user")
-            return
-        }
+    @MainActor
+    func sendMessage(_ text: String) async {
         let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !trimmed.isEmpty else { return }
+        guard let thread = currentThread, !trimmed.isEmpty else { return }
         
-        let newMessage = ClarifyMessage(
-            id: UUID(),
-            threadId: thread.id,
-            senderId: user.id,
-            message: trimmed,
-            createdAt: Date()
-        )
-        messages.append(newMessage)
-    }
-    
-    func markAsResolved() {
-        guard var thread = currentThread else { return }
-        thread.isResolved = true
-        thread.updatedAt = Date()
-        currentThread = thread
-        openThreadsInPet.removeAll { $0.id == thread.id }
+        do {
+            let newMessage = try await ClarifyRepository.shared.sendMessage(
+                threadId: thread.id,
+                message: trimmed
+            )
+            messages.append(newMessage)
+            await loadProfiles(forSenderIds: [newMessage.senderId])
+        } catch {
+            errorMessage = error.localizedDescription
+        }
     }
     
     @MainActor
-    func selectThread(_ thread: ClarifyThread) async {
-        currentThread = thread
-        await loadMessages(threadId: thread.id)
+    func markAsResolved() async {
+        guard let thread = currentThread else { return }
+        
+        do {
+            try await ClarifyRepository.shared.markAsResolved(threadId: thread.id)
+            // Remove from inbox list (since resolved threads are filtered out)
+            openThreadsInPet.removeAll { $0.id == thread.id }
+        } catch {
+            errorMessage = error.localizedDescription
+        }
     }
     
     @MainActor
@@ -138,8 +143,71 @@ class ClarifyViewModel {
         
         do {
             messages = try await ClarifyRepository.shared.fetchMessages(threadId: threadId)
+            let senderIds = Array(Set(messages.map { $0.senderId }))
+            await loadProfiles(forSenderIds: senderIds)
         } catch {
             errorMessage = "Failed to load messages: \(error.localizedDescription)"
         }
+    }
+    
+    @MainActor
+    func selectThread(_ thread: ClarifyThread) async {
+        currentThread = thread
+        await loadMessages(threadId: thread.id)
+    }
+    
+    @MainActor
+    func startThread(title: String) async {
+        guard let pet = pet else {
+            errorMessage = "No pet context"
+            return
+        }
+        
+        let category = self.category ?? .food
+        
+        isLoading = true
+        defer { isLoading = false }
+        
+        do {
+            let newThread = try await ClarifyRepository.shared.startThread(
+                petId: pet.id,
+                category: category,
+                title: title
+            )
+            currentThread = newThread
+            openThreadsInPet.append(newThread)
+            messages = []
+        } catch {
+            errorMessage = "Failed to start thread: \(error.localizedDescription)"
+        }
+    }
+    
+    // MARK: - Profile Cache
+
+    @MainActor
+    func loadProfiles(forSenderIds ids: [UUID]) async {
+        let uncachedIds = ids.filter { profileCache[$0] == nil }
+        guard !uncachedIds.isEmpty else { return }
+        
+        for id in uncachedIds {
+            if let profile = try? await ClarifyRepository.shared.fetchProfile(userId: id) {
+                profileCache[id] = profile
+            }
+        }
+    }
+
+    func displayName(for senderId: UUID) -> String {
+        profileCache[senderId]?.name ?? "Unknown"
+    }
+
+    func roleLabel(for senderId: UUID) -> String {
+        guard let pet = pet else { return "" }
+        return senderId == pet.ownerId ? "OWNER" : "SITTER"
+    }
+
+    func senderLabel(for senderId: UUID) -> String {
+        let name = displayName(for: senderId).uppercased()
+        let role = roleLabel(for: senderId)
+        return "\(name) (\(role))"
     }
 }

@@ -7,32 +7,45 @@
 
 import SwiftUI
 
+// MARK: - Main View
+
 struct ClarifySheetView: View {
     let pet: PetRow
     let category: ClarifyCategory?
     var isInNavigationStack: Bool = false
     var routineTitle: String? = nil
+    var initialThread: ClarifyThread? = nil
 
     @Environment(\.dismiss) var dismiss
     @State private var messageText = ""
     @State private var isSidebarOpen = false
+    @State private var initialLoadComplete = false
     @State private var viewModel: ClarifyViewModel
 
     init(
         pet: PetRow,
         category: ClarifyCategory? = nil,
         isInNavigationStack: Bool = false,
-        routineTitle: String? = nil
+        routineTitle: String? = nil,
+        initialThread: ClarifyThread? = nil
     ) {
         self.pet = pet
         self.category = category
         self.isInNavigationStack = isInNavigationStack
         self.routineTitle = routineTitle
-        _viewModel = State(
-            initialValue: ClarifyViewModel(pet: pet, category: category)
-        )
+        self.initialThread = initialThread
+
+        if let initialThread {
+            _viewModel = State(
+                initialValue: ClarifyViewModel(pet: pet, thread: initialThread)
+            )
+        } else {
+            _viewModel = State(
+                initialValue: ClarifyViewModel(pet: pet, category: category)
+            )
+        }
     }
-    
+
     private var titleText: String {
         if viewModel.isLoading {
             return "Clarify: Loading…"
@@ -53,44 +66,27 @@ struct ClarifySheetView: View {
 
     private func messageModel(from msg: ClarifyMessage) -> MessageModel {
         let isMe = msg.senderId == viewModel.currentUser?.id
-
         let formatter = DateFormatter()
         formatter.dateFormat = "HH:mm"
-
         return MessageModel(
-            senderLabel: msg.senderId == Profile.mockSarah.id
-                ? "SARAH (SITTER)" : "ALEX (OWNER)",
+            senderLabel: viewModel.senderLabel(for: msg.senderId),
             time: formatter.string(from: msg.createdAt),
             text: msg.message,
             isMe: isMe,
-            avatarImage: Image(
-                msg.senderId == Profile.mockSarah.id
-                    ? "SarahPic" : "AlexProfilePicture"
-            )
+            avatarImage: Image(systemName: "person.circle.fill")
         )
     }
 
     var body: some View {
         ZStack(alignment: .leading) {
 
-            // ── Main chat panel ──────────────────────────────────────
+            // Main chat panel
             VStack(spacing: 0) {
 
                 // Top bar
                 HStack(alignment: .center, spacing: 10) {
 
-                    // Left side: optional Back + Hamburger
-                    HStack(spacing: 4) {
-                        if isInNavigationStack {
-                            Button {
-                                dismiss()
-                            } label: {
-                                Image(systemName: "chevron.left")
-                                    .font(.system(size: 16, weight: .semibold))
-                                    .foregroundColor(Color.primaryG)
-                            }
-                        }
-
+                    if routineTitle == nil {
                         Button {
                             withAnimation(
                                 .spring(response: 0.35, dampingFraction: 0.8)
@@ -126,11 +122,13 @@ struct ClarifySheetView: View {
 
                     Spacer()
 
-                    // Right: Mark as Resolved
+                    // Mark as Resolved (owner-only)
                     if viewModel.canMarkAsResolved {
                         Button {
-                            viewModel.markAsResolved()
-                            dismiss()
+                            Task {
+                                await viewModel.markAsResolved()
+                                dismiss()
+                            }
                         } label: {
                             Image(systemName: "checkmark")
                                 .font(.system(size: 20))
@@ -147,27 +145,22 @@ struct ClarifySheetView: View {
 
                 Divider()
 
-                // Messages
-                if viewModel.shouldShowEmptyStateForOwner {
-                    // Empty state for owner
-                    VStack(spacing: 16) {
-                        Spacer()
-                        Image(systemName: "bubble.left.and.bubble.right")
-                            .font(.system(size: 48))
-                            .foregroundColor(.secondary.opacity(0.5))
-                        Text("No chat yet for this routine")
-                            .font(.headline)
-                            .foregroundColor(.secondary)
-                        Text(
-                            "Wait for the sitter to start a\nconversation about this routine"
-                        )
-                        .font(.subheadline)
-                        .foregroundColor(.secondary.opacity(0.7))
-                        .multilineTextAlignment(.center)
-                        Spacer()
-                    }
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .padding(16)
+                // Messages content
+                if !initialLoadComplete {
+                    ProgressView()
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                } else if viewModel.shouldShowEmptyStateForOwner {
+                    ownerEmptyState
+                } else if viewModel.currentThread == nil,
+                    let title = routineTitle,
+                    viewModel.isCurrentUserSitter
+                {
+                    sitterStartButton(title: title)
+                } else if viewModel.currentThread == nil
+                    && viewModel.openThreadsInPet.isEmpty
+                    && !viewModel.isLoading
+                {
+                    inboxEmptyState
                 } else {
                     ScrollView {
                         VStack(spacing: 16) {
@@ -183,8 +176,8 @@ struct ClarifySheetView: View {
 
                 Divider()
 
-                // Input bar
-                if !viewModel.shouldShowEmptyStateForOwner {
+                // Input bar (only when thread exists)
+                if viewModel.currentThread != nil {
                     HStack(spacing: 12) {
                         Button {
                         } label: {
@@ -200,8 +193,11 @@ struct ClarifySheetView: View {
                             .clipShape(Capsule())
 
                         Button {
-                            viewModel.sendMessage(messageText)
+                            let toSend = messageText
                             messageText = ""
+                            Task {
+                                await viewModel.sendMessage(toSend)
+                            }
                         } label: {
                             Image(systemName: "arrow.up")
                                 .font(.system(size: 16, weight: .bold))
@@ -211,12 +207,11 @@ struct ClarifySheetView: View {
                                 .clipShape(Circle())
                         }
                     }
-
                     .padding(.horizontal, 16)
                     .padding(.vertical, 12)
                 }
             }
-            // Dim + close sidebar on tap
+            // Dim overlay
             .overlay {
                 if isSidebarOpen {
                     Color.black.opacity(0.25)
@@ -231,7 +226,7 @@ struct ClarifySheetView: View {
                 }
             }
 
-            // ── Sidebar panel ────────────────────────────────────────
+            // Sidebar panel
             if isSidebarOpen {
                 SidebarView(
                     threads: viewModel.openThreadsInPet,
@@ -246,7 +241,9 @@ struct ClarifySheetView: View {
                         Task {
                             await viewModel.selectThread(thread)
                         }
-                        withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) {
+                        withAnimation(
+                            .spring(response: 0.35, dampingFraction: 0.8)
+                        ) {
                             isSidebarOpen = false
                         }
                     }
@@ -259,10 +256,96 @@ struct ClarifySheetView: View {
         .task {
             await viewModel.loadCurrentUser()
             await viewModel.loadThreads()
-            if let title = routineTitle {
+
+            // Determine which thread to open as default
+            if let thread = initialThread {
+                // From Inbox row tap (not used anymore but kept for compat)
+                await viewModel.loadMessages(threadId: thread.id)
+            } else if let title = routineTitle {
+                // From RoutineCard with specific routine context
                 await viewModel.loadThread(routineTitle: title)
+            } else if let mostRecent = viewModel.openThreadsInPet.first {
+                // From Dashboard toolbar → auto-load most recent (last chat)
+                await viewModel.selectThread(mostRecent)
             }
+            initialLoadComplete = true
         }
+    }
+
+    // MARK: - Empty states
+
+    private var ownerEmptyState: some View {
+        VStack(spacing: 16) {
+            Spacer()
+            Image(systemName: "bubble.left.and.bubble.right")
+                .font(.system(size: 48))
+                .foregroundColor(.secondary.opacity(0.5))
+            Text("No chat yet for this routine")
+                .font(.headline)
+                .foregroundColor(.secondary)
+            Text(
+                "Wait for the sitter to start a\nconversation about this routine"
+            )
+            .font(.subheadline)
+            .foregroundColor(.secondary.opacity(0.7))
+            .multilineTextAlignment(.center)
+            Spacer()
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .padding(16)
+    }
+
+    private func sitterStartButton(title: String) -> some View {
+        VStack(spacing: 16) {
+            Spacer()
+            Image(systemName: "bubble.left.and.bubble.right")
+                .font(.system(size: 48))
+                .foregroundColor(.primaryG.opacity(0.7))
+            Text("No conversation yet")
+                .font(.headline)
+                .foregroundColor(.secondary)
+            Text("Start a chat about \(title) with the owner")
+                .font(.subheadline)
+                .foregroundColor(.secondary)
+                .multilineTextAlignment(.center)
+            Button {
+                Task {
+                    await viewModel.startThread(title: title)
+                }
+            } label: {
+                Label("Start Conversation", systemImage: "plus.bubble.fill")
+                    .font(.subheadline)
+                    .fontWeight(.semibold)
+                    .foregroundColor(.white)
+                    .padding(.horizontal, 20)
+                    .padding(.vertical, 12)
+                    .background(Color.primaryG)
+                    .clipShape(Capsule())
+            }
+            .disabled(viewModel.isLoading)
+            Spacer()
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .padding(16)
+    }
+
+    private var inboxEmptyState: some View {
+        VStack(spacing: 16) {
+            Spacer()
+            Image(systemName: "tray")
+                .font(.system(size: 48))
+                .foregroundColor(.secondary.opacity(0.5))
+            Text("No active conversations")
+                .font(.headline)
+                .foregroundColor(.secondary)
+            Text("Open a routine card to start a chat")
+                .font(.subheadline)
+                .foregroundColor(.secondary.opacity(0.7))
+                .multilineTextAlignment(.center)
+            Spacer()
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .padding(16)
     }
 }
 
@@ -278,7 +361,7 @@ private struct SidebarView: View {
 
             // Sidebar header
             HStack {
-                Text("Past Chats")
+                Text("Open Conversations")
                     .font(.title3)
                     .fontWeight(.bold)
                 Spacer()
@@ -297,39 +380,55 @@ private struct SidebarView: View {
 
             Divider()
 
-            ScrollView {
-                VStack(spacing: 0) {
-                    ForEach(threads) { thread in
-                        Button {
-                            onSelect(thread)
-                        } label: {
-                            HStack(spacing: 12) {
-                                VStack(alignment: .leading, spacing: 3) {
-                                    Text(thread.title)
-                                        .font(.subheadline)
-                                        .fontWeight(.medium)
-                                        .foregroundColor(.primary)
-                                        .lineLimit(1)
-                                    Text(thread.category.rawValue.capitalized)
+            if threads.isEmpty {
+                VStack(spacing: 12) {
+                    Spacer()
+                    Image(systemName: "tray")
+                        .font(.system(size: 36))
+                        .foregroundColor(.secondary.opacity(0.5))
+                    Text("No open conversations")
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                    Spacer()
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+            } else {
+                ScrollView {
+                    VStack(spacing: 0) {
+                        ForEach(threads) { thread in
+                            Button {
+                                onSelect(thread)
+                            } label: {
+                                HStack(spacing: 12) {
+                                    VStack(alignment: .leading, spacing: 3) {
+                                        Text(thread.title)
+                                            .font(.subheadline)
+                                            .fontWeight(.medium)
+                                            .foregroundColor(.primary)
+                                            .lineLimit(1)
+                                        Text(
+                                            thread.category.rawValue.capitalized
+                                        )
                                         .font(.caption)
                                         .foregroundColor(.secondary)
+                                    }
+
+                                    Spacer()
+
+                                    Image(systemName: "chevron.right")
+                                        .font(.system(size: 11))
+                                        .foregroundColor(Color(.systemGray3))
                                 }
-
-                                Spacer()
-
-                                Image(systemName: "chevron.right")
-                                    .font(.system(size: 11))
-                                    .foregroundColor(Color(.systemGray3))
+                                .padding(.horizontal, 16)
+                                .padding(.vertical, 12)
                             }
-                            .padding(.horizontal, 16)
-                            .padding(.vertical, 12)
-                        }
 
-                        Divider()
-                            .padding(.leading, 64)
+                            Divider()
+                                .padding(.leading, 64)
+                        }
                     }
+                    .padding(.top, 4)
                 }
-                .padding(.top, 4)
             }
 
             Spacer()
@@ -348,7 +447,10 @@ private struct ChatBubbleView: View {
         HStack(alignment: .bottom, spacing: 8) {
             if !message.isMe {
                 message.avatarImage
+                    .resizable()
+                    .scaledToFit()
                     .frame(width: 32, height: 32)
+                    .foregroundColor(Color.primaryG.opacity(0.7))
                     .clipShape(Circle())
             } else {
                 Spacer()
@@ -384,7 +486,10 @@ private struct ChatBubbleView: View {
 
             if message.isMe {
                 message.avatarImage
+                    .resizable()
+                    .scaledToFit()
                     .frame(width: 32, height: 32)
+                    .foregroundColor(Color.primaryG.opacity(0.7))
                     .clipShape(Circle())
             } else {
                 Spacer()
@@ -392,41 +497,3 @@ private struct ChatBubbleView: View {
         }
     }
 }
-
-// MARK: - Attachment Suggestion Card
-
-private struct AttachmentSuggestionCard: View {
-    var body: some View {
-        HStack(spacing: 12) {
-            Image(systemName: "photo.badge.plus")
-                .font(.system(size: 18))
-                .foregroundColor(.secondary)
-
-            Text("Tap to attach a photo of the bowl setup")
-                .font(.subheadline)
-                .foregroundColor(.secondary)
-
-            Spacer()
-        }
-        .padding(14)
-        .background(Color(.systemBackground))
-        .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
-        .overlay(
-            RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .strokeBorder(style: StrokeStyle(lineWidth: 1.5, dash: [6]))
-                .foregroundColor(Color(.systemGray4))
-        )
-    }
-}
-
-// MARK: - Preview
-//
-//#Preview("Sheet (no nav stack)") {
-//    ClarifySheetView(isInNavigationStack: false)
-//}
-//
-//#Preview("Inside NavigationStack") {
-//    NavigationStack {
-//        ClarifySheetView(isInNavigationStack: true)
-//    }
-//}
