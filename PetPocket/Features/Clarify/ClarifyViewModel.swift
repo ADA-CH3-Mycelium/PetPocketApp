@@ -112,20 +112,34 @@ class ClarifyViewModel {
         openThreadsInPet.removeAll { $0.id == thread.id }
     }
     
-    func selectThread(_ thread: ClarifyThread) {
+    @MainActor
+    func selectThread(_ thread: ClarifyThread) async {
         currentThread = thread
-        messages = []
+        await loadMessages(threadId: thread.id)
     }
     
+    @MainActor
     @discardableResult
-    func loadThread(routineTitle: String) -> Bool {
+    func loadThread(routineTitle: String) async -> Bool {
         if let existing = openThreadsInPet.first(where: { $0.title == routineTitle }) {
             currentThread = existing
-            messages = []
+            await loadMessages(threadId: existing.id)
             return true
         }
         currentThread = nil
         messages = []
         return false
+    }
+    
+    @MainActor
+    func loadMessages(threadId: UUID) async {
+        isLoading = true
+        defer { isLoading = false }
+        
+        do {
+            messages = try await ClarifyRepository.shared.fetchMessages(threadId: threadId)
+        } catch {
+            errorMessage = "Failed to load messages: \(error.localizedDescription)"
+        }
     }
 }

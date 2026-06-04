@@ -243,10 +243,10 @@ struct ClarifySheetView: View {
                         }
                     },
                     onSelect: { thread in
-                        viewModel.selectThread(thread)
-                        withAnimation(
-                            .spring(response: 0.35, dampingFraction: 0.8)
-                        ) {
+                        Task {
+                            await viewModel.selectThread(thread)
+                        }
+                        withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) {
                             isSidebarOpen = false
                         }
                     }
@@ -256,17 +256,12 @@ struct ClarifySheetView: View {
                 .zIndex(1)
             }
         }
-        .onAppear {
-            if let title = routineTitle {
-                viewModel.loadThread(routineTitle: title)
-            }
-        }
         .task {
             await viewModel.loadCurrentUser()
             await viewModel.loadThreads()
-                if let title = routineTitle {
-                    viewModel.loadThread(routineTitle: title)
-                }
+            if let title = routineTitle {
+                await viewModel.loadThread(routineTitle: title)
+            }
         }
     }
 }
