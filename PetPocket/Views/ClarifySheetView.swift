@@ -7,8 +7,6 @@
 
 import SwiftUI
 
-// MARK: - Main View
-
 struct ClarifySheetView: View {
     let pet: PetRow
     let category: ClarifyCategory?
@@ -33,6 +31,24 @@ struct ClarifySheetView: View {
         _viewModel = State(
             initialValue: ClarifyViewModel(pet: pet, category: category)
         )
+    }
+    
+    private var titleText: String {
+        if viewModel.isLoading {
+            return "Clarify: Loading…"
+        }
+        if let thread = viewModel.currentThread {
+            return "Clarify: \(thread.title)"
+        }
+        if let routineTitle = routineTitle {
+            return "Clarify: \(routineTitle)"
+        }
+        return "Clarify"
+    }
+
+    private var subtitleText: String? {
+        guard viewModel.currentThread != nil else { return nil }
+        return "Active conversation"
     }
 
     private func messageModel(from msg: ClarifyMessage) -> MessageModel {
@@ -97,18 +113,15 @@ struct ClarifySheetView: View {
 
                     // Title
                     VStack(alignment: .leading, spacing: 2) {
-                        Text(
-                            "Clarify: \(viewModel.currentThread?.title ?? routineTitle ?? "Loading")"
-                        )
-                        .font(.headline)
-                        .fontWeight(.bold)
-                        .lineLimit(1)
-                        Text(
-                            viewModel.isCurrentUserSitter
-                                ? "Active Chat" : "Reply to Sarah"
-                        )
-                        .font(.caption)
-                        .foregroundColor(.secondary)
+                        Text(titleText)
+                            .font(.headline)
+                            .fontWeight(.bold)
+                            .lineLimit(1)
+                        if let subtitle = subtitleText {
+                            Text(subtitle)
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                        }
                     }
 
                     Spacer()
@@ -250,6 +263,10 @@ struct ClarifySheetView: View {
         }
         .task {
             await viewModel.loadCurrentUser()
+            await viewModel.loadThreads()
+                if let title = routineTitle {
+                    viewModel.loadThread(routineTitle: title)
+                }
         }
     }
 }

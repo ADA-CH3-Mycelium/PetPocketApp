@@ -26,7 +26,6 @@ class ClarifyViewModel {
         self.pet = pet
         self.category = category
         
-        loadMockThreadsAndMessages()
     }
     
     @MainActor
@@ -39,6 +38,32 @@ class ClarifyViewModel {
             currentUser = try await ClarifyRepository.shared.fetchProfile(userId: userId)
         } catch {
             errorMessage = "Failed to load profile: \(error.localizedDescription)"
+        }
+    }
+    
+    @MainActor
+    func loadThreads() async {
+        guard let pet = pet else {
+            errorMessage = "No pet context"
+            return
+        }
+        
+        isLoading = true
+        defer { isLoading = false }
+        
+        do {
+            if let category = category {
+                // Category-specific mode
+                openThreadsInPet = try await ClarifyRepository.shared.fetchThreads(
+                    petId: pet.id,
+                    category: category
+                )
+            } else {
+                // Inbox mode (cross-category, unresolved only)
+                openThreadsInPet = try await ClarifyRepository.shared.fetchInboxThreads(petId: pet.id)
+            }
+        } catch {
+            errorMessage = "Failed to load threads: \(error.localizedDescription)"
         }
     }
     
@@ -59,17 +84,6 @@ class ClarifyViewModel {
     
     var shouldShowEmptyStateForOwner: Bool {
         return isCurrentUserOwner && currentThread == nil
-    }
-    
-    
-    private func loadMockThreadsAndMessages() {
-        currentThread = ClarifyThread.mockBreakfast
-        messages = ClarifyMessage.mockMessages
-        openThreadsInPet = [
-            ClarifyThread.mockBreakfast,
-            ClarifyThread.mockEveryFourHour,
-            ClarifyThread.mockFearTriggers
-        ]
     }
     
     func sendMessage(_ text: String) {
@@ -100,14 +114,14 @@ class ClarifyViewModel {
     
     func selectThread(_ thread: ClarifyThread) {
         currentThread = thread
-        messages = ClarifyMessage.mockMessages.filter { $0.threadId == thread.id }
+        messages = []
     }
     
     @discardableResult
     func loadThread(routineTitle: String) -> Bool {
         if let existing = openThreadsInPet.first(where: { $0.title == routineTitle }) {
             currentThread = existing
-            messages = ClarifyMessage.mockMessages.filter { $0.threadId == existing.id }
+            messages = []
             return true
         }
         currentThread = nil
