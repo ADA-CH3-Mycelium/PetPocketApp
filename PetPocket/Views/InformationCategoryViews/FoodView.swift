@@ -12,6 +12,7 @@ struct FoodView: View {
     @State private var isEditing = false
     @State private var showAddMeal = false
     @State private var editingMeal: RoutineCardItem? = nil
+    @State private var showDietaryEdit = false
 
     private let headers: [CategoryHeaderItem] = [
         CategoryHeaderItem(icon: "exclamationmark.triangle.fill", label: "Dietary Alert"),
@@ -29,13 +30,29 @@ struct FoodView: View {
                     VStack(alignment: .leading, spacing: 10) {
                         CategoryHeader(item: headers[0])
 
-                        if detail.allergies.isEmpty && detail.restricted.isEmpty {
-                            GhostAlertCard()
+                        let dietaryCard = Group {
+                            if detail.allergies.isEmpty && detail.restricted.isEmpty {
+                                GhostAlertCard()
+                            } else {
+                                AlertCardStyle(
+                                    allergies: detail.allergies,
+                                    restricted: detail.restricted
+                                )
+                            }
+                        }
+
+                        if isEditing {
+                            Button { showDietaryEdit = true } label: {
+                                dietaryCard.overlay(alignment: .topTrailing) {
+                                    Image(systemName: "pencil.circle.fill")
+                                        .font(.system(size: 22))
+                                        .foregroundStyle(.white, Color.alertRed)
+                                        .padding(6)
+                                }
+                            }
+                            .buttonStyle(.plain)
                         } else {
-                            AlertCardStyle(
-                                allergies: detail.allergies,
-                                restricted: detail.restricted
-                            )
+                            dietaryCard
                         }
                     }
 
@@ -83,6 +100,12 @@ struct FoodView: View {
             // Edit existing meal — sheet opens when editingMeal is set
             .sheet(item: $editingMeal) { meal in
                 AddMealSheet(detail: detail, editing: meal)
+                    .presentationDetents([.large])
+                    .presentationCornerRadius(24)
+            }
+            // Edit dietary restrictions
+            .sheet(isPresented: $showDietaryEdit) {
+                DietaryEditSheet(detail: detail)
                     .presentationDetents([.large])
                     .presentationCornerRadius(24)
             }

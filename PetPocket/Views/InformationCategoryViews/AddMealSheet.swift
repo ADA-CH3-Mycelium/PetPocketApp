@@ -28,15 +28,9 @@ struct AddMealSheet: View {
 
     // State
     @State private var isSaving = false
-
-    private let iconOptions: [(icon: String, label: String)] = [
-        ("sunrise.fill",        "Breakfast"),
-        ("sun.max.fill",        "Lunch"),
-        ("sunset.fill",         "Dinner"),
-        ("moon.fill",           "Night"),
-        ("fork.knife",          "General"),
-        ("cup.and.saucer.fill", "Drink"),
-    ]
+    @State private var isDeleting = false
+    @State private var showDeleteConfirm = false
+    @State private var showSymbolPicker = false
 
     private var isEditing: Bool { editing != nil }
     private var title: String { isEditing ? "Edit Meal" : "Add Meal" }
@@ -58,17 +52,30 @@ struct AddMealSheet: View {
 
                         // ── Icon picker ──────────────────────────────
                         formCard {
-                            VStack(alignment: .leading, spacing: 12) {
-                                sectionLabel("Icon")
-                                ScrollView(.horizontal, showsIndicators: false) {
-                                    HStack(spacing: 12) {
-                                        ForEach(iconOptions, id: \.icon) { opt in
-                                            iconCell(opt)
-                                        }
+                            Button { showSymbolPicker = true } label: {
+                                HStack(spacing: 14) {
+                                    Image(systemName: selectedIcon)
+                                        .font(.title2)
+                                        .foregroundColor(.white)
+                                        .frame(width: 52, height: 52)
+                                        .background(Color.primaryG)
+                                        .clipShape(RoundedRectangle(cornerRadius: 14))
+
+                                    VStack(alignment: .leading, spacing: 2) {
+                                        sectionLabel("Icon")
+                                        Text("Tap to choose a symbol")
+                                            .font(.caption)
+                                            .foregroundColor(.secondary)
                                     }
-                                    .padding(.vertical, 2)
+
+                                    Spacer()
+
+                                    Image(systemName: "chevron.right")
+                                        .font(.subheadline)
+                                        .foregroundColor(.secondary)
                                 }
                             }
+                            .buttonStyle(.plain)
                         }
 
                         // ── Meal name + Time ─────────────────────────
@@ -177,7 +184,29 @@ struct AddMealSheet: View {
                             .foregroundColor(.white)
                             .clipShape(RoundedRectangle(cornerRadius: 14))
                         }
-                        .disabled(!canSave || isSaving)
+                        .disabled(!canSave || isSaving || isDeleting)
+
+                        // ── Delete (edit mode only) ──────────────────
+                        if isEditing {
+                            Button(role: .destructive) {
+                                showDeleteConfirm = true
+                            } label: {
+                                Group {
+                                    if isDeleting {
+                                        ProgressView().tint(.red)
+                                    } else {
+                                        Label("Delete Meal", systemImage: "trash")
+                                            .fontWeight(.semibold)
+                                    }
+                                }
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 14)
+                                .foregroundColor(.red)
+                                .background(Color.red.opacity(0.1))
+                                .clipShape(RoundedRectangle(cornerRadius: 14))
+                            }
+                            .disabled(isSaving || isDeleting)
+                        }
                     }
                     .padding(20)
                 }
@@ -191,29 +220,19 @@ struct AddMealSheet: View {
                 }
             }
             .onAppear { prefill() }
+            .sheet(isPresented: $showSymbolPicker) {
+                SymbolPickerSheet(selection: $selectedIcon)
+            }
+            .alert("Delete this meal?", isPresented: $showDeleteConfirm) {
+                Button("Delete", role: .destructive) { Task { await deleteCard() } }
+                Button("Cancel", role: .cancel) {}
+            } message: {
+                Text("This permanently removes the meal card.")
+            }
         }
     }
 
     // MARK: - Subviews
-
-    private func iconCell(_ option: (icon: String, label: String)) -> some View {
-        let isSelected = selectedIcon == option.icon
-        return Button { selectedIcon = option.icon } label: {
-            VStack(spacing: 6) {
-                Image(systemName: option.icon)
-                    .font(.title2)
-                    .foregroundColor(isSelected ? .white : .primaryG)
-                    .frame(width: 52, height: 52)
-                    .background(isSelected ? Color.primaryG : Color.primaryG.opacity(0.1))
-                    .clipShape(RoundedRectangle(cornerRadius: 14))
-                Text(option.label)
-                    .font(.caption2)
-                    .foregroundColor(isSelected ? .primaryG : .secondary)
-            }
-        }
-        .buttonStyle(.plain)
-        .animation(.easeInOut(duration: 0.15), value: selectedIcon)
-    }
 
     @ViewBuilder
     private func formCard<C: View>(@ViewBuilder content: () -> C) -> some View {
@@ -258,14 +277,35 @@ struct AddMealSheet: View {
             uploadedUrl = try? await PetRepository.shared.uploadMealPhoto(data: data)
         }
 
-        let ok = await detail.addMeal(
-            mealName: mealName.trimmingCharacters(in: .whitespaces),
-            time: time.trimmingCharacters(in: .whitespaces),
-            notes: description.trimmingCharacters(in: .whitespaces),
-            iconName: selectedIcon,
-            mediaUrl: uploadedUrl
-        )
+        let ok: Bool
+        if let editing {
+            // EDIT: update the existing row, don't insert a new one.
+            ok = await detail.updateMeal(
+                id: editing.id,
+                mealName: mealName.trimmingCharacters(in: .whitespaces),
+                time: time.trimmingCharacters(in: .whitespaces),
+                notes: description.trimmingCharacters(in: .whitespaces),
+                iconName: selectedIcon,
+                mediaUrl: uploadedUrl
+            )
+        } else {
+            ok = await detail.addMeal(
+                mealName: mealName.trimmingCharacters(in: .whitespaces),
+                time: time.trimmingCharacters(in: .whitespaces),
+                notes: description.trimmingCharacters(in: .whitespaces),
+                iconName: selectedIcon,
+                mediaUrl: uploadedUrl
+            )
+        }
         isSaving = false
+        if ok { dismiss() }
+    }
+
+    private func deleteCard() async {
+        guard let editing else { return }
+        isDeleting = true
+        let ok = await detail.deleteMeal(id: editing.id)
+        isDeleting = false
         if ok { dismiss() }
     }
 }

@@ -11,11 +11,22 @@ import SwiftUI
 struct EmergencyView: View {
     @Environment(PetDetailStore.self) private var detail
 
-    // headers
-    private let emergencyCategoryHeaders: [CategoryHeaderItem] = [
-        CategoryHeaderItem(icon: "cross.vial.fill", label: "First Aid Guides"),
+    @State private var isEditing = false
+
+    // First aid (care_items, category = "emergency")
+    @State private var showAddFirstAid = false
+    @State private var editingFirstAid: RoutineCardItem? = nil
+    // Contacts
+    @State private var showAddContact = false
+    @State private var editingContact: ContactCardItem? = nil
+    // Clinics
+    @State private var showAddClinic = false
+    @State private var editingClinic: VetClinicCardItem? = nil
+
+    private let headers: [CategoryHeaderItem] = [
+        CategoryHeaderItem(icon: "cross.vial.fill",    label: "First Aid Guides"),
         CategoryHeaderItem(icon: "person.circle.fill", label: "Trusted Contacts"),
-        CategoryHeaderItem(icon: "cross.case.fill", label: "Trusted Vet Clinics")
+        CategoryHeaderItem(icon: "cross.case.fill",    label: "Trusted Vet Clinics"),
     ]
 
     var body: some View {
@@ -23,46 +34,9 @@ struct EmergencyView: View {
             Color.background.ignoresSafeArea()
             ScrollView {
                 VStack(spacing: 30) {
-
-                    // First Aid Guide
-                    if !detail.firstAid.isEmpty {
-                        VStack(alignment: .leading, spacing: 10) {
-                            CategoryHeader(item: emergencyCategoryHeaders[0])
-
-                            ScrollView(.horizontal, showsIndicators: false) {
-                                HStack(spacing: 15) {
-                                    ForEach(detail.firstAid) { item in
-                                        RoutineCard(item: item, isEmergency: true)
-                                            .frame(width: 240)
-                                    }
-                                }
-                            }.scrollClipDisabled()
-                        }
-                    }
-
-                    // Contacts
-                    if !detail.contacts.isEmpty {
-                        VStack(alignment: .leading, spacing: 10){
-                            CategoryHeader(item: emergencyCategoryHeaders[1])
-
-                            VStack(spacing: 12) {
-                                ForEach(detail.contacts, id: \.self) { contact in
-                                    ContactCard(contact: contact)
-                                }
-                            }
-                        }
-                    }
-
-                    // clinic
-                    if !detail.clinics.isEmpty {
-                        VStack {
-                            CategoryHeader(item: emergencyCategoryHeaders[2])
-                            ForEach(detail.clinics) { item in
-                                VetClinicCard(item: item)
-                            }
-                        }
-                    }
-
+                    firstAidSection
+                    contactsSection
+                    clinicsSection
                 }.padding(20)
             }
         }
@@ -71,20 +45,126 @@ struct EmergencyView: View {
         .tint(Color.primaryG)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
-                Menu {
-                    Button(action: {}) {
-                        Label("Edit information", systemImage: "pencil")
-                    }
-                    
-                } label: {
-                    Image(systemName: "ellipsis")
-                        .imageScale(.large)
-                        .rotationEffect(Angle(degrees: 90))
-                        .foregroundColor(Color.primaryG)
-                }
-                
+                EditMenuButton(isEditing: $isEditing)
             }
         }
+        // First aid sheets
+        .sheet(isPresented: $showAddFirstAid) {
+            CareItemSheet(detail: detail, category: "emergency")
+                .presentationDetents([.large]).presentationCornerRadius(24)
+        }
+        .sheet(item: $editingFirstAid) { item in
+            CareItemSheet(detail: detail, category: "emergency", editing: item)
+                .presentationDetents([.large]).presentationCornerRadius(24)
+        }
+        // Contact sheets
+        .sheet(isPresented: $showAddContact) {
+            ContactSheet(detail: detail)
+                .presentationDetents([.large]).presentationCornerRadius(24)
+        }
+        .sheet(item: $editingContact) { item in
+            ContactSheet(detail: detail, editing: item)
+                .presentationDetents([.large]).presentationCornerRadius(24)
+        }
+        // Clinic sheets
+        .sheet(isPresented: $showAddClinic) {
+            ClinicSheet(detail: detail)
+                .presentationDetents([.large]).presentationCornerRadius(24)
+        }
+        .sheet(item: $editingClinic) { item in
+            ClinicSheet(detail: detail, editing: item)
+                .presentationDetents([.large]).presentationCornerRadius(24)
+        }
+    }
+
+    // MARK: First aid
+    private var firstAidSection: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            CategoryHeader(item: headers[0])
+
+            if detail.firstAid.isEmpty {
+                if !isEditing {
+                    GhostRoutineCard(icon: "cross.vial.fill",
+                                     titlePlaceholder: "Choking",
+                                     descriptionPlaceholder: "First-aid guides will appear here.")
+                }
+            } else {
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 15) {
+                        ForEach(detail.firstAid) { item in
+                            Group {
+                                if isEditing {
+                                    Button { editingFirstAid = item } label: {
+                                        RoutineCard(item: item, isEmergency: true)
+                                            .overlay(alignment: .topTrailing) { editBadge }
+                                    }.buttonStyle(.plain)
+                                } else {
+                                    RoutineCard(item: item, isEmergency: true)
+                                }
+                            }
+                            .frame(width: 240)
+                        }
+                    }
+                }.scrollClipDisabled()
+            }
+
+            if isEditing {
+                AddCardButton { showAddFirstAid = true }
+            }
+        }
+    }
+
+    // MARK: Contacts
+    private var contactsSection: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            CategoryHeader(item: headers[1])
+
+            VStack(spacing: 12) {
+                ForEach(detail.contacts, id: \.self) { contact in
+                    if isEditing {
+                        Button { editingContact = contact } label: {
+                            ContactCard(contact: contact)
+                                .overlay(alignment: .topTrailing) { editBadge }
+                        }.buttonStyle(.plain)
+                    } else {
+                        ContactCard(contact: contact)
+                    }
+                }
+            }
+
+            if isEditing {
+                AddCardButton { showAddContact = true }
+            }
+        }
+    }
+
+    // MARK: Clinics
+    private var clinicsSection: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            CategoryHeader(item: headers[2])
+
+            ForEach(detail.clinics) { item in
+                if isEditing {
+                    Button { editingClinic = item } label: {
+                        VetClinicCard(item: item)
+                            .overlay(alignment: .topTrailing) { editBadge }
+                    }.buttonStyle(.plain)
+                } else {
+                    VetClinicCard(item: item)
+                }
+            }
+
+            if isEditing {
+                AddCardButton { showAddClinic = true }
+            }
+        }
+    }
+
+    private var editBadge: some View {
+        Image(systemName: "pencil.circle.fill")
+            .font(.system(size: 22))
+            .foregroundStyle(.white, Color.primaryG)
+            .padding(6)
     }
 }
 

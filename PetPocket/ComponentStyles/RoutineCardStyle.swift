@@ -80,40 +80,41 @@ struct RoutineCard: View {
     let isEmergency: Bool
 
     var body: some View {
-        HStack(alignment: .top) {
-            // left
-            VStack(alignment: .leading, spacing: 5) {
-                HStack {
-                    Image(systemName: item.icon)
-                        .font(.caption)
+        VStack(alignment: .leading, spacing: 10) {
+            HStack(alignment: .top) {
+                // left
+                VStack(alignment: .leading, spacing: 5) {
+                    HStack {
+                        Image(systemName: item.icon)
+                            .font(.caption)
 
-                    Text(
-                        item.time.isEmpty
-                            ? item.title : "\(item.title) • \(item.time)"
-                    )
-                    .font(.headline)
-                    .fontWeight(.bold)
+                        Text(
+                            item.time.isEmpty
+                                ? item.title : "\(item.title) • \(item.time)"
+                        )
+                        .font(.headline)
+                        .fontWeight(.bold)
 
-                }.foregroundColor(Color.primaryG)
+                    }.foregroundColor(Color.primaryG)
 
-                Text(item.description)
-                    .font(.body)
-                    
-            }
+                    Text(item.description)
+                        .font(.body)
 
-            Spacer()
-
-            // right
-            VStack(alignment: .trailing, spacing: 7) {
-                if item.media != nil {
-                    if let media = item.media {
-                        MediaThumbnailView(media: media)
-                    }
                 }
 
-                if isEmergency != true {
+                Spacer()
+
+                // right — media only
+                if let media = item.media {
+                    MediaThumbnailView(media: media)
+                }
+            }
+
+            // clarify pinned bottom-right
+            if isEmergency != true {
+                HStack {
+                    Spacer()
                     ClarifyButtonStyle()
-                        .offset(y: 2)
                 }
             }
         }

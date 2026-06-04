@@ -10,11 +10,11 @@ import SwiftUI
 struct WasteView: View {
     @Environment(PetDetailStore.self) private var detail
     @State private var isEditing = false
+    @State private var showAddItem = false
     @State private var editingItem: RoutineCardItem? = nil
 
     private let headers: [CategoryHeaderItem] = [
-        CategoryHeaderItem(icon: "exclamationmark.triangle.fill", label: "Waste Alert"),
-        CategoryHeaderItem(icon: "leaf.fill",                     label: "Waste Routine"),
+        CategoryHeaderItem(icon: "leaf.fill", label: "Waste Routine"),
     ]
 
     var body: some View {
@@ -24,15 +24,9 @@ struct WasteView: View {
             ScrollView(.vertical, showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 24) {
 
-                    // MARK: Alert section (always placeholder — no waste alerts in DB yet)
-                    VStack(alignment: .leading, spacing: 10) {
-                        CategoryHeader(item: headers[0])
-                        GhostAlertCard()
-                    }
-
                     // MARK: Routine section
                     VStack(alignment: .leading, spacing: 10) {
-                        CategoryHeader(item: headers[1])
+                        CategoryHeader(item: headers[0])
 
                         if detail.wasteItems.isEmpty {
                             GhostRoutineCard(
@@ -51,7 +45,7 @@ struct WasteView: View {
                         }
 
                         if isEditing {
-                            AddCardButton { }   // wire add sheet in Phase 4
+                            AddCardButton { showAddItem = true }
                         }
                     }
 
@@ -65,6 +59,16 @@ struct WasteView: View {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     EditMenuButton(isEditing: $isEditing)
                 }
+            }
+            .sheet(isPresented: $showAddItem) {
+                CareItemSheet(detail: detail, category: "waste")
+                    .presentationDetents([.large])
+                    .presentationCornerRadius(24)
+            }
+            .sheet(item: $editingItem) { item in
+                CareItemSheet(detail: detail, category: "waste", editing: item)
+                    .presentationDetents([.large])
+                    .presentationCornerRadius(24)
             }
         }
     }
