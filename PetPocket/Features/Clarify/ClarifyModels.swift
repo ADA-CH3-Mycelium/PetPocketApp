@@ -7,10 +7,17 @@
 
 import Foundation
 
+enum ClarifyCategory: String, Codable, Hashable, CaseIterable {
+    case food
+    case waste
+    case care
+    case emergency
+}
+
 struct ClarifyThread: Identifiable, Codable, Hashable {
     let id: UUID
     let petId: UUID
-    let category: String
+    let category: ClarifyCategory
     let title: String
     let createdBy: UUID
     var isResolved: Bool
@@ -83,7 +90,7 @@ extension ClarifyThread {
     static let mockBreakfast = ClarifyThread(
         id: UUID(uuidString: "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa")!,
         petId: UUID(),
-        category: "food",
+        category: .food,
         title: "Breakfast",
         createdBy: Profile.mockSarah.id,
         isResolved: false,
@@ -94,7 +101,7 @@ extension ClarifyThread {
     static let mockEveryFourHour = ClarifyThread(
         id: UUID(uuidString: "bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb")!,
         petId: UUID(),
-        category: "waste",
+        category: .waste,
         title: "Every 4 Hour",
         createdBy: Profile.mockSarah.id,
         isResolved: false,
@@ -105,7 +112,7 @@ extension ClarifyThread {
     static let mockFearTriggers = ClarifyThread(
         id: UUID(uuidString: "cccccccc-cccc-cccc-cccc-cccccccccccc")!,
         petId: UUID(),
-        category: "care",
+        category: .care,
         title: "Fear Triggers",
         createdBy: Profile.mockSarah.id,
         isResolved: false,

@@ -273,7 +273,7 @@ private struct SidebarView: View {
                                         .fontWeight(.medium)
                                         .foregroundColor(.primary)
                                         .lineLimit(1)
-                                    Text(thread.category.capitalized)
+                                    Text(thread.category.rawValue.capitalized)
                                         .font(.caption)
                                         .foregroundColor(.secondary)
                                 }
