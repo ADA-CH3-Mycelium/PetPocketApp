@@ -13,32 +13,32 @@ struct AlertCardStyle: View {
     let restricted: [String]
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 6) {
-            //HEADER
-            HStack(spacing: 2) {
-                Image(systemName: "exclamationmark.triangle.fill")
-                Text("CRITICAL DIETARY RESTRICTIONS")
-                    .font(.caption)
-                    .bold()
-            }.foregroundColor(Color.alertRed)
+        ZStack(alignment: .leading) {
+            LinearGradient(gradient: Gradient(colors: [.accentColor.opacity(0.4), .accentColor.opacity(0.1)]), startPoint: .leading, endPoint: .trailing)
+                .clipShape(.rect(cornerRadius: 16))
             
-            Text("ALLERGIES: \(allergies.map { "No \($0)" }.joined(separator: ", ")).")
-                .font(.caption)
-            Text("RESTRICTED: \(restricted.map { "\($0)" }.joined(separator: ", ")).")
-                .font(.caption)
+            VStack(alignment: .leading, spacing: 6) {
+                //HEADER
+                HStack(spacing: 2) {
+                    Image(systemName: "exclamationmark.triangle.fill")
+                    Text("DIETARY RESTRICTIONS")
+                        .font(.subheadline)
+                        .bold()
+                }.foregroundColor(Color.red)
+                
+                Text("Allergies: \(allergies.map { "\($0)" }.joined(separator: ", ")).")
+                Text("Restricted: \(restricted.map { "\($0)" }.joined(separator: ", ")).")
+            }.padding(20)
         }
         
-        .padding()
+        .fixedSize(horizontal: false, vertical: true)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .glassEffect(.regular.tint(Color.alertRed.opacity(0.1)), in: .rect(cornerRadius: 16))
-//        .overlay(
-//            RoundedRectangle(cornerRadius: 16)
-//                .stroke(Color.alertRed.opacity(0.3), lineWidth: 1)
-//        )
+        .glassEffect(/*.regular.tint(Color.accent.opacity(0.25)),*/ in: .rect(cornerRadius: 16))
     }
 
 }
 
 #Preview {
     AlertCardStyle(allergies: ["chocolate"], restricted: ["chicken", "fish", "shellfish"])
+        .padding(16)
 }

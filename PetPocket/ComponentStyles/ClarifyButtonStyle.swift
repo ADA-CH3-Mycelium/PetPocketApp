@@ -17,7 +17,7 @@ struct ClarifyButtonStyle: View {
                 .font(.caption2)
                 .fontWeight(.light)
                 .frame(width: 26, height: 26)
-                .glassEffect()
+                .glassEffect(.regular.tint(.secondaryG.opacity(1)))
 //                .background(.accent)
 //                .clipShape(Circle())
         }

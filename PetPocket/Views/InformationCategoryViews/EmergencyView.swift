@@ -27,11 +27,15 @@ struct EmergencyView: View {
         ),
     ]
     
+    //  additional notes
+    private var mockEmergencyAdditionalNotes : [AdditionalNotesCardItem] = []
+    
     // headers
     private let emergencyCategoryHeaders: [CategoryHeaderItem] = [
         CategoryHeaderItem(icon: "cross.vial.fill", label: "First Aid Guides"),
         CategoryHeaderItem(icon: "person.circle.fill", label: "Trusted Contacts"),
-        CategoryHeaderItem(icon: "cross.case.fill", label: "Trusted Vet Clinics")
+        CategoryHeaderItem(icon: "cross.case.fill", label: "Trusted Vet Clinics"),
+        CategoryHeaderItem(icon: "text.pad.header", label: "Additional Notes")
     ]
 
     var body: some View {
@@ -59,7 +63,7 @@ struct EmergencyView: View {
 
                     // Contacts
                     VStack(alignment: .leading, spacing: 10){
-                        CategoryHeader(item: emergencyCategoryHeaders[2])
+                        CategoryHeader(item: emergencyCategoryHeaders[1])
                         
                         VStack(spacing: 12) {
                             ForEach(mockContact, id: \.self) { contact in
@@ -73,6 +77,20 @@ struct EmergencyView: View {
                         CategoryHeader(item: emergencyCategoryHeaders[2])
                         ForEach(mockVetClinicItem) { item in
                             VetClinicCard(item: item)
+                        }
+                        
+                    }
+                    
+                    // ADDITIONAL NOTES
+                    if mockEmergencyAdditionalNotes != [] {
+                        
+                        // header
+                        VStack(spacing: 10){
+                            CategoryHeader(item: emergencyCategoryHeaders[1])
+                            
+                            ForEach(mockEmergencyAdditionalNotes) { item in
+                                AddNotesStyle(item: item)
+                            }
                         }
                         
                     }

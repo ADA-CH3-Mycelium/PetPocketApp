@@ -17,10 +17,12 @@ struct PetDashboardView: View {
             ZStack {
                 Color.background.ignoresSafeArea()
                 
-                Text("🐾")
+//                Text("🐾")
+                Image(systemName: "pawprint.fill")
                     .font(.system(size: 130, weight: .bold, design: .rounded))
+                    .foregroundColor(Color.secondaryG)
                     .offset(x: 140, y: 350)
-                    .opacity(0.3)
+
                 
 
                 //ScrollView {
@@ -56,7 +58,7 @@ struct PetDashboardView: View {
                                 .bold()
 
                             Text("3 years old  • Male  • Golden Retriever")
-                                .foregroundColor(.gray)
+                                .foregroundColor(.secondary)
                         }
                         .padding(20)
                         .offset(y: 30)

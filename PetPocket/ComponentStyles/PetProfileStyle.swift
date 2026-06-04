@@ -62,20 +62,20 @@ struct TwCoColGrid: View {
 //                let col = item.isAlert ? Color.alertRed : Color.primaryG
                 NavigationLink(value: item.targetScreen) {
                     ZStack() {
-                        //Color.black.opacity(0.2)
-                        RadialGradient(
-                            gradient: Gradient(colors: [Color.primaryG, .clear]),
-                            center: .bottomTrailing,
-                            startRadius: 0,
-                            endRadius: 300
-                                               
-                        ).opacity(0.95)
+                        Color.primaryG.opacity(0.25)
+//                        RadialGradient(
+//                            gradient: Gradient(colors: [Color.primaryG, .clear]),
+//                            center: .bottomTrailing,
+//                            startRadius: 0,
+//                            endRadius: 300
+//                                               
+//                        ).opacity(0.95)
 
                         // icon
                         Image(systemName: item.icon)
                             .font(.system(size: 80))
-                            .foregroundColor(Color.primaryG.opacity(0.5))
-                            .blendMode(.hardLight)
+                            .foregroundColor(Color.primaryG.opacity(0.2))
+                            //.blendMode(.hardLight)
                             .offset(x: 70, y: 25)
                         
                         // text label
@@ -128,7 +128,7 @@ struct CategoryHeader: View {
     
     var body: some View {
         HStack(spacing: 2) {
-            Image(systemName: item.icon)
+            //Image(systemName: item.icon)
             Text(item.label)
                 .font(.headline)
                 .fontWeight(.bold)

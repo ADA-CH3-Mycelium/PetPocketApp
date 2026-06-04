@@ -71,10 +71,12 @@ struct FoodView: View {
                     if mockFoodAdditionalNotes != [] {
                         
                         // header
-                        CategoryHeader(item: foodCategoryHeaders[1])
-                        
-                        ForEach(mockFoodAdditionalNotes) { item in
-                            AddNotesStyle(item: item)
+                        VStack(spacing: 10){
+                            CategoryHeader(item: foodCategoryHeaders[1])
+                            
+                            ForEach(mockFoodAdditionalNotes) { item in
+                                AddNotesStyle(item: item)
+                            }
                         }
                         
                     }
