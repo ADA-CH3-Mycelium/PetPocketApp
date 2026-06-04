@@ -230,7 +230,7 @@ struct AddingNewPetForm: View {
                     }}) {
                     Text(isSaving ? "Saving…" : "Save")
                         .fontWeight(.semibold)
-                        .foregroundStyle(Color.primaryApp)
+                        .foregroundStyle(.primary)
                 }
                 .disabled(isSaving || petName.trimmingCharacters(in: .whitespaces).isEmpty)
             }
@@ -275,9 +275,3 @@ private extension UIImage {
         }
     }
 }
-//
-//#Preview {
-//    NavigationStack {
-//        AddingNewPetForm()
-//    }
-//}

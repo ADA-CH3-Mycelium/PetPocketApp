@@ -11,16 +11,17 @@ import SwiftUI
 struct PetDashboardView: View {
     @State private var showingManageAccess = false
     @State private var showingGenerateCode = false
-    let pet: PetItem
 
     var body: some View {
             ZStack {
                 Color.background.ignoresSafeArea()
                 
-                Text("🐾")
+//                Text("🐾")
+                Image(systemName: "pawprint.fill")
                     .font(.system(size: 130, weight: .bold, design: .rounded))
+                    .foregroundColor(Color.secondaryG)
                     .offset(x: 140, y: 350)
-                    .opacity(0.3)
+
                 
 
                 //ScrollView {
@@ -56,7 +57,7 @@ struct PetDashboardView: View {
                                 .bold()
 
                             Text("3 years old  • Male  • Golden Retriever")
-                                .foregroundColor(.gray)
+                                .foregroundColor(.secondary)
                         }
                         .padding(20)
                         .offset(y: 30)
@@ -74,72 +75,6 @@ struct PetDashboardView: View {
                     }
                     .padding(20)
                     .offset(y: -65)
-
-                    //                        // Critical Dietary Restrictions Callout Layout Panel
-                    //                        VStack(alignment: .leading, spacing: 6) {
-                    //                            HStack {
-                    //                                Image(systemName: "exclamationmark.triangle.fill")
-                    //                                    .foregroundColor(PawPocketTheme.alertRed)
-                    //                                Text("CRITICAL DIETARY RESTRICTIONS")
-                    //                                    .font(.caption)
-                    //                                    .bold()
-                    //                                    .foregroundColor(PawPocketTheme.alertRed)
-                    //                            }
-                    //                            Text("ALLERGIES: No Chicken.")
-                    //                                .font(.headline)
-                    //                                .foregroundColor(PawPocketTheme.alertRed)
-                    //                            Text("RESTRICTED: Grapes, Chocolate, Onion.")
-                    //                                .font(.caption)
-                    //                                .foregroundColor(PawPocketTheme.textDark)
-                    //                        }
-                    //                        .padding()
-                    //                        .frame(maxWidth: .infinity, alignment: .leading)
-                    //                        .background(PawPocketTheme.alertRed.opacity(0.1))
-                    //                        .cornerRadius(12)
-                    //                        .overlay(
-                    //                            RoundedRectangle(cornerRadius: 12)
-                    //                                .stroke(PawPocketTheme.alertRed.opacity(0.3), lineWidth: 1)
-                    //                        )
-                    //
-                    //                        // Daily Routine List Header Section
-                    //                        HStack {
-                    //                            Text("Daily Feeding Routine")
-                    //                                .font(.headline)
-                    //                            Spacer()
-                    //                            Text("3 Meals / Day")
-                    //                                .font(.subheadline)
-                    //                                .foregroundColor(PawPocketTheme.textSecondary)
-                    //                        }
-                    //
-                    //                        // Breakfast Care Card Component
-                    //                        VStack(alignment: .leading, spacing: 8) {
-                    //                            HStack {
-                    //                                Label("Breakfast", systemImage: "sun.max.fill")
-                    //                                    .font(.headline)
-                    //                                    .foregroundColor(PawPocketTheme.accentOrange)
-                    //                                Spacer()
-                    //                                Text("8:00 AM")
-                    //                                    .font(.caption)
-                    //                                    .bold()
-                    //                                    .padding(.horizontal, 8)
-                    //                                    .padding(.vertical, 4)
-                    //                                    .background(PawPocketTheme.accentOrange.opacity(0.2))
-                    //                                    .cornerRadius(6)
-                    //                            }
-                    //                            Text("1 Cup Dry Kibble")
-                    //                                .font(.subheadline)
-                    //                                .bold()
-                    //                            Text("Mix with warm water to soften the grains. Add probiotic powder.")
-                    //                                .font(.callout)
-                    //                                .foregroundColor(PawPocketTheme.textSecondary)
-                    //                        }
-                    //                        .padding()
-                    //                        .background(PawPocketTheme.cardBackground)
-                    //                        .cornerRadius(16)
-                    //                        .shadow(color: Color.black.opacity(0.03), radius: 8, x: 0, y: 4)
-                    //                    }
-                    //                    .padding(.horizontal)                     .padding(.bottom, 20)
-                    //                }
                 }
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
@@ -179,25 +114,26 @@ struct PetDashboardView: View {
                     }
                     
                 }
-                .navigationDestination(isPresented: $showingManageAccess) {
-                    ManageAccessView()
-                }
-                .sheet(isPresented: $showingGenerateCode) {
-                    GenerateCodeView()
-                }
             }
+        
+        .navigationDestination(for: ScreenViews.self) { screen in
+            switch screen {
+            case .food:     FoodView()
+            case .waste:    WasteView()
+            case .care:     CareView()
+            case .emergency: EmergencyView()
+            }
+        }
+        .navigationDestination(isPresented: $showingManageAccess) {
+            ManageAccessView()
+        }
+        .sheet(isPresented: $showingGenerateCode) {
+            GenerateCodeView()
+        }
         
     }
 }
 
 #Preview {
-    PetDashboardView(pet: PetItem(
-        id: UUID(),
-                name: "Cooper",
-                gender: "Male",
-                age: "3",
-                breed: "Golden Retriever",
-                image: "1PetImage",
-                type: .owning
-            ))
+    PetDashboardView()
 }

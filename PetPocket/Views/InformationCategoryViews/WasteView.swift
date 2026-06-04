@@ -8,8 +8,6 @@
 import SwiftUI
 
 struct WasteView: View {
-    @Environment(PetDetailStore.self) private var detail
-
     var body: some View {
         ZStack {
             Color.background.ignoresSafeArea()
@@ -17,43 +15,28 @@ struct WasteView: View {
 
                 // Waste
                 VStack(alignment: .leading, spacing: 10) {
-                    if detail.wasteItems.isEmpty {
-                        Text("No waste routine added yet.")
-                            .font(.subheadline)
-                            .foregroundColor(.secondary)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                    } else {
-                        ForEach(detail.wasteItems) { item in
-                            RoutineCard(item: item, isEmergency: false)
-                        }
+                    RoutineCard(item: mockData[3], isEmergency: false)
+                    RoutineCard(item: mockData[4], isEmergency: false)
+                    RoutineCard(item: mockData[5], isEmergency: false)
+                    
+                    //add btn
+                    Button(action: {
+                        print("add btn pressed")
+                    }) {Image(systemName: "plus")
+                            .font(.system(size: 24, weight: .semibold))
+                            .padding(10)
+                            .glassEffect()
                     }
+                    
                 }
                 Spacer()
 
             }.padding(20)
-        }
-        .navigationBarTitleDisplayMode(.inline)
-        .tint(Color.primaryG)
-        .toolbar {
-            ToolbarItem(placement: .navigationBarTrailing) {
-                Menu {
-                    Button(action: {}) {
-                        Label("Edit information", systemImage: "pencil")
-                    }
-                    
-                } label: {
-                    Image(systemName: "ellipsis")
-                        .imageScale(.large)
-                        .rotationEffect(Angle(degrees: 90))
-                        .foregroundColor(Color.primaryG)
-                }
-                
-            }
         }
 
     }
 }
 
 #Preview {
-    WasteView().environment(PetDetailStore(pet: .sample))
+    WasteView()
 }

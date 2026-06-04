@@ -9,13 +9,33 @@ import MapKit
 import SwiftUI
 
 struct EmergencyView: View {
-    @Environment(PetDetailStore.self) private var detail
-
+    // mock data
+    // first aid data
+    private var mockFirstAidData: [RoutineCardItem] = [
+        RoutineCardItem(
+            title: "Choking",
+            time: "",
+            description:
+                "Signs: Pawing at mouth, pale gums, inability to breathe.",
+            icon: "lungs.fill"
+        ),
+        RoutineCardItem(
+            title: "Poisoning",
+            time: "",
+            description: "Signs: Vomiting, drooling, unusual behavior.",
+            icon: "pills.fill"
+        ),
+    ]
+    
+    //  additional notes
+    private var mockEmergencyAdditionalNotes : [AdditionalNotesCardItem] = []
+    
     // headers
     private let emergencyCategoryHeaders: [CategoryHeaderItem] = [
         CategoryHeaderItem(icon: "cross.vial.fill", label: "First Aid Guides"),
         CategoryHeaderItem(icon: "person.circle.fill", label: "Trusted Contacts"),
-        CategoryHeaderItem(icon: "cross.case.fill", label: "Trusted Vet Clinics")
+        CategoryHeaderItem(icon: "cross.case.fill", label: "Trusted Vet Clinics"),
+        CategoryHeaderItem(icon: "text.pad.header", label: "Additional Notes")
     ]
 
     var body: some View {
@@ -25,42 +45,54 @@ struct EmergencyView: View {
                 VStack(spacing: 30) {
 
                     // First Aid Guide
-                    if !detail.firstAid.isEmpty {
-                        VStack(alignment: .leading, spacing: 10) {
-                            CategoryHeader(item: emergencyCategoryHeaders[0])
+                    VStack(alignment: .leading, spacing: 10) {
+                        CategoryHeader(item: emergencyCategoryHeaders[0])
 
-                            ScrollView(.horizontal, showsIndicators: false) {
-                                HStack(spacing: 15) {
-                                    ForEach(detail.firstAid) { item in
-                                        RoutineCard(item: item, isEmergency: true)
-                                            .frame(width: 240)
-                                    }
-                                }
-                            }.scrollClipDisabled()
-                        }
+                        ScrollView(.horizontal, showsIndicators: false) {
+                            HStack(spacing: 15) {
+                                RoutineCard(item: mockFirstAidData[0], isEmergency: true)
+                                    .frame(width: 240)
+
+                                RoutineCard(item: mockFirstAidData[1], isEmergency: true)
+                                    .frame(width: 240)
+
+                            }
+
+                        }.scrollClipDisabled()
                     }
 
                     // Contacts
-                    if !detail.contacts.isEmpty {
-                        VStack(alignment: .leading, spacing: 10){
-                            CategoryHeader(item: emergencyCategoryHeaders[1])
-
-                            VStack(spacing: 12) {
-                                ForEach(detail.contacts, id: \.self) { contact in
-                                    ContactCard(contact: contact)
-                                }
+                    VStack(alignment: .leading, spacing: 10){
+                        CategoryHeader(item: emergencyCategoryHeaders[1])
+                        
+                        VStack(spacing: 12) {
+                            ForEach(mockContact, id: \.self) { contact in
+                                ContactCard(contact: contact)
                             }
                         }
                     }
-
+                    
                     // clinic
-                    if !detail.clinics.isEmpty {
-                        VStack {
-                            CategoryHeader(item: emergencyCategoryHeaders[2])
-                            ForEach(detail.clinics) { item in
-                                VetClinicCard(item: item)
+                    VStack {
+                        CategoryHeader(item: emergencyCategoryHeaders[2])
+                        ForEach(mockVetClinicItem) { item in
+                            VetClinicCard(item: item)
+                        }
+                        
+                    }
+                    
+                    // ADDITIONAL NOTES
+                    if mockEmergencyAdditionalNotes != [] {
+                        
+                        // header
+                        VStack(spacing: 10){
+                            CategoryHeader(item: emergencyCategoryHeaders[1])
+                            
+                            ForEach(mockEmergencyAdditionalNotes) { item in
+                                AddNotesStyle(item: item)
                             }
                         }
+                        
                     }
 
                 }.padding(20)
@@ -68,26 +100,10 @@ struct EmergencyView: View {
         }
         .navigationTitle("Emergency Guidelines")
         .navigationBarTitleDisplayMode(.inline)
-        .tint(Color.primaryG)
-        .toolbar {
-            ToolbarItem(placement: .navigationBarTrailing) {
-                Menu {
-                    Button(action: {}) {
-                        Label("Edit information", systemImage: "pencil")
-                    }
-                    
-                } label: {
-                    Image(systemName: "ellipsis")
-                        .imageScale(.large)
-                        .rotationEffect(Angle(degrees: 90))
-                        .foregroundColor(Color.primaryG)
-                }
-                
-            }
-        }
+
     }
 }
 
 #Preview {
-    EmergencyView().environment(PetDetailStore(pet: .sample))
+    EmergencyView()
 }
