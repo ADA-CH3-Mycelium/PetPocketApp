@@ -14,7 +14,14 @@ struct LoginView: View {
     @State private var password = ""
     @State private var navigateToPetList = false
     @State private var navigateToRegister = false
-
+    
+    private var isLoginValid: Bool {
+        let emailValid = email.contains("@") && email.contains(".")
+        
+        return emailValid &&
+               !password.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+    }
+    
     var body: some View {
         NavigationStack {
             ZStack {
@@ -51,10 +58,13 @@ struct LoginView: View {
 
                                 Button("Forgot Password?") {}
                                     .foregroundColor(.primaryG)
-                                    .fontWeight(.medium)
+                                    .font(.caption)
                             }
 
-                            PrimaryButton(title: "Login") {
+                            PrimaryButton(
+                                title: "Login",
+                                isEnabled: isLoginValid
+                            ) {
                                 navigateToPetList = true
                             }
 

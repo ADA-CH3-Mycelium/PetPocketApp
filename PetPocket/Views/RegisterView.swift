@@ -15,6 +15,13 @@ struct RegisterView: View {
     @State private var confirmPassword = ""
     @State private var navigateToLogin = false
     
+    private var isRegisterValid: Bool {
+        !name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty &&
+        !email.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty &&
+        !password.isEmpty &&
+        !confirmPassword.isEmpty &&
+        password == confirmPassword
+    }
 
     var body: some View {
 
@@ -54,7 +61,10 @@ struct RegisterView: View {
                         text: $confirmPassword
                     )
 
-                    PrimaryButton(title: "Sign up") {
+                    PrimaryButton(
+                        title: "Sign up",
+                        isEnabled: isRegisterValid
+                    ) {
                         navigateToLogin = true
                     }
                     
