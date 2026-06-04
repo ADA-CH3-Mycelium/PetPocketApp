@@ -1,20 +1,45 @@
 //
-//  PetListView.swift
+//  PetListsView.swift
 //  PetPocket
 //
-//  Data-driven home. Replaces the static EmptyStatePetList / AddedStatePetList
-//  mockups: loads the signed-in user's profile + pets from Supabase and shows
-//  the empty state or the pet list accordingly.
+//  Created by Michel Pierce on 03/06/26.
 //
 
 import SwiftUI
 
 struct PetListView: View {
-    @State private var store = PetStore()
     @State private var showAddModal = false
     @State private var navigateToOwnPet = false
     @State private var navigateToSitPet = false
-
+    @State private var navigateToDashboard = false
+    @State private var searchPet: String = ""
+    
+    var mockData : [PetItem] = [
+        PetItem(
+            id: UUID(),
+            name: "Cooper",
+            gender: "Male",
+            age: "3",
+            breed: "Golden Retriever",
+            image: "1PetImage",
+            type: .owning
+        ),
+        PetItem(
+            id: UUID(),
+            name: "Luna",
+            gender: "Male",
+            age: "4",
+            breed: "Orange Cat",
+            image: "2PetImage",
+            type: .sitting(
+                sitter: "Sarah",
+                sitterImage: "SarahPic",
+                dateRange: "Nov 5th - Nov 10th"
+            )
+        )
+    ]
+    
+    
     var body: some View {
         NavigationStack {
             Group {
@@ -137,26 +162,14 @@ struct PetListView: View {
                         Text("Your Pets")
                             .font(.title2).fontWeight(.bold)
                             .foregroundColor(.primary)
-                        Text(subtitle)
-                            .font(.subheadline)
-                            .foregroundColor(.secondary)
+                        Text("2 friends are under your care")
+                            .font(.caption)
+                            .foregroundColor(.primaryG)
                     }
-                    Spacer()
-                    Button(action: { showAddModal = true }) {
-                        Image(systemName: "plus")
-                            .font(.system(size: 16, weight: .semibold))
-                            .foregroundColor(.white)
-                            .frame(width: 36, height: 36)
-                            .background(Color.primaryApp)
-                            .clipShape(Circle())
-                    }
-                }
-                .padding(.horizontal, 20)
-                .padding(.bottom, 16)
-
-                VStack(spacing: 16) {
-                    ForEach(store.ownedPets) { pet in
-                        NavigationLink(value: pet) {
+                    
+                    // Pet cards
+                    VStack(spacing: 16) {
+                        ForEach(mockData){ pet in
                             PetListCard(item: PetItem(
                                 id: pet.id,
                                 name: pet.name,
@@ -193,33 +206,39 @@ struct PetListView: View {
                                     )
                                 ))
                             }
-                            .buttonStyle(.plain)
                         }
-                    }
+                        
+                        // add new pet
+                        Button(action: { showAddModal = true }) {
+                            Image(systemName: "plus")
+                                .fontWeight(.bold)
+                                .frame(width: 36, height: 36)
+                                .glassEffect()
+                        }
+                    } .padding(20)
                 }
-                .padding(.horizontal, 20)
-                .padding(.bottom, 32)
+                .navigationBarHidden(true)
+                .searchable(text: $searchPet)
+                .searchToolbarBehavior(.minimize)
+                .navigationDestination(isPresented: $navigateToDashboard) {
+                    PetDashboardView()
+                }
+                .navigationDestination(isPresented: $navigateToOwnPet) {
+                    AddingNewPetForm()
+                }
+                .navigationDestination(isPresented: $navigateToSitPet) {
+                    PetCodeInput()
+                }
+                .sheet(isPresented: $showAddModal) {
+                    AddPetModal(
+                        isPresented: $showAddModal,
+                        onOwnPet: { navigateToOwnPet = true },
+                        onSitPet: { navigateToSitPet = true }
+                    )
+                    .presentationDetents([.height(400)])
+                    .presentationCornerRadius(24)
+                }
             }
-        }
-    }
-
-    private var subtitle: String {
-        let n = store.ownedPets.count + store.sittingPets.count
-        return "\(n) pet friend\(n == 1 ? "" : "s") under your care"
-    }
-
-    private func addButton(label: String, wide: Bool) -> some View {
-        Button(action: { showAddModal = true }) {
-            HStack(spacing: 8) {
-                Image(systemName: "plus").font(.system(size: 17, weight: .semibold))
-                Text(label).font(.system(size: 17, weight: .semibold))
-            }
-            .frame(maxWidth: wide ? 220 : nil)
-            .foregroundColor(.white)
-            .padding(.horizontal, 28)
-            .padding(.vertical, 14)
-            .background(Color.primaryG)
-            .clipShape(RoundedRectangle(cornerRadius: 14))
         }
     }
 }

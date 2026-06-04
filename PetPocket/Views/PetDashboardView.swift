@@ -11,51 +11,7 @@ import SwiftUI
 struct PetDashboardView: View {
     @State private var showingManageAccess = false
     @State private var showingGenerateCode = false
-    @State private var showingChatPage = false
-    
-    let pet: PetRow
-    @State private var detail: PetDetailStore
-    
-    init(pet: PetRow) {
-        self.pet = pet
-        _detail = State(initialValue: PetDetailStore(pet: pet))
-    }
-    
-    // DB
-    @State var catItem: [CategoryItem2] = [
-        // FOOD
-        CategoryItem2(
-            icon: "fork.knife",
-            label: "Food",
-            isActive: false,
-            isAlert: false,
-            targetScreen: .food
-        ),
-        // WASTE
-        CategoryItem2(
-            icon: "leaf.fill",
-            label: "Waste",
-            isActive: false,
-            isAlert: false,
-            targetScreen: .waste
-        ),
-        // CARE
-        CategoryItem2(
-            icon: "heart.text.square.fill",
-            label: "Care Notes",
-            isActive: false,
-            isAlert: false,
-            targetScreen: .care
-        ),
-        // EMERGENCY
-        CategoryItem2(
-            icon: "exclamationmark.shield.fill",
-            label: "Emergency",
-            isActive: false,
-            isAlert: true,
-            targetScreen: .emergency
-        ),
-    ]
+    @State private var selectedScreen: ScreenViews? = nil
     
     var body: some View {
         ZStack {
@@ -123,62 +79,61 @@ struct PetDashboardView: View {
                     .offset(y: -100)
 
                     
-                    // Categories
+                        .scaledToFill()
+                        .frame(width: 400, height: 500)
+                        .mask(
+                            LinearGradient(
+                                gradient: Gradient(stops: [
+                                    .init(color: .black, location: 0.0),
+                                    .init(color: .black, location: 0.75),
+                                    .init(color: .clear, location: 1),
+                                ]),
+                                startPoint: .top,
+                                endPoint: .bottom
+                            )
+                        )
                     
-                    VStack(alignment: .leading, spacing: 10) {
-                        Text("Here are my habits and needs 🐾")
+                    // TEXT
+                    VStack(alignment: .leading) {
+                        Text("Hi, I'm")
                             .font(.body)
+                        //.fontWeight(.semibold)
+                        //.foregroundColor(.gray)
+                        Text("Cooper")
+                            .font(.largeTitle)
+                            .bold()
                         
-                        TwCoColGrid(catItem: catItem)
+                        Text("3 years old  • Male  • Golden Retriever")
+                            .foregroundColor(.secondary)
                     }
                     .padding(20)
-                    .offset(y: -65)
-                }
-                .navigationBarTitleDisplayMode(.inline)
-                .toolbar {
-                    // clarify chat
-                    ToolbarItem(placement: .navigationBarTrailing) {
-                        Button(action: {
-                            showingChatPage = true
-                        }) {
-                            Image(systemName: "questionmark.bubble.fill")
-                                .imageScale(.large)
-                                .foregroundStyle(Color.primaryG)
-                        }
-                    }
-                    
-                    // menu
-                    ToolbarItem(placement: .navigationBarTrailing) {
-                        Menu {
-                            Button(action: { showingManageAccess = true }) {
-                                Label(
-                                    "Manage access",
-                                    systemImage: "person.badge.key"
-                                )
-                            }
-                            Button(action: {}) {
-                                Label("Edit information", systemImage: "pencil")
-                            }
-                            Button(action: { showingGenerateCode = true }) {
-                                Label(
-                                    "Generate new code",
-                                    systemImage: "qrcode"
-                                )
-                            }
-                        } label: {
-                            Image(systemName: "ellipsis")
-                                .imageScale(.large)
-                                .rotationEffect(Angle(degrees: 90))
-                                .foregroundColor(Color.primaryG)
-                        }
-                    }
+                    .offset(y: 30)
                     
                 }
-                .navigationDestination(isPresented: $showingManageAccess) {
-                    ManageAccessView()
+                .offset(y: -100)
+                
+                // Categories
+                
+                VStack(alignment: .leading, spacing: 10) {
+                    Text("Here are my habits and needs 🐾")
+                        .font(.body)
+                    
+                    TwCoColGrid(catItem: catItem) { screen in
+                        selectedScreen = screen
+                    }
                 }
-                .navigationDestination(isPresented: $showingChatPage) {
-                    ClarifySheetView()
+                .padding(20)
+                .offset(y: -65)
+            }
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                // clarify chat
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button(action: {}) {
+                        Image(systemName: "questionmark.bubble.fill")
+                            .imageScale(.large)
+                            .foregroundStyle(Color.primaryG)
+                    }
                 }
                 .navigationDestination(for: ScreenViews.self) { screen in
                     switch screen {

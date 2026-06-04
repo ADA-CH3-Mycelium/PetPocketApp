@@ -330,9 +330,9 @@ private struct AttachmentSuggestionCard: View {
 #Preview("Sheet (no nav stack)") {
     ClarifySheetView(isInNavigationStack: false)
 }
-
-#Preview("Inside NavigationStack") {
-    NavigationStack {
-        ClarifySheetView(isInNavigationStack: true)
-    }
-}
+//
+//#Preview("Inside NavigationStack") {
+//    NavigationStack {
+//        ClarifySheetView(isInNavigationStack: true)
+//    }
+//}

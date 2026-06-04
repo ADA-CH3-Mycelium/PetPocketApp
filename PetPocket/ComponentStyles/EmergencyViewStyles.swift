@@ -25,7 +25,7 @@ var mockContact: [ContactCardItem] = [
 ]
 
 var mockVetClinicItem: [VetClinicCardItem] = [
-    VetClinicCardItem(name: "Oakwood Veterinary Clinic", address: "1240 Oakwood Ave, Brookside, NY 10012", phone: "(555) 012-3456", note: "24/7 Emergency Line")
+    VetClinicCardItem(name: "Oakwood Veterinary Clinic", address: "1240 Oakwood Ave, Brookside, NY 10012", phone: "(555) 012-3456", note: "their 24/7 emergency line, see dr. michel")
 ]
 
 // MARK: - CONTACT CARD
@@ -38,38 +38,59 @@ struct ContactCard: View {
     var body: some View {
         HStack(spacing: 12) {
             // initial bubble
-            Text(contact.initial)
-                .font(.title2)
-                .fontWeight(.semibold)
-                .foregroundStyle(Color.primaryG)
-                .frame(width: 44, height: 44)
-                .glassEffect()
+//            Text(mockContact[0].initial)
+//                .font(.title2)
+//                .fontWeight(.semibold)
+//                .foregroundStyle(Color.primaryG)
+//                .frame(width: 44, height: 44)
+//                .glassEffect()
 
             // text
             VStack(alignment: .leading, spacing: 2) {
-                HStack {
-                    Text(contact.name)
+                HStack(spacing: 2) {
+                    Image(systemName: "sparkle")
                         .font(.subheadline)
+                        .foregroundColor(Color.primaryG)
+                    Text(contact.name)
+                        .font(.headline)
                         .fontWeight(.bold)
+                        .foregroundColor(Color.primaryG)
 
                     Spacer()
 
                     Text(contact.relationship.uppercased())
                         .font(.caption)
-
-                        .foregroundStyle(.gray)
+                        .foregroundStyle(.accent)
                 }
+                
+                HStack(spacing: 2) {
 
+                    Text(contact.phone)
+                        .font(.caption)
+                    
+                    Button {
+                        print("copy phone num pressed")
+                    } label: {
+                        Image(systemName: "square.on.square")
+                            .font(.caption2)
+                            .foregroundColor(.secondary)
+                    }
+                    
+                                        
+                }
+                
                 Text(contact.note)
-                    .font(.caption)
+                    .font(.body)
+                    .padding(.top, 5)
                     .foregroundStyle(.gray)
             }
 
             // call btn
-            Image(systemName: "phone.fill")
-                .foregroundColor(Color.green)
-                .frame(width: 44, height: 44)
-                .glassEffect()
+//            Image(systemName: "phone.fill")
+//                .foregroundColor(Color.green)
+//                .frame(width: 44, height: 44)
+//                .glassEffect()
+            
 
         }
         .padding()
@@ -86,29 +107,48 @@ struct VetClinicCard: View {
     var body: some View {
             VStack(alignment: .leading, spacing: 5) {
                 // text
-                Text(item.name)
-                    .font(.headline)
+                //name
+                HStack(spacing: 2) {
+                    Image(systemName: "cross.case.fill")
+                        .font(.subheadline)
+                    Text(item.name)
+                        .font(.headline)
+                    
+                }
+                .fontWeight(.bold)
+                .foregroundColor(Color.primaryG)
 
+                //address
                 Text(item.address)
                     .font(.caption)
                     .foregroundStyle(.secondary)
 
-                Text(item.note.isEmpty ? item.phone : item.phone + " • \(item.note)")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-
-
-                    // call btn
-                    Button(action: {}) {
-                        HStack(spacing: 6) {
-                            Image(systemName: "phone.fill")
-                            Text("Call Vet")
-                        }
-                        .font(.caption)
-                        .padding(.horizontal, 16)
-                        .padding(.vertical, 7)
-                        .glassEffect(in: .rect(cornerRadius: 12))
+                // phone number
+                HStack(spacing: 2) {
+                    Text(item.phone)
+                        
+                    Button {
+                        print("copy vet phone num pressed")
+                    } label: {
+                        Image(systemName: "square.on.square")
                     }
+                    
+                }
+                .font(.caption)
+                    .foregroundStyle(.secondary)
+                
+                
+                    // call btn
+//                    Button(action: {}) {
+//                        HStack(spacing: 6) {
+//                            Image(systemName: "phone.fill")
+//                            Text("Call Vet")
+//                        }
+//                        .font(.caption)
+//                        .padding(.horizontal, 16)
+//                        .padding(.vertical, 7)
+//                        .glassEffect(in: .rect(cornerRadius: 12))
+//                    }
 
                 // map
                 Map(
@@ -138,7 +178,7 @@ struct VetClinicCard: View {
                         .foregroundColor(.secondary)
                 }
             }
-            .padding()
+            .padding(20)
             .frame(maxWidth: .infinity, alignment: .leading)
             .modifier(greenEdgeCard())
 

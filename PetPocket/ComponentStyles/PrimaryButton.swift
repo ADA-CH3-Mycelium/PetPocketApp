@@ -9,10 +9,11 @@
 import SwiftUI
 
 struct PrimaryButton: View {
-
+    
     let title: String
+    let isEnabled: Bool
     let action: () -> Void
-
+    
     var body: some View {
         Button(action: action) {
             Text(title)
@@ -21,13 +22,12 @@ struct PrimaryButton: View {
                 .frame(maxWidth: .infinity)
                 .padding()
                 .background(
-                    Color(
-                        red: 69/255,
-                        green: 109/255,
-                        blue: 82/255
-                    )
+                    isEnabled
+                    ? Color.primaryG
+                    : Color.gray.opacity(0.5)
                 )
                 .cornerRadius(18)
         }
+        .disabled(!isEnabled)
     }
 }

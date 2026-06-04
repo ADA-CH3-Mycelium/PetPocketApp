@@ -75,5 +75,5 @@ struct CareView: View {
 }
 
 #Preview {
-    CareView().environment(PetDetailStore(pet: .sample))
+    CareView()
 }

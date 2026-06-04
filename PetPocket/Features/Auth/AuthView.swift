@@ -16,7 +16,6 @@ struct AuthView: View {
     @State private var password = ""
 
     var body: some View {
-        NavigationStack {
             Form {
                 Section {
                     if isSignUp {
@@ -73,7 +72,7 @@ struct AuthView: View {
                     .font(.subheadline)
                 }
             }
-        }
+
     }
 }
 

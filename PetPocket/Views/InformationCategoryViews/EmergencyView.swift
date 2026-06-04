@@ -136,6 +136,9 @@ struct EmergencyView: View {
                 AddCardButton { showAddContact = true }
             }
         }
+        .navigationTitle("Emergency Guidelines")
+        .navigationBarTitleDisplayMode(.inline)
+
     }
 
     // MARK: Clinics
@@ -169,5 +172,5 @@ struct EmergencyView: View {
 }
 
 #Preview {
-    EmergencyView().environment(PetDetailStore(pet: .sample))
+    EmergencyView()
 }

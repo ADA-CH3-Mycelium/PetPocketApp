@@ -75,5 +75,5 @@ struct WasteView: View {
 }
 
 #Preview {
-    WasteView().environment(PetDetailStore(pet: .sample))
+    WasteView()
 }

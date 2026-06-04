@@ -13,7 +13,6 @@ struct AddPetModal: View {
     var onSitPet: () -> Void
     
     var body: some View {
-        NavigationStack {
             VStack(spacing: 24) {
                 // Header
                 HStack {
@@ -68,7 +67,7 @@ struct AddPetModal: View {
                 
                 Spacer()
             }
-        }
+        
     }
 }
 

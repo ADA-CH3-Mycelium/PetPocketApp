@@ -9,11 +9,11 @@ import SwiftUI
 import PhotosUI
 
 struct AddingNewPetForm: View {
-
+    
     @Environment(\.dismiss) private var dismiss
-
-    let store: PetStore
-
+    
+    //    let store: PetStore
+    
     @State private var petName = ""
     @State private var selectedGender = "Male"
     @State private var age = ""
@@ -23,10 +23,10 @@ struct AddingNewPetForm: View {
     @State private var pickedItem: PhotosPickerItem? = nil
     @State private var imageData: Data? = nil
     @State private var isSaving = false
-
-
+    
+    
     let genders = ["Male", "Female"]
-
+    
     var body: some View {
         ScrollView {
             VStack(spacing: 20) {
@@ -38,13 +38,13 @@ struct AddingNewPetForm: View {
                             .font(.title2)
                             .fontWeight(.bold)
                             .foregroundColor(.primary)
-
+                        
                         Text("Tell us about your furry companion")
                             .font(.subheadline)
                             .foregroundColor(.secondary)
                     }
                     .frame(maxWidth: .infinity, alignment: .center)
-
+                    
                     // Photo picker
                     PhotosPicker(selection: $pickedItem, matching: .images, photoLibrary: .shared()) {
                         ZStack {
@@ -72,27 +72,27 @@ struct AddingNewPetForm: View {
                         Task { await loadPicked(newItem) }
                     }
                     .frame(maxWidth: .infinity, alignment: .center)
-
+                    
                     // Pet Name
                     VStack(alignment: .leading, spacing: 6) {
                         Text("Pet Name")
                             .font(.subheadline)
                             .fontWeight(.medium)
                             .foregroundColor(.primary)
-
+                        
                         TextField("e.g. Buddy", text: $petName)
                             .padding(12)
                             .background(Color(.systemGray6))
                             .clipShape(RoundedRectangle(cornerRadius: 10))
                     }
-
+                    
                     // Gender toggle
                     VStack(alignment: .leading, spacing: 6) {
                         Text("Gender")
                             .font(.subheadline)
                             .fontWeight(.medium)
                             .foregroundColor(.primary)
-
+                        
                         HStack(spacing: 0) {
                             ForEach(genders, id: \.self) { gender in
                                 Button(action: { selectedGender = gender }) {
@@ -105,7 +105,7 @@ struct AddingNewPetForm: View {
                                     .background(
                                         selectedGender == gender
                                         ? Color.primaryG
-                                            : Color(.systemGray6)
+                                        : Color(.systemGray6)
                                     )
                                     .foregroundColor(
                                         selectedGender == gender ? .white : .secondary
@@ -115,7 +115,7 @@ struct AddingNewPetForm: View {
                         }
                         .clipShape(RoundedRectangle(cornerRadius: 10))
                     }
-
+                    
                     // Age + Species
                     HStack(spacing: 12) {
                         VStack(alignment: .leading, spacing: 6) {
@@ -123,41 +123,50 @@ struct AddingNewPetForm: View {
                                 .font(.subheadline)
                                 .fontWeight(.medium)
                                 .foregroundColor(.primary)
-
+                            
                             TextField("e.g. 3 yrs", text: $age)
                                 .padding(12)
                                 .background(Color(.systemGray6))
                                 .clipShape(RoundedRectangle(cornerRadius: 10))
                         }
-
+                        
                         VStack(alignment: .leading, spacing: 6) {
                             Text("Species")
                                 .font(.subheadline)
                                 .fontWeight(.medium)
                                 .foregroundColor(.primary)
-
+                            
                             TextField("e.g. Dog", text: $species)
                                 .padding(12)
                                 .background(Color(.systemGray6))
                                 .clipShape(RoundedRectangle(cornerRadius: 10))
                         }
                     }
-
+                    
                     // Breed
                     VStack(alignment: .leading, spacing: 6) {
                         Text("Breed")
                             .font(.subheadline)
                             .fontWeight(.medium)
                             .foregroundColor(.primary)
-
+                        
                         TextField("e.g. Golden Retriever", text: $breed)
                             .padding(12)
                             .background(Color(.systemGray6))
                             .clipShape(RoundedRectangle(cornerRadius: 10))
                     }
-
+                    
                     // Save button
-                    Button(action: { Task { await save() } }) {
+                    Button(action: {
+                        //                        Task { await save() }
+                        isSaving = true
+                        
+                        Task {
+                            try? await Task.sleep(for: .seconds(3))
+                            
+                            dismiss()
+                        }
+                    }) {
                         Text(isSaving ? "Saving…" : "Save Pet")
                             .font(.system(size: 16, weight: .semibold))
                             .frame(maxWidth: 220)
@@ -170,13 +179,13 @@ struct AddingNewPetForm: View {
                     .frame(maxWidth: .infinity, alignment: .center)
                     .padding(.top, 4)
                     .disabled(isSaving || petName.trimmingCharacters(in: .whitespaces).isEmpty)
-
-                    if let error = store.errorMessage {
-                        Text(error)
-                            .font(.caption)
-                            .foregroundColor(.red)
-                            .multilineTextAlignment(.center)
-                    }
+                    
+                    //                    if let error = store.errorMessage {
+                    //                        Text(error)
+                    //                            .font(.caption)
+                    //                            .foregroundColor(.red)
+                    //                            .multilineTextAlignment(.center)
+                    //                    }
                 }
                 .padding(20)
                 .background(Color(.systemBackground))
@@ -207,33 +216,41 @@ struct AddingNewPetForm: View {
                     .font(.headline)
                     .fontWeight(.bold)
                     .foregroundStyle(Color.primaryG)
-
+                
             }
             ToolbarItem(placement: .topBarTrailing) {
-                Button(action: { Task { await save() } }) {
+                Button(action: {
+                    //                        Task { await save() }
+                    isSaving = true
+                    
+                    Task {
+                        try? await Task.sleep(for: .seconds(3))
+                        
+                        dismiss()
+                    }}) {
                     Text(isSaving ? "Saving…" : "Save")
                         .fontWeight(.semibold)
-                        .foregroundStyle(Color.primaryApp)
+                        .foregroundStyle(.primary)
                 }
                 .disabled(isSaving || petName.trimmingCharacters(in: .whitespaces).isEmpty)
             }
         }
     }
-
-    private func save() async {
-        isSaving = true
-        let ok = await store.addPet(
-            name: petName.trimmingCharacters(in: .whitespaces),
-            gender: selectedGender,
-            ageText: age,
-            species: species,
-            breed: breed,
-            imageData: imageData
-        )
-        isSaving = false
-        if ok { dismiss() }
-    }
-
+    
+    //    private func save() async {
+    //        isSaving = true
+    //        let ok = await store.addPet(
+    //            name: petName.trimmingCharacters(in: .whitespaces),
+    //            gender: selectedGender,
+    //            ageText: age,
+    //            species: species,
+    //            breed: breed,
+    //            imageData: imageData
+    //        )
+    //        isSaving = false
+    //        if ok { dismiss() }
+    //    }
+    
     /// Loads the picked photo, downscales it, and keeps JPEG data for upload.
     private func loadPicked(_ item: PhotosPickerItem?) async {
         guard let item,
@@ -256,11 +273,5 @@ private extension UIImage {
         return renderer.image { _ in
             draw(in: CGRect(origin: .zero, size: newSize))
         }
-    }
-}
-
-#Preview {
-    NavigationStack {
-        AddingNewPetForm(store: PetStore())
     }
 }

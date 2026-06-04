@@ -80,13 +80,12 @@ struct RoutineCard: View {
     let isEmergency: Bool
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            HStack(alignment: .top) {
-                // left
-                VStack(alignment: .leading, spacing: 5) {
-                    HStack {
-                        Image(systemName: item.icon)
-                            .font(.caption)
+        HStack(alignment: .top) {
+            // left
+            VStack(alignment: .leading, spacing: 5) {
+                HStack(spacing: 2) {
+                    Image(systemName: item.icon)
+                        .font(.caption)
 
                         Text(
                             item.time.isEmpty
@@ -102,26 +101,28 @@ struct RoutineCard: View {
 
                 }
 
-                Spacer()
-
-                // right — media only
-                if let media = item.media {
-                    MediaThumbnailView(media: media)
-                }
-            }
-
-            // clarify pinned bottom-right
-            if isEmergency != true {
-                HStack {
-                    Spacer()
+Spacer(minLength: 7)
+            // right
+            VStack(alignment: .trailing, spacing: 7) {
+                // clarify btn
+                if isEmergency != true {
                     ClarifyButtonStyle()
+                        .offset(y: -4)
+                }
+                
+                // media
+                if item.media != nil {
+                    if let media = item.media {
+                        MediaThumbnailView(media: media)
+                    }
                 }
             }
         }
         .padding(20)
+        .frame(maxWidth: .infinity)
         .clipShape(RoundedRectangle(cornerRadius: 16))
         .glassEffect(
-            .regular.tint(colorScheme == .dark ? .clear : .white),
+//            .regular.tint(colorScheme == .dark ? .clear : .white),
             in: .rect(cornerRadius: 16)
         )
     }
