@@ -123,6 +123,8 @@ struct VetClinicCardItem: Identifiable, Hashable {
     var address: String
     var phone: String
     var note: String
+    var latitude: Double?
+    var longitude: Double?
 }
 
 // MARK: - Message Modle

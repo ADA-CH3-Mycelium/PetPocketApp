@@ -10,7 +10,7 @@ import SwiftUI
 struct PetCodeInput: View {
     @Environment(\.dismiss) private var dismiss
 
-//    let store: PetStore
+    let store: PetStore
 
     @State private var code = ""
     @State private var isJoining = false
@@ -76,20 +76,7 @@ struct PetCodeInput: View {
                 .shadow(color: .black.opacity(0.05), radius: 10, x: 0, y: 3)
 
                 // Join button
-                Button(action: {
-//                    Task { await join() }
-                    isJoining = true
-                        
-                        // 2. Launch an asynchronous task so the UI remains responsive
-                        Task {
-                            // Wait for 3 seconds (available in iOS 16+)
-                            try? await Task.sleep(for: .seconds(3))
-                            
-                            // 3. Dismiss the view
-                            // (SwiftUI safely handles this on the main thread automatically inside a Task)
-                            dismiss()
-                        }
-                }) {
+                Button(action: { Task { await join() } }) {
                     Text(isJoining ? "Joining…" : "Join Pet Profile")
                         .font(.system(size: 16, weight: .semibold))
                         .frame(maxWidth: 220)
@@ -102,13 +89,13 @@ struct PetCodeInput: View {
                 .frame(maxWidth: .infinity, alignment: .center)
                 .disabled(isJoining || code.trimmingCharacters(in: .whitespaces).isEmpty)
 
-//                if let error = store.errorMessage {
-//                    Text(error)
-//                        .font(.caption)
-//                        .foregroundColor(.red)
-//                        .multilineTextAlignment(.center)
-//                        .frame(maxWidth: .infinity)
-//                }
+                if let error = store.errorMessage {
+                    Text(error)
+                        .font(.caption)
+                        .foregroundColor(.red)
+                        .multilineTextAlignment(.center)
+                        .frame(maxWidth: .infinity)
+                }
 
                 Spacer(minLength: 40)
 
@@ -162,16 +149,10 @@ struct PetCodeInput: View {
         }
     }
 
-//    private func join() async {
-//        isJoining = true
-//        let ok = await store.redeem(code: code)
-//        isJoining = false
-//        if ok { dismiss() }
-//    }
+    private func join() async {
+        isJoining = true
+        let ok = await store.redeem(code: code)
+        isJoining = false
+        if ok { dismiss() }
+    }
 }
-//
-//#Preview {
-//    NavigationStack {
-//        PetCodeInput()
-//    }
-//}

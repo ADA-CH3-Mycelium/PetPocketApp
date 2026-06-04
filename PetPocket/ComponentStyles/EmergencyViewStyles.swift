@@ -150,38 +150,51 @@ struct VetClinicCard: View {
 //                        .glassEffect(in: .rect(cornerRadius: 12))
 //                    }
 
-                // map
-                Map(
-                    initialPosition: .region(
+                // map — only when real coordinates are set
+                if let lat = item.latitude, let lon = item.longitude {
+                    let coord = CLLocationCoordinate2D(latitude: lat, longitude: lon)
+
+                    Map(initialPosition: .region(
                         MKCoordinateRegion(
-                            center: CLLocationCoordinate2D(
-                                latitude: 40.7128,
-                                longitude: -74.0060
-                            ),
-                            span: MKCoordinateSpan(
-                                latitudeDelta: 0.05,
-                                longitudeDelta: 0.05
-                            )
+                            center: coord,
+                            span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)
                         )
-                    )
-                )
-                .frame(height: 150)
-                .clipShape(RoundedRectangle(cornerRadius: 12))
-                .padding(.top, 8)
-                
-                // hyperlink
-                HStack {
-                    Spacer()
-                    
-                    Link("Open in Maps \(Image(systemName: "arrow.up.forward.app"))", destination: URL(string: "https://www.google.com/maps/place/Oakwood+Veterinary+Clinic/@42.7555251,-73.6713186,17z/data=!3m2!4b1!5s0x89de0fef7133a4cd:0x57986344fe15209d!4m6!3m5!1s0x89de0fef7985b2e1:0x9bc46f9d77e6bcde!8m2!3d42.7555212!4d-73.6687437!16s%2Fg%2F1w4vky7d?entry=ttu&g_ep=EgoyMDI2MDUyNy4wIKXMDSoASAFQAw%3D%3D")!)
-                        .font(.caption)
-                        .foregroundColor(.secondary)
+                    )) {
+                        Marker(item.name, coordinate: coord)
+                            .tint(Color.primaryG)
+                    }
+                    .frame(height: 150)
+                    .clipShape(RoundedRectangle(cornerRadius: 12))
+                    .padding(.top, 8)
+
+                    // hyperlink — opens Apple Maps at the clinic coordinate
+                    HStack {
+                        Spacer()
+                        if let url = mapsURL(lat: lat, lon: lon, name: item.name) {
+                            Link("Open in Maps \(Image(systemName: "arrow.up.forward.app"))", destination: url)
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                        }
+                    }
+                } else {
+                    HStack(spacing: 6) {
+                        Image(systemName: "mappin.slash")
+                        Text("No location set")
+                    }
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .padding(.top, 8)
                 }
             }
             .padding(20)
             .frame(maxWidth: .infinity, alignment: .leading)
             .modifier(greenEdgeCard())
 
+    }
+
+    private func mapsURL(lat: Double, lon: Double, name: String) -> URL? {
+        let q = name.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "Vet+Clinic"
+        return URL(string: "http://maps.apple.com/?ll=\(lat),\(lon)&q=\(q)")
     }
 }
 

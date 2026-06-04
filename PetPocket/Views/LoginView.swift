@@ -12,9 +12,10 @@ struct LoginView: View {
 
     @State private var email = ""
     @State private var password = ""
-    @State private var navigateToPetList = false
     @State private var navigateToRegister = false
-    
+    @State private var isLoggingIn = false
+    @State private var loginError: String?
+
     private var isLoginValid: Bool {
         let emailValid = email.contains("@") && email.contains(".")
         
@@ -62,10 +63,17 @@ struct LoginView: View {
                             }
 
                             PrimaryButton(
-                                title: "Login",
-                                isEnabled: isLoginValid
+                                title: isLoggingIn ? "Logging in…" : "Login",
+                                isEnabled: isLoginValid && !isLoggingIn
                             ) {
-                                navigateToPetList = true
+                                Task { await login() }
+                            }
+
+                            if let loginError {
+                                Text(loginError)
+                                    .font(.caption)
+                                    .foregroundColor(.red)
+                                    .multilineTextAlignment(.center)
                             }
 
                             HStack {
@@ -108,12 +116,21 @@ struct LoginView: View {
             }
                     .background(Color(.systemGroupedBackground))
             
-                    .navigationDestination(isPresented: $navigateToPetList) {
-                        PetListView()
-                    }
                     .navigationDestination(isPresented: $navigateToRegister) {
                         RegisterView()
                     }
+        }
+    }
+
+    private func login() async {
+        isLoggingIn = true
+        loginError = nil
+        await AuthManager.shared.signIn(email: email, password: password)
+        isLoggingIn = false
+        // On success, AuthManager.isAuthenticated flips and the app root
+        // (PetPocketApp) swaps to PetListView automatically — no push needed.
+        if !AuthManager.shared.isAuthenticated {
+            loginError = AuthManager.shared.errorMessage ?? "Login failed."
         }
     }
 }

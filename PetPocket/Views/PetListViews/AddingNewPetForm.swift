@@ -11,9 +11,9 @@ import PhotosUI
 struct AddingNewPetForm: View {
     
     @Environment(\.dismiss) private var dismiss
-    
-    //    let store: PetStore
-    
+
+    let store: PetStore
+
     @State private var petName = ""
     @State private var selectedGender = "Male"
     @State private var age = ""
@@ -157,16 +157,7 @@ struct AddingNewPetForm: View {
                     }
                     
                     // Save button
-                    Button(action: {
-                        //                        Task { await save() }
-                        isSaving = true
-                        
-                        Task {
-                            try? await Task.sleep(for: .seconds(3))
-                            
-                            dismiss()
-                        }
-                    }) {
+                    Button(action: { Task { await save() } }) {
                         Text(isSaving ? "Saving…" : "Save Pet")
                             .font(.system(size: 16, weight: .semibold))
                             .frame(maxWidth: 220)
@@ -179,13 +170,13 @@ struct AddingNewPetForm: View {
                     .frame(maxWidth: .infinity, alignment: .center)
                     .padding(.top, 4)
                     .disabled(isSaving || petName.trimmingCharacters(in: .whitespaces).isEmpty)
-                    
-                    //                    if let error = store.errorMessage {
-                    //                        Text(error)
-                    //                            .font(.caption)
-                    //                            .foregroundColor(.red)
-                    //                            .multilineTextAlignment(.center)
-                    //                    }
+
+                    if let error = store.errorMessage {
+                        Text(error)
+                            .font(.caption)
+                            .foregroundColor(.red)
+                            .multilineTextAlignment(.center)
+                    }
                 }
                 .padding(20)
                 .background(Color(.systemBackground))
@@ -219,15 +210,7 @@ struct AddingNewPetForm: View {
                 
             }
             ToolbarItem(placement: .topBarTrailing) {
-                Button(action: {
-                    //                        Task { await save() }
-                    isSaving = true
-                    
-                    Task {
-                        try? await Task.sleep(for: .seconds(3))
-                        
-                        dismiss()
-                    }}) {
+                Button(action: { Task { await save() } }) {
                     Text(isSaving ? "Saving…" : "Save")
                         .fontWeight(.semibold)
                         .foregroundStyle(.primary)
@@ -237,20 +220,20 @@ struct AddingNewPetForm: View {
         }
     }
     
-    //    private func save() async {
-    //        isSaving = true
-    //        let ok = await store.addPet(
-    //            name: petName.trimmingCharacters(in: .whitespaces),
-    //            gender: selectedGender,
-    //            ageText: age,
-    //            species: species,
-    //            breed: breed,
-    //            imageData: imageData
-    //        )
-    //        isSaving = false
-    //        if ok { dismiss() }
-    //    }
-    
+    private func save() async {
+        isSaving = true
+        let ok = await store.addPet(
+            name: petName.trimmingCharacters(in: .whitespaces),
+            gender: selectedGender,
+            ageText: age,
+            species: species,
+            breed: breed,
+            imageData: imageData
+        )
+        isSaving = false
+        if ok { dismiss() }
+    }
+
     /// Loads the picked photo, downscales it, and keeps JPEG data for upload.
     private func loadPicked(_ item: PhotosPickerItem?) async {
         guard let item,

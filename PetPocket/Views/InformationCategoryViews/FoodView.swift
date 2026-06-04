@@ -43,7 +43,7 @@ struct FoodView: View {
 
                         if isEditing {
                             Button { showDietaryEdit = true } label: {
-                                dietaryCard.overlay(alignment: .topTrailing) {
+                                dietaryCard.overlay(alignment: .bottomTrailing) {
                                     Image(systemName: "pencil.circle.fill")
                                         .font(.system(size: 22))
                                         .foregroundStyle(.white, Color.alertRed)

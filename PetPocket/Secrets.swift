@@ -38,14 +38,14 @@ enum Secrets {
     }
 }
 
-#if DEBUG
-let supabase = SupabaseClient(
-    supabaseURL: URL(string: "https://placeholder.supabase.co")!,
-    supabaseKey: "placeholder"
-)
-#else
+//#if DEBUG
+//let supabase = SupabaseClient(
+//    supabaseURL: URL(string: "https://placeholder.supabase.co")!,
+//    supabaseKey: "placeholder"
+//)
+//#else
 let supabase = SupabaseClient(
     supabaseURL: Secrets.supabaseURL,
     supabaseKey: Secrets.supabaseAnonKey
 )
-#endif
+//#endif

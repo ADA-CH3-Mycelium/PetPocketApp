@@ -14,7 +14,9 @@ struct RegisterView: View {
     @State private var password = ""
     @State private var confirmPassword = ""
     @State private var navigateToLogin = false
-    
+    @State private var isRegistering = false
+    @State private var registerError: String?
+
     private var isRegisterValid: Bool {
         !name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty &&
         !email.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty &&
@@ -62,12 +64,19 @@ struct RegisterView: View {
                     )
 
                     PrimaryButton(
-                        title: "Sign up",
-                        isEnabled: isRegisterValid
+                        title: isRegistering ? "Creating…" : "Sign up",
+                        isEnabled: isRegisterValid && !isRegistering
                     ) {
-                        navigateToLogin = true
+                        Task { await register() }
                     }
-                    
+
+                    if let registerError {
+                        Text(registerError)
+                            .font(.caption)
+                            .foregroundColor(.red)
+                            .multilineTextAlignment(.center)
+                    }
+
                     HStack {
                         Text("Already have an account?")
                         Button("Log in") {}
@@ -81,6 +90,17 @@ struct RegisterView: View {
         }
         .navigationDestination(isPresented: $navigateToLogin) {
             LoginView()
+        }
+    }
+
+    private func register() async {
+        isRegistering = true
+        registerError = nil
+        await AuthManager.shared.signUp(email: email, password: password, name: name)
+        isRegistering = false
+        // On success the app root swaps to PetListView automatically.
+        if !AuthManager.shared.isAuthenticated {
+            registerError = AuthManager.shared.errorMessage ?? "Sign up failed."
         }
     }
 }

@@ -10,7 +10,7 @@ import SwiftUI
 struct GenerateCodeView: View {
     @Environment(\.dismiss) var dismiss
 
-//    let petId: UUID
+    let petId: UUID
 
     @State private var codeString = "------"
     @State private var copyStatusFeedback = "Copy"
@@ -93,7 +93,7 @@ struct GenerateCodeView: View {
                 .padding()
             }
             .task {
-//                await generate()
+                await generate()
             }
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
@@ -139,19 +139,19 @@ struct GenerateCodeView: View {
         
     }
 
-//    private func generate() async {
-//        guard codeString == "------" else { return }   // only once
-//        isGenerating = true
-//        errorMessage = nil
-//        do {
-//            codeString = try await PetRepository.shared.generateAccessCode(petId: petId)
-//        } catch {
-//            errorMessage = error.localizedDescription
-//        }
-//        isGenerating = false
-//    }
+    private func generate() async {
+        guard codeString == "------" else { return }   // only once
+        isGenerating = true
+        errorMessage = nil
+        do {
+            codeString = try await PetRepository.shared.generateAccessCode(petId: petId)
+        } catch {
+            errorMessage = error.localizedDescription
+        }
+        isGenerating = false
+    }
 }
 
 #Preview {
-    GenerateCodeView()
+    GenerateCodeView(petId: UUID())
 }

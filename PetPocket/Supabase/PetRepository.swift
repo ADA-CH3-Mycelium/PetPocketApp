@@ -316,18 +316,18 @@ struct PetRepository {
     }
 
     @discardableResult
-    func addClinic(petId: UUID, name: String, address: String?, phone: String?, isPrimary: Bool?) async throws -> VetClinicRow {
+    func addClinic(petId: UUID, name: String, address: String?, phone: String?, latitude: Double?, longitude: Double?, isPrimary: Bool?) async throws -> VetClinicRow {
         try await client
             .from("vet_clinics")
-            .insert(VetClinicInsert(petId: petId, name: name, address: address, phone: phone, isPrimary: isPrimary))
+            .insert(VetClinicInsert(petId: petId, name: name, address: address, phone: phone, latitude: latitude, longitude: longitude, isPrimary: isPrimary))
             .select().single().execute().value
     }
 
     @discardableResult
-    func updateClinic(id: UUID, name: String, address: String?, phone: String?, isPrimary: Bool?) async throws -> VetClinicRow {
+    func updateClinic(id: UUID, name: String, address: String?, phone: String?, latitude: Double?, longitude: Double?, isPrimary: Bool?) async throws -> VetClinicRow {
         try await client
             .from("vet_clinics")
-            .update(VetClinicUpdate(name: name, address: address, phone: phone, isPrimary: isPrimary))
+            .update(VetClinicUpdate(name: name, address: address, phone: phone, latitude: latitude, longitude: longitude, isPrimary: isPrimary))
             .eq("id", value: id.uuidString)
             .select().single().execute().value
     }

@@ -89,23 +89,18 @@ struct EmergencyView: View {
                                      descriptionPlaceholder: "First-aid guides will appear here.")
                 }
             } else {
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: 15) {
-                        ForEach(detail.firstAid) { item in
-                            Group {
-                                if isEditing {
-                                    Button { editingFirstAid = item } label: {
-                                        RoutineCard(item: item, isEmergency: true)
-                                            .overlay(alignment: .topTrailing) { editBadge }
-                                    }.buttonStyle(.plain)
-                                } else {
-                                    RoutineCard(item: item, isEmergency: true)
-                                }
-                            }
-                            .frame(width: 240)
+                VStack(spacing: 12) {
+                    ForEach(detail.firstAid) { item in
+                        if isEditing {
+                            Button { editingFirstAid = item } label: {
+                                RoutineCard(item: item, isEmergency: true)
+                                    .overlay(alignment: .bottomTrailing) { editBadge }
+                            }.buttonStyle(.plain)
+                
+                            RoutineCard(item: item, isEmergency: true)
                         }
                     }
-                }.scrollClipDisabled()
+                }
             }
 
             if isEditing {
@@ -124,7 +119,7 @@ struct EmergencyView: View {
                     if isEditing {
                         Button { editingContact = contact } label: {
                             ContactCard(contact: contact)
-                                .overlay(alignment: .topTrailing) { editBadge }
+                                .overlay(alignment: .bottomTrailing) { editBadge }
                         }.buttonStyle(.plain)
                     } else {
                         ContactCard(contact: contact)
@@ -150,7 +145,7 @@ struct EmergencyView: View {
                 if isEditing {
                     Button { editingClinic = item } label: {
                         VetClinicCard(item: item)
-                            .overlay(alignment: .topTrailing) { editBadge }
+                            .overlay(alignment: .bottomTrailing) { editBadge }
                     }.buttonStyle(.plain)
                 } else {
                     VetClinicCard(item: item)

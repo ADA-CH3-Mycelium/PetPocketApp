@@ -16,6 +16,8 @@ struct ClinicSheet: View {
     @State private var name = ""
     @State private var address = ""
     @State private var phone = ""
+    @State private var latitudeText = ""
+    @State private var longitudeText = ""
     @State private var isPrimary = false
     @State private var isSaving = false
     @State private var isDeleting = false
@@ -37,6 +39,13 @@ struct ClinicSheet: View {
                                 field("Address", "e.g. 1240 Oakwood Ave", $address)
                                 Divider()
                                 field("Phone", "e.g. (555) 012-3456", $phone, keyboard: .phonePad)
+                                Divider()
+                                HStack(spacing: 12) {
+                                    field("Latitude", "e.g. 40.7128", $latitudeText, keyboard: .numbersAndPunctuation)
+                                    field("Longitude", "e.g. -74.0060", $longitudeText, keyboard: .numbersAndPunctuation)
+                                }
+                                Text("Used to pin the clinic on the map. Leave blank to hide the map.")
+                                    .font(.caption2).foregroundColor(.secondary)
                                 Divider()
                                 Toggle("Primary clinic", isOn: $isPrimary)
                                     .tint(Color.primaryG)
@@ -87,6 +96,8 @@ struct ClinicSheet: View {
                 if let e = editing {
                     name = e.name; address = e.address; phone = e.phone
                     isPrimary = e.note == "Primary clinic"
+                    latitudeText = e.latitude.map { String($0) } ?? ""
+                    longitudeText = e.longitude.map { String($0) } ?? ""
                 }
             }
             .alert("Delete this clinic?", isPresented: $showDeleteConfirm) {
@@ -118,10 +129,12 @@ struct ClinicSheet: View {
         let n = name.trimmingCharacters(in: .whitespaces)
         let a = address.trimmingCharacters(in: .whitespaces)
         let p = phone.trimmingCharacters(in: .whitespaces)
+        let lat = Double(latitudeText.trimmingCharacters(in: .whitespaces))
+        let lon = Double(longitudeText.trimmingCharacters(in: .whitespaces))
         if let editing {
-            ok = await detail.updateClinic(id: editing.id, name: n, address: a, phone: p, isPrimary: isPrimary)
+            ok = await detail.updateClinic(id: editing.id, name: n, address: a, phone: p, latitude: lat, longitude: lon, isPrimary: isPrimary)
         } else {
-            ok = await detail.addClinic(name: n, address: a, phone: p, isPrimary: isPrimary)
+            ok = await detail.addClinic(name: n, address: a, phone: p, latitude: lat, longitude: lon, isPrimary: isPrimary)
         }
         isSaving = false
         if ok { dismiss() }

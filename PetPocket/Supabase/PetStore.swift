@@ -162,15 +162,7 @@ final class PetDetailStore {
                 )
             }
 
-            clinics = try await clinicRows.map { row in
-                VetClinicCardItem(
-                    id: row.id,
-                    name: row.name,
-                    address: row.address ?? "",
-                    phone: row.phone ?? "",
-                    note: (row.isPrimary == true) ? "Primary clinic" : ""
-                )
-            }
+            clinics = try await clinicRows.map { Self.clinicItem($0) }
 
             loaded = true
         } catch {
@@ -415,17 +407,31 @@ final class PetDetailStore {
 
     // MARK: Write — Vet clinics
 
+    static func clinicItem(_ row: VetClinicRow) -> VetClinicCardItem {
+        VetClinicCardItem(
+            id: row.id,
+            name: row.name,
+            address: row.address ?? "",
+            phone: row.phone ?? "",
+            note: (row.isPrimary == true) ? "Primary clinic" : "",
+            latitude: row.latitude,
+            longitude: row.longitude
+        )
+    }
+
     @MainActor
-    func addClinic(name: String, address: String, phone: String, isPrimary: Bool) async -> Bool {
+    func addClinic(name: String, address: String, phone: String, latitude: Double?, longitude: Double?, isPrimary: Bool) async -> Bool {
         errorMessage = nil
         do {
             let row = try await repo.addClinic(
                 petId: pet.id, name: name,
                 address: address.isEmpty ? nil : address,
                 phone: phone.isEmpty ? nil : phone,
+                latitude: latitude,
+                longitude: longitude,
                 isPrimary: isPrimary
             )
-            clinics.append(VetClinicCardItem(id: row.id, name: row.name, address: row.address ?? "", phone: row.phone ?? "", note: (row.isPrimary == true) ? "Primary clinic" : ""))
+            clinics.append(Self.clinicItem(row))
             return true
         } catch {
             errorMessage = error.localizedDescription
@@ -434,11 +440,18 @@ final class PetDetailStore {
     }
 
     @MainActor
-    func updateClinic(id: UUID, name: String, address: String, phone: String, isPrimary: Bool) async -> Bool {
+    func updateClinic(id: UUID, name: String, address: String, phone: String, latitude: Double?, longitude: Double?, isPrimary: Bool) async -> Bool {
         errorMessage = nil
         do {
-            let row = try await repo.updateClinic(id: id, name: name, address: address.isEmpty ? nil : address, phone: phone.isEmpty ? nil : phone, isPrimary: isPrimary)
-            let updated = VetClinicCardItem(id: row.id, name: row.name, address: row.address ?? "", phone: row.phone ?? "", note: (row.isPrimary == true) ? "Primary clinic" : "")
+            let row = try await repo.updateClinic(
+                id: id, name: name,
+                address: address.isEmpty ? nil : address,
+                phone: phone.isEmpty ? nil : phone,
+                latitude: latitude,
+                longitude: longitude,
+                isPrimary: isPrimary
+            )
+            let updated = Self.clinicItem(row)
             if let i = clinics.firstIndex(where: { $0.id == id }) { clinics[i] = updated } else { clinics.append(updated) }
             return true
         } catch {

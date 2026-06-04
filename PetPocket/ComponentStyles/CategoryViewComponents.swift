@@ -161,7 +161,7 @@ struct TappableRoutineCard: View {
                 onEditTap(item)
             } label: {
                 RoutineCard(item: item, isEmergency: false)
-                    .overlay(alignment: .topTrailing) {
+                    .overlay(alignment: .bottomTrailing) {
                         Image(systemName: "pencil.circle.fill")
                             .font(.system(size: 22))
                             .foregroundStyle(.white, Color.primaryG)

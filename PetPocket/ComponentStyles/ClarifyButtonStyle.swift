@@ -18,8 +18,9 @@ struct ClarifyButtonStyle: View {
             Image(systemName: "questionmark.bubble.fill")
                 .font(.caption2)
                 .fontWeight(.light)
+                .foregroundStyle(.white)
                 .frame(width: 26, height: 26)
-                .glassEffect(.regular.tint(.secondaryG.opacity(1)))
+                .glassEffect(.regular.tint(.brandSecondary.opacity(1)))
 //                .background(.accent)
 //                .clipShape(Circle())
         }

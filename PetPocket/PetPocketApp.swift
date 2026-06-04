@@ -24,12 +24,11 @@ struct PetPocketApp: App {
     
     var body: some Scene {
         WindowGroup {
-//                if auth.isAuthenticated {
-//                    PetListView()
-//                } else {
-                    //                AuthView()
-                    LoginView()
-//                }
+            if auth.isAuthenticated {
+                PetListView()
+            } else {
+                LoginView()
+            }
         }
         .environment(auth)
         .modelContainer(sharedModelContainer)

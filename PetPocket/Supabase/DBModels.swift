@@ -245,10 +245,12 @@ struct VetClinicInsert: Encodable {
     let name: String
     let address: String?
     let phone: String?
+    let latitude: Double?
+    let longitude: Double?
     let isPrimary: Bool?
 
     enum CodingKeys: String, CodingKey {
-        case name, address, phone
+        case name, address, phone, latitude, longitude
         case petId = "pet_id"
         case isPrimary = "is_primary"
     }
@@ -258,10 +260,12 @@ struct VetClinicUpdate: Encodable {
     let name: String
     let address: String?
     let phone: String?
+    let latitude: Double?
+    let longitude: Double?
     let isPrimary: Bool?
 
     enum CodingKeys: String, CodingKey {
-        case name, address, phone
+        case name, address, phone, latitude, longitude
         case isPrimary = "is_primary"
     }
 }
