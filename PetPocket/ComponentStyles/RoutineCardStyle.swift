@@ -77,6 +77,7 @@ struct RoutineCard: View {
     @Environment(\.colorScheme) var colorScheme
 
     @State private var showClarifySheet = false
+    @Environment(PetDetailStore.self) private var detail
 
     let item: RoutineCardItem
     let isEmergency: Bool
@@ -126,7 +127,7 @@ struct RoutineCard: View {
             in: .rect(cornerRadius: 16)
         )
         .sheet(isPresented: $showClarifySheet) {
-            ClarifySheetView(routineTitle: item.title)
+            ClarifySheetView(pet: detail.pet, routineTitle: item.title)
         }
     }
 }

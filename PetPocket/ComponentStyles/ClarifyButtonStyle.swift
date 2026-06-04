@@ -11,6 +11,7 @@ import SwiftUI
 struct ClarifyButtonStyle: View {
     var action: (() -> Void)? = nil
     @State private var navigate = false
+    @Environment(PetDetailStore.self) private var detail
 
     var body: some View {
         Button(action: {
@@ -27,7 +28,7 @@ struct ClarifyButtonStyle: View {
                 .glassEffect()
         }
         .navigationDestination(isPresented: $navigate) {
-            ClarifySheetView(isInNavigationStack: true)
+            ClarifySheetView(pet: detail.pet, isInNavigationStack: true)
         }
     }
 }

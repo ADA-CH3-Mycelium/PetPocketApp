@@ -8,15 +8,29 @@
 
 /* Begin PBXBuildFile section */
 		A7A08C44AD16BD3F959683F4 /* Supabase in Frameworks */ = {isa = PBXBuildFile; productRef = 606BB5C9D57E962EF7555CEB /* Supabase */; };
+		D4F957B92FD13DC300554A4B /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = D4F957B82FD13DC300554A4B /* FirebaseMessaging */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		7FDBD20C2FC7E1C30006BE09 /* PetPocket.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PetPocket.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		D4F957B62FD1272400554A4B /* Exceptions for "PetPocket" folder in "PetPocket" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 7FDBD20B2FC7E1C30006BE09 /* PetPocket */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		7FDBD20E2FC7E1C30006BE09 /* PetPocket */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				D4F957B62FD1272400554A4B /* Exceptions for "PetPocket" folder in "PetPocket" target */,
+			);
 			path = PetPocket;
 			sourceTree = "<group>";
 		};
@@ -27,6 +41,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D4F957B92FD13DC300554A4B /* FirebaseMessaging in Frameworks */,
 				A7A08C44AD16BD3F959683F4 /* Supabase in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -71,6 +86,7 @@
 			name = PetPocket;
 			packageProductDependencies = (
 				606BB5C9D57E962EF7555CEB /* Supabase */,
+				D4F957B82FD13DC300554A4B /* FirebaseMessaging */,
 			);
 			productName = PetPocket;
 			productReference = 7FDBD20C2FC7E1C30006BE09 /* PetPocket.app */;
@@ -102,6 +118,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				DB1D4FF7F817631F48FD3CFD /* XCRemoteSwiftPackageReference "supabase-swift" */,
+				D4F957B72FD13DC300554A4B /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 7FDBD20D2FC7E1C30006BE09 /* Products */;
@@ -345,6 +362,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		D4F957B72FD13DC300554A4B /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 12.14.0;
+			};
+		};
 		DB1D4FF7F817631F48FD3CFD /* XCRemoteSwiftPackageReference "supabase-swift" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/supabase/supabase-swift";
@@ -360,6 +385,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = DB1D4FF7F817631F48FD3CFD /* XCRemoteSwiftPackageReference "supabase-swift" */;
 			productName = Supabase;
+		};
+		D4F957B82FD13DC300554A4B /* FirebaseMessaging */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D4F957B72FD13DC300554A4B /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseMessaging;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

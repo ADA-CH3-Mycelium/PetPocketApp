@@ -10,18 +10,30 @@ import SwiftUI
 // MARK: - Main View
 
 struct ClarifySheetView: View {
-    //    let mealName: String
-    //      for this use local cache
-    /// Pass `true` when this view is pushed onto a NavigationStack
-    /// so the back button appears alongside the hamburger.
+    let pet: PetRow
+    let category: ClarifyCategory?
     var isInNavigationStack: Bool = false
-
     var routineTitle: String? = nil
 
     @Environment(\.dismiss) var dismiss
     @State private var messageText = ""
     @State private var isSidebarOpen = false
-    @State private var viewModel = ClarifyViewModel()
+    @State private var viewModel: ClarifyViewModel
+
+    init(
+        pet: PetRow,
+        category: ClarifyCategory? = nil,
+        isInNavigationStack: Bool = false,
+        routineTitle: String? = nil
+    ) {
+        self.pet = pet
+        self.category = category
+        self.isInNavigationStack = isInNavigationStack
+        self.routineTitle = routineTitle
+        _viewModel = State(
+            initialValue: ClarifyViewModel(pet: pet, category: category)
+        )
+    }
 
     private func messageModel(from msg: ClarifyMessage) -> MessageModel {
         let isMe = msg.senderId == viewModel.currentUser?.id
@@ -396,13 +408,13 @@ private struct AttachmentSuggestionCard: View {
 }
 
 // MARK: - Preview
-
-#Preview("Sheet (no nav stack)") {
-    ClarifySheetView(isInNavigationStack: false)
-}
-
-#Preview("Inside NavigationStack") {
-    NavigationStack {
-        ClarifySheetView(isInNavigationStack: true)
-    }
-}
+//
+//#Preview("Sheet (no nav stack)") {
+//    ClarifySheetView(isInNavigationStack: false)
+//}
+//
+//#Preview("Inside NavigationStack") {
+//    NavigationStack {
+//        ClarifySheetView(isInNavigationStack: true)
+//    }
+//}
