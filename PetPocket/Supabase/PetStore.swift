@@ -136,9 +136,10 @@ final class PetDetailStore {
 
             meals = try await mealsRows.map { row in
                 RoutineCardItem(
+                    id: row.id,
                     title: row.mealName,
                     time: row.time,
-                    description: [row.amount, row.notes].compactMap { $0 }.joined(separator: ". "),
+                    description: row.notes ?? "",
                     icon: row.iconName ?? "fork.knife"
                 )
             }
@@ -182,5 +183,40 @@ final class PetDetailStore {
             description: row.content ?? "",
             icon: row.icon ?? "info.circle.fill"
         )
+    }
+
+    // MARK: Write — Meals
+    @MainActor
+    func addMeal(
+        mealName: String,
+        time: String,
+        notes: String?,
+        iconName: String?,
+        mediaUrl: String?
+    ) async -> Bool {
+        errorMessage = nil
+        do {
+            let newRow = try await repo.addMeal(
+                petId: pet.id,
+                mealName: mealName,
+                time: time,
+                notes: notes.flatMap { $0.isEmpty ? nil : $0 },
+                iconName: iconName,
+                mediaUrl: mediaUrl,
+                sortOrder: meals.count
+            )
+            meals.append(RoutineCardItem(
+                title: newRow.mealName,
+                time: newRow.time,
+                description: newRow.notes ?? "",
+                icon: newRow.iconName ?? "fork.knife",
+                media: newRow.mediaUrl.flatMap { URL(string: $0) }
+                    .map { MediaAttachment.video($0) }  // stored as URL; treat as photo URL
+            ))
+            return true
+        } catch {
+            errorMessage = error.localizedDescription
+            return false
+        }
     }
 }

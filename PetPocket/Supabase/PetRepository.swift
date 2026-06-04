@@ -119,13 +119,56 @@ struct PetRepository {
             .absoluteString
     }
 
+    /// Uploads a meal photo to the `pet-media` bucket.
+    /// Returns the public URL string, or throws on failure.
+    func uploadMealPhoto(data: Data) async throws -> String {
+        let uid = try await currentUserId()
+        let path = "\(uid.uuidString.lowercased())/meals/\(UUID().uuidString.lowercased()).jpg"
+        try await client.storage
+            .from("pet-media")
+            .upload(path, data: data, options: FileOptions(contentType: "image/jpeg", upsert: true))
+        return try client.storage
+            .from("pet-media")
+            .getPublicURL(path: path)
+            .absoluteString
+    }
+
     // MARK: Category content
+
     func fetchMeals(petId: UUID) async throws -> [FeedingMealRow] {
         try await client
             .from("feeding_meals")
             .select()
             .eq("pet_id", value: petId.uuidString)
             .order("sort_order", ascending: true)
+            .execute()
+            .value
+    }
+
+    @discardableResult
+    func addMeal(
+        petId: UUID,
+        mealName: String,
+        time: String,
+        notes: String?,
+        iconName: String?,
+        mediaUrl: String?,
+        sortOrder: Int?
+    ) async throws -> FeedingMealRow {
+        let payload = FeedingMealInsert(
+            petId: petId,
+            mealName: mealName,
+            time: time,
+            notes: notes,
+            iconName: iconName,
+            mediaUrl: mediaUrl,
+            sortOrder: sortOrder
+        )
+        return try await client
+            .from("feeding_meals")
+            .insert(payload)
+            .select()
+            .single()
             .execute()
             .value
     }

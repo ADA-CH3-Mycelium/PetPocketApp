@@ -86,18 +86,36 @@ struct FeedingMealRow: Decodable, Identifiable {
     let id: UUID
     let mealName: String
     let time: String
-    let amount: String
     let notes: String?
     let iconName: String?
     let mediaUrl: String?
     let mediaType: String?
 
     enum CodingKeys: String, CodingKey {
-        case id, time, amount, notes
-        case mealName = "meal_name"
-        case iconName = "icon_name"
-        case mediaUrl = "media_url"
+        case id, time, notes
+        case mealName  = "meal_name"
+        case iconName  = "icon_name"
+        case mediaUrl  = "media_url"
         case mediaType = "media_type"
+    }
+}
+
+struct FeedingMealInsert: Encodable {
+    let petId: UUID
+    let mealName: String
+    let time: String
+    let notes: String?
+    let iconName: String?
+    let mediaUrl: String?
+    let sortOrder: Int?
+
+    enum CodingKeys: String, CodingKey {
+        case time, notes
+        case petId     = "pet_id"
+        case mealName  = "meal_name"
+        case iconName  = "icon_name"
+        case mediaUrl  = "media_url"
+        case sortOrder = "sort_order"
     }
 }
 

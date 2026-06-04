@@ -9,12 +9,13 @@ import SwiftUI
 
 struct FoodView: View {
     @Environment(PetDetailStore.self) private var detail
-    @State var isEditing: Bool = false
+    @State private var isEditing = false
+    @State private var showAddMeal = false
+    @State private var editingMeal: RoutineCardItem? = nil
 
-    // headers
-    private let foodCategoryHeaders: [CategoryHeaderItem] = [
-        CategoryHeaderItem(icon: "clock.arrow.circlepath", label: "Daily Feeding Routine"),
-        CategoryHeaderItem(icon: "text.pad.header", label: "Additional Notes"),
+    private let headers: [CategoryHeaderItem] = [
+        CategoryHeaderItem(icon: "exclamationmark.triangle.fill", label: "Dietary Alert"),
+        CategoryHeaderItem(icon: "clock.arrow.circlepath",        label: "Daily Feeding Routine"),
     ]
 
     var body: some View {
@@ -22,50 +23,69 @@ struct FoodView: View {
             Color.background.ignoresSafeArea()
 
             ScrollView(.vertical, showsIndicators: false) {
-                VStack(alignment: .leading, spacing: 30) {
+                VStack(alignment: .leading, spacing: 24) {
 
-                    // ALLERGY WARNING — hidden when pet has no dietary restrictions
-                    if !detail.allergies.isEmpty || !detail.restricted.isEmpty {
-                        AlertCardStyle(
-                            allergies: detail.allergies,
-                            restricted: detail.restricted
-                        )
+                    // MARK: Alert section
+                    VStack(alignment: .leading, spacing: 10) {
+                        CategoryHeader(item: headers[0])
+
+                        if detail.allergies.isEmpty && detail.restricted.isEmpty {
+                            GhostAlertCard()
+                        } else {
+                            AlertCardStyle(
+                                allergies: detail.allergies,
+                                restricted: detail.restricted
+                            )
+                        }
                     }
 
-                    // DAILY FEEDING ROUTINE
+                    // MARK: Routine section
                     VStack(alignment: .center, spacing: 10) {
-                        CategoryHeader(item: foodCategoryHeaders[0])
+                        CategoryHeader(item: headers[1])
 
                         if detail.meals.isEmpty {
-                            Text("No feeding routine added yet.")
-                                .font(.subheadline)
-                                .foregroundColor(.secondary)
-                                .frame(maxWidth: .infinity, alignment: .leading)
+                            GhostRoutineCard(
+                                icon: "fork.knife",
+                                titlePlaceholder: isEditing ? "Tap + to add a meal" : "Breakfast • 8:00",
+                                descriptionPlaceholder: "Your feeding routine will appear here."
+                            )
                         } else {
                             ForEach(detail.meals) { meal in
-                                RoutineCard(item: meal, isEmergency: false)
+                                TappableRoutineCard(
+                                    item: meal,
+                                    isEditing: isEditing,
+                                    onEditTap: { editingMeal = $0 }
+                                )
                             }
                         }
 
-                        // add btn (editing mode placeholder — Phase 3 write-back)
                         if isEditing {
-                            Button(action: {
-                                print("add btn pressed")
-                            }) {
-                                Image(systemName: "plus")
-                                    .font(.system(size: 24, weight: .semibold))
-                                    .padding(10)
-                                    .glassEffect()
-                            }
+                            AddCardButton { showAddMeal = true }
                         }
                     }
 
                     Spacer()
-
                 }.padding(20)
             }
-            .navigationTitle(Text("My Food Routine"))
+            .navigationTitle("My Food Routine")
             .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    EditMenuButton(isEditing: $isEditing)
+                }
+            }
+            // Add new meal
+            .sheet(isPresented: $showAddMeal) {
+                AddMealSheet(detail: detail)
+                    .presentationDetents([.large])
+                    .presentationCornerRadius(24)
+            }
+            // Edit existing meal — sheet opens when editingMeal is set
+            .sheet(item: $editingMeal) { meal in
+                AddMealSheet(detail: detail, editing: meal)
+                    .presentationDetents([.large])
+                    .presentationCornerRadius(24)
+            }
         }
     }
 }
