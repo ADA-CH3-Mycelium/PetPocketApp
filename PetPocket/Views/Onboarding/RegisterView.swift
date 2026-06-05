@@ -107,7 +107,18 @@ struct RegisterView: View {
                         title: "Sign up",
                         isEnabled: isRegisterValid
                     ) {
-                        navigateToLogin = true
+                        Task {
+                            await AuthManager.shared.signUp(email: email, password: password, name: name)
+                            if AuthManager.shared.isAuthenticated {
+                                navigateToRegister = false   // dismiss; root gate swaps to PetListView
+                            }
+                        }
+                    }
+
+                    if let err = AuthManager.shared.errorMessage {
+                        Text(err)
+                            .font(.caption)
+                            .foregroundColor(.alertRed)
                     }
 
                     // already have acc?

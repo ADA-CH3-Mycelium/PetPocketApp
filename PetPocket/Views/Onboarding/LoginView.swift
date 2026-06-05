@@ -91,9 +91,18 @@ struct LoginView: View {
                         title: "Login",
                         isEnabled: isLoginValid
                     ) {
-                        navigateToLogin = false
-                        navigateToPetList = true
+                        Task {
+                            await AuthManager.shared.signIn(email: email, password: password)
+                            if AuthManager.shared.isAuthenticated {
+                                navigateToLogin = false   // dismiss; root gate swaps to PetListView
+                            }
+                        }
+                    }
 
+                    if let err = AuthManager.shared.errorMessage {
+                        Text(err)
+                            .font(.caption)
+                            .foregroundColor(.alertRed)
                     }
 
                 }.padding(.top, 16)

@@ -3,83 +3,76 @@
 //  PetPocket
 //
 //  Created by Cheisha Amanda on 02/06/26.
-//  Edited by Samantha Lugay on 04/06/26.
 //
 
 import SwiftUI
 
 struct WasteView: View {
-    @State private var isEditing: Bool = false
-    
-    // headers
-    private let wasteCategoryHeaders: [CategoryHeaderItem] = [
-        CategoryHeaderItem(icon: "clock.arrow.circlepath", label: "Waste Routine"),
-        CategoryHeaderItem(icon: "text.pad.header", label: "Behavioural Signs"),
-        
+    @Environment(PetDetailStore.self) private var detail
+    @State private var isEditing = false
+    @State private var showAddItem = false
+    @State private var editingItem: RoutineCardItem? = nil
+
+    private let headers: [CategoryHeaderItem] = [
+        CategoryHeaderItem(icon: "leaf.fill", label: "Waste Routine"),
     ]
-    
-    //DB
-    var mockWasteAdditionalNotes : [AdditionalNotesCardItem] = [
-        AdditionalNotesCardItem(description: "Cooper will sit by the back door and whine when he needs to go")
-    ]
+
     var body: some View {
         ZStack {
             Color.background.ignoresSafeArea()
-            
-            VStack(alignment: .leading, spacing: 30) {
 
-                // routne cards
-                VStack(alignment: .center, spacing: 10) {
-                    // header
-                    CategoryHeader(item: wasteCategoryHeaders[0])
-                    
-                    //items
-                    RoutineCard(item: mockData[3], isEmergency: false)
-                    RoutineCard(item: mockData[4], isEmergency: false)
-                    RoutineCard(item: mockData[5], isEmergency: false)
-                    
-                    //add btn
-                    if isEditing {
-                        Button(action: {
-                            print("add new routine card btn pressed")
-                        }) {
-                            Image(systemName: "plus")
-                                .font(.system(size: 24, weight: .semibold))
-                                .padding(10)
-                                .glassEffect()
-                        }.padding(.bottom, 20)
+            ScrollView(.vertical, showsIndicators: false) {
+                VStack(alignment: .leading, spacing: 24) {
+
+                    if isEditing { EditHintBanner() }
+
+                    // MARK: Routine section
+                    VStack(alignment: .leading, spacing: 10) {
+                        CategoryHeader(item: headers[0])
+
+                        if detail.wasteItems.isEmpty {
+                            GhostRoutineCard(
+                                icon: "clock.fill",
+                                titlePlaceholder: isEditing ? "Tap + to add a routine" : "Every 4 Hours",
+                                descriptionPlaceholder: "Your waste routine will appear here."
+                            )
+                        } else {
+                            ForEach(detail.wasteItems) { item in
+                                TappableRoutineCard(
+                                    item: item,
+                                    isEditing: isEditing,
+                                    onEditTap: { editingItem = $0 }
+                                )
+                            }
+                        }
+
+                        if isEditing {
+                            AddCardButton { showAddItem = true }
+                        }
                     }
-                    
-                }
-                
-                VStack(alignment: .center, spacing: 10) {
-                    //header
-                    CategoryHeader(item: wasteCategoryHeaders[1])
-                    
-                    // items
-                    AddNotesStyle(item: mockWasteAdditionalNotes[0])
 
-                    //add btn
-                    if isEditing {
-                        Button(action: {
-                            print("add additional notes btn pressed")
-                        }) {
-                            Image(systemName: "plus")
-                                .font(.system(size: 24, weight: .semibold))
-                                .padding(10)
-                                .glassEffect()
-                        }.padding(.bottom, 20)
-                    }
-                    
-                    
+                    Spacer()
+                }.padding(20)
+            }
+            .navigationTitle("Waste Routine")
+            .navigationBarTitleDisplayMode(.inline)
+            .tint(Color.primaryG)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    EditMenuButton(isEditing: $isEditing)
                 }
-                
-                
-                Spacer()
-
-            }.padding(20)
+            }
+            .sheet(isPresented: $showAddItem) {
+                CareItemSheet(detail: detail, category: "waste")
+                    .presentationDetents([.large])
+                    .presentationCornerRadius(24)
+            }
+            .sheet(item: $editingItem) { item in
+                CareItemSheet(detail: detail, category: "waste", editing: item)
+                    .presentationDetents([.large])
+                    .presentationCornerRadius(24)
+            }
         }
-
     }
 }
 

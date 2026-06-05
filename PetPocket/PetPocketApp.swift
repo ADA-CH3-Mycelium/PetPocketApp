@@ -13,6 +13,7 @@ struct PetPocketApp: App {
     
     @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     @State private var auth = AuthManager.shared
+    @State private var store = PetStore()
     
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([Item.self])
@@ -27,7 +28,7 @@ struct PetPocketApp: App {
     var body: some Scene {
         WindowGroup {
             if auth.isAuthenticated {
-                PetListView()
+                PetListView(store: store)
             } else {
                 OnboardingView()
             }

@@ -167,28 +167,42 @@ struct ClarifyRepository {
     
     func subscribeToThreadsForPet(
         petId: UUID,
-        onInsert: @escaping (ClarifyThread) -> Void
+        onInsert: @escaping (ClarifyThread) -> Void,
+        onUpdate: @escaping (ClarifyThread) -> Void
     ) async -> RealtimeChannelV2 {
         let channel = client.channel("clarify-threads-pet-\(petId.uuidString)")
-        
-        let stream = channel.postgresChange(
+
+        let insertStream = channel.postgresChange(
             InsertAction.self,
             schema: "public",
             table: "clarify_threads",
             filter: "pet_id=eq.\(petId.uuidString)"
         )
-        
+        let updateStream = channel.postgresChange(
+            UpdateAction.self,
+            schema: "public",
+            table: "clarify_threads",
+            filter: "pet_id=eq.\(petId.uuidString)"
+        )
+
         await channel.subscribe()
         print("[Clarify Realtime] Subscribed to threads for pet \(petId)")
-        
+
         Task {
-            for await change in stream {
+            for await change in insertStream {
                 if let thread = Self.decodeThread(from: change.record) {
                     onInsert(thread)
                 }
             }
         }
-        
+        Task {
+            for await change in updateStream {
+                if let thread = Self.decodeThread(from: change.record) {
+                    onUpdate(thread)
+                }
+            }
+        }
+
         return channel
     }
     

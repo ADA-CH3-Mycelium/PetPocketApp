@@ -192,6 +192,10 @@ class ClarifyViewModel {
             currentThread = newThread
             openThreadsInPet.append(newThread)
             messages = []
+            // Subscribe to new thread's messages + status, else owner replies
+            // won't arrive until a manual refresh re-runs loadMessages.
+            await subscribeToMessages(threadId: newThread.id)
+            await subscribeToThreadUpdates(threadId: newThread.id)
         } catch {
             errorMessage = "Failed to start thread: \(error.localizedDescription)"
         }
@@ -299,6 +303,19 @@ class ClarifyViewModel {
                     self.openThreadsInPet.append(thread)
                     // Resort by updatedAt desc (consistent with fetchInboxThreads order)
                     self.openThreadsInPet.sort { $0.updatedAt > $1.updatedAt }
+                }
+            },
+            onUpdate: { [weak self] thread in
+                Task { @MainActor in
+                    guard let self else { return }
+                    // Resolved → drop from inbox live (was only removed on reopen).
+                    if thread.isResolved {
+                        self.openThreadsInPet.removeAll { $0.id == thread.id }
+                    } else if !self.openThreadsInPet.contains(where: { $0.id == thread.id }) {
+                        // Reopened/unresolved elsewhere → re-add.
+                        self.openThreadsInPet.append(thread)
+                        self.openThreadsInPet.sort { $0.updatedAt > $1.updatedAt }
+                    }
                 }
             }
         )

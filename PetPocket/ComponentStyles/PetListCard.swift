@@ -54,30 +54,14 @@ struct PetListCard: View {
                 
                 switch item.type {
                 case .owning:
-                    Text("Your Pet")
+                    Text("Owner")
                         .font(.subheadline)
-                        .italic()
                         .foregroundColor(.secondary)
-                    
-                case .sitting(let sitter, let sitterImage, _):
-                    HStack(spacing: 6) {
-                        if sitterImage.isEmpty {
-                            Image(systemName: "person.circle.fill")
-                                .resizable()
-                                .frame(width: 22, height: 22)
-                                .foregroundColor(.secondary)
-                        } else {
-                            Image(sitterImage)
-                                .resizable()
-                                .scaledToFill()
-                                .frame(width: 22, height: 22)
-                                .clipShape(Circle())
-                        }
-                        
-                        Text(sitter)
-                            .font(.subheadline)
-                            .foregroundColor(.secondary)
-                    }
+
+                case .sitting:
+                    Text("Sitting")
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
                 }
             }
             .padding(.horizontal, 16)
