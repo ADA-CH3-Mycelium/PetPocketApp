@@ -11,7 +11,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		7FDBD20C2FC7E1C30006BE09 /* PetPocket.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PetPocket.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		7FDBD20C2FC7E1C30006BE09 /* PetPocket: Pet Sitter & Owner.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "PetPocket: Pet Sitter & Owner.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -45,7 +45,7 @@
 		7FDBD20D2FC7E1C30006BE09 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				7FDBD20C2FC7E1C30006BE09 /* PetPocket.app */,
+				7FDBD20C2FC7E1C30006BE09 /* PetPocket: Pet Sitter & Owner.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -73,7 +73,7 @@
 				606BB5C9D57E962EF7555CEB /* Supabase */,
 			);
 			productName = PetPocket;
-			productReference = 7FDBD20C2FC7E1C30006BE09 /* PetPocket.app */;
+			productReference = 7FDBD20C2FC7E1C30006BE09 /* PetPocket: Pet Sitter & Owner.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -276,8 +276,8 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.cheisha.PetPocket;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.cheisa.PetPocket;
+				PRODUCT_NAME = "PetPocket: Pet Sitter & Owner";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
@@ -309,8 +309,8 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.cheisha.PetPocket;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.cheisa.PetPocket;
+				PRODUCT_NAME = "PetPocket: Pet Sitter & Owner";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
