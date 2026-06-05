@@ -64,18 +64,12 @@ struct TwCoColGrid: View {
                         Image(systemName: item.icon)
                             .font(.system(size: 80))
                             .foregroundColor(Color.primaryG.opacity(0.2))
-                            .offset(x: 70, y: 25)
+                            .offset(x: 65, y: 25)
 
                         Text(item.label)
-                            .font(.body)
-                            .foregroundColor(
-                                item.isAlert ? Color.alertRed : .primary
-                            )
+                            .font(.headline)
+                            .foregroundColor(.primary)
 
-                        Image(systemName: item.icon)
-                            .font(.largeTitle)
-                            .foregroundColor(Color.primaryG.opacity(0.75))
-                            .offset(x: 65, y: 25)
                     }
                     .frame(maxWidth: .infinity)
                     .frame(height: 100)

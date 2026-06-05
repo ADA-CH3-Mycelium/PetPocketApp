@@ -10,6 +10,8 @@ import SwiftData
 
 @main
 struct PetPocketApp: App {
+    
+    @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     @State private var auth = AuthManager.shared
     
     var sharedModelContainer: ModelContainer = {
@@ -27,7 +29,7 @@ struct PetPocketApp: App {
             if auth.isAuthenticated {
                 PetListView()
             } else {
-                LoginView()
+                OnboardingView()
             }
         }
         .environment(auth)

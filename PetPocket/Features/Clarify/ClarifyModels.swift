@@ -7,10 +7,17 @@
 
 import Foundation
 
+enum ClarifyCategory: String, Codable, Hashable, CaseIterable {
+    case food
+    case waste
+    case care
+    case emergency
+}
+
 struct ClarifyThread: Identifiable, Codable, Hashable {
     let id: UUID
     let petId: UUID
-    let category: String
+    let category: ClarifyCategory
     let title: String
     let createdBy: UUID
     var isResolved: Bool
@@ -61,54 +68,10 @@ struct Profile: Identifiable, Codable, Hashable {
     }
 }
 
-extension Profile {
-    static let mockAlex = Profile(
-        id: UUID(uuidString: "11111111-1111-1111-1111-111111111111")!,
-        name: "Alex",
-        photoUrl: "AlexProfilePicture",
-        createdAt: Date(),
-        updatedAt: Date()
-    )
-    
-    static let mockSarah = Profile(
-        id: UUID(uuidString: "22222222-2222-2222-2222-222222222222")!,
-        name: "Sarah",
-        photoUrl: "SarahPic",
-        createdAt: Date(),
-        updatedAt: Date()
-    )
-}
-
 extension ClarifyThread {
-    static let mockBreakfast = ClarifyThread(
-        id: UUID(uuidString: "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa")!,
-        petId: UUID(),
-        category: "food",
-        title: "Breakfast",
-        createdBy: Profile.mockSarah.id,
-        isResolved: false,
-        createdAt: Date(),
-        updatedAt: Date()
-    )
+    
 }
 
 extension ClarifyMessage {
-    static let mockMessages: [ClarifyMessage] = [
-        ClarifyMessage(
-            id: UUID(),
-            threadId: ClarifyThread.mockBreakfast.id,
-            senderId: Profile.mockSarah.id,
-            message: "What kind of Kibble should I give to Cooper?",
-            createdAt: Date()
-        ),
-        ClarifyMessage(
-            id: UUID(),
-            threadId: ClarifyThread.mockBreakfast.id,
-            senderId: Profile.mockAlex.id,
-            message: "Eum dunno, anything fine please!",
-            createdAt: Date()
-        )
-    ]
+   
 }
-
-

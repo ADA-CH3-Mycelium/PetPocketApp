@@ -26,3 +26,12 @@ struct greenEdgeCard: ViewModifier {
     }
 }
 
+// login section headers
+struct onBoardingSectionHeaderStyle: ViewModifier {
+    func body(content: Content) -> some View {
+        content
+            .textCase(.uppercase)
+            .font(.caption)
+    }
+}
+

@@ -76,6 +76,9 @@ struct RoutineCard: View {
     // reading environment colour mode
     @Environment(\.colorScheme) var colorScheme
 
+    @State private var showClarifySheet = false
+    @Environment(PetDetailStore.self) private var detail
+
     let item: RoutineCardItem
     let isEmergency: Bool
 
@@ -87,34 +90,34 @@ struct RoutineCard: View {
                     Image(systemName: item.icon)
                         .font(.caption)
 
-                        Text(
-                            item.time.isEmpty
-                                ? item.title : "\(item.title) • \(item.time)"
-                        )
-                        .font(.headline)
-                        .fontWeight(.bold)
+                    Text(
+                        item.time.isEmpty
+                            ? item.title : "\(item.title) • \(item.time)"
+                    )
+                    .font(.headline)
+                    .fontWeight(.bold)
 
-                    }.foregroundColor(Color.primaryG)
+                }.foregroundColor(Color.primaryG)
 
-                    Text(item.description)
-                        .font(.body)
+                Text(item.description)
+                    .font(.body)
 
-                }
+            }
 
-Spacer(minLength: 7)
+            Spacer(minLength: 7)
             // right
             VStack(alignment: .trailing, spacing: 7) {
-                // clarify btn
-                if isEmergency != true {
-                    ClarifyButtonStyle()
-                        .offset(y: -4)
-                }
-                
                 // media
                 if item.media != nil {
                     if let media = item.media {
                         MediaThumbnailView(media: media)
                     }
+                }
+
+                // clarify btn
+                if isEmergency != true {
+                    ClarifyButtonStyle(action: { showClarifySheet = true })
+                        .offset(y: 2)
                 }
             }
         }
@@ -122,9 +125,12 @@ Spacer(minLength: 7)
         .frame(maxWidth: .infinity)
         .clipShape(RoundedRectangle(cornerRadius: 16))
         .glassEffect(
-//            .regular.tint(colorScheme == .dark ? .clear : .white),
+            //            .regular.tint(colorScheme == .dark ? .clear : .white),
             in: .rect(cornerRadius: 16)
         )
+        .sheet(isPresented: $showClarifySheet) {
+            ClarifySheetView(pet: detail.pet, routineTitle: item.title)
+        }
     }
 }
 // MARK: - Preview

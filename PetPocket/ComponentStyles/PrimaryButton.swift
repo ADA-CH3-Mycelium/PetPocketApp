@@ -19,15 +19,22 @@ struct PrimaryButton: View {
             Text(title)
                 .font(.headline)
                 .foregroundColor(.white)
-                .frame(maxWidth: .infinity)
-                .padding()
+                .padding(.vertical, 10)
+                .padding(.horizontal, 40)
                 .background(
                     isEnabled
-                    ? Color.primaryG
+                    ? Color.accent
                     : Color.gray.opacity(0.5)
                 )
-                .cornerRadius(18)
+                .cornerRadius(50)
+                .glassEffect()
         }
         .disabled(!isEnabled)
+    }
+}
+
+#Preview {
+    PrimaryButton(title: "Login", isEnabled: true) {
+        print("yay")
     }
 }

@@ -9,23 +9,27 @@ import Foundation
 import SwiftUI
 
 struct ClarifyButtonStyle: View {
+    var action: (() -> Void)? = nil
     @State private var navigate = false
-    
+    @Environment(PetDetailStore.self) private var detail
+
     var body: some View {
         Button(action: {
-            navigate = true
+            if let action {
+                action()
+            } else {
+                navigate = true
+            }
         }) {
             Image(systemName: "questionmark.bubble.fill")
                 .font(.caption2)
                 .fontWeight(.light)
                 .foregroundStyle(.white)
                 .frame(width: 26, height: 26)
-                .glassEffect(.regular.tint(.brandSecondary.opacity(1)))
-//                .background(.accent)
-//                .clipShape(Circle())
+                .glassEffect(.regular.tint(.secondaryG.opacity(1)))
         }
         .navigationDestination(isPresented: $navigate) {
-            ClarifySheetView(isInNavigationStack: true)
+            ClarifySheetView(pet: detail.pet, isInNavigationStack: true)
         }
     }
 }

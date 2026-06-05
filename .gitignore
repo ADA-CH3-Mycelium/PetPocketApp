@@ -4,6 +4,8 @@ PetPocket.xcodeproj/xcuserdata
 */.xcuserdatad
 
 PetPocket/Secrets.plist
+PetPocket/Secrets.plist.local.backup
+PetPocket/Secrets.plist*
 
 *.xcuserstate
 
