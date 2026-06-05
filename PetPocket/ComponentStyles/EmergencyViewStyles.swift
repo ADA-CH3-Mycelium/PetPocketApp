@@ -73,16 +73,15 @@ struct ContactCard: View {
                     } label: {
                         Image(systemName: "square.on.square")
                             .font(.caption2)
-                            .foregroundColor(.secondary)
+                            
                     }
                     
-                                        
-                }
+                }.foregroundColor(.secondary)
                 
                 Text(contact.note)
                     .font(.body)
-                    .padding(.top, 5)
-                    .foregroundStyle(.gray)
+                    //.padding(.top, 5)
+
             }
 
             // call btn

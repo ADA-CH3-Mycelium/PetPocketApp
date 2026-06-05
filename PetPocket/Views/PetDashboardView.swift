@@ -18,10 +18,10 @@ struct PetDashboardView: View {
             Color.background.ignoresSafeArea()
             
             //                Text("🐾")
-            Image(systemName: "pawprint.fill")
+            Image(systemName: "bubbles.and.sparkles.fill")
                 .font(.system(size: 130, weight: .bold, design: .rounded))
                 .foregroundColor(Color.secondaryG)
-                .offset(x: 140, y: 350)
+                .offset(x: 130, y: 370)
             
             
             
@@ -70,7 +70,7 @@ struct PetDashboardView: View {
                 
                 VStack(alignment: .leading, spacing: 10) {
                     Text("Here are my habits and needs 🐾")
-                        .font(.body)
+                        .font(.headline)
                     
                     TwCoColGrid(catItem: catItem) { screen in
                         selectedScreen = screen

@@ -28,7 +28,7 @@ struct PetPocketApp: App {
 //                    PetListView()
 //                } else {
                     //                AuthView()
-                    LoginView()
+                    OnboardingView()
 //                }
         }
         .environment(auth)

@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct FoodView: View {
-    @State var isEditing: Bool = false
+    @State private var isEditing: Bool = false
     
     // headers
     private let foodCategoryHeaders: [CategoryHeaderItem] = [
@@ -55,14 +55,14 @@ struct FoodView: View {
                         //add btn
                         if isEditing {
                             Button(action: {
-                                print("add btn pressed")
+                                print("add routine card btn pressed")
                             }) {
                                 Image(systemName: "plus")
                                     .font(.system(size: 24, weight: .semibold))
                                 //.foregroundColor(.white)
                                     .padding(10)
                                     .glassEffect()
-                            }
+                            }.padding(.bottom, 20)
                         }
                         
                     }
@@ -72,10 +72,25 @@ struct FoodView: View {
                         
                         // header
                         VStack(spacing: 10){
+                            //header
                             CategoryHeader(item: foodCategoryHeaders[1])
                             
+                            // items
                             ForEach(mockFoodAdditionalNotes) { item in
                                 AddNotesStyle(item: item)
+                            }
+                            
+                            //add btn
+                            if isEditing {
+                                Button(action: {
+                                    print("add routine card btn pressed")
+                                }) {
+                                    Image(systemName: "plus")
+                                        .font(.system(size: 24, weight: .semibold))
+                                    //.foregroundColor(.white)
+                                        .padding(10)
+                                        .glassEffect()
+                                }.padding(.bottom, 20)
                             }
                         }
                         

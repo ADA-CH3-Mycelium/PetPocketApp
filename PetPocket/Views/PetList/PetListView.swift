@@ -47,31 +47,6 @@ struct PetListView: View {
             
             ScrollView {
                 VStack(alignment: .leading, spacing: 30) {
-                    // Top header
-                    //                        HStack(alignment: .center, spacing: 10) {
-                    //
-                    //                                    Image("AlexProfilePicture")
-                    //                                        .resizable()
-                    //                                        .scaledToFill()
-                    //                                        .frame(width: 40, height: 40)
-                    //                                        .clipShape(Circle())
-                    //
-                    //
-                    //                            Text("Good morning, Alex!")
-                    //                                .font(.subheadline)
-                    //                                .fontWeight(.semibold)
-                    //
-                    //                            Spacer()
-                    //
-                    //                            Button(action: {}) {
-                    //                                Image(systemName: "magnifyingglass")
-                    //                                    .font(.system(size: 20, weight: .medium))
-                    //                                    .foregroundColor(.primary)
-                    //                            }
-                    //                        }
-                    //                        .padding(.horizontal, 20)
-                    //                        .padding(.top, 16)
-                    //                        .padding(.bottom, 24)
                     
                     // Your Pet header row
                     VStack(alignment: .leading, spacing: 2) {
@@ -109,8 +84,8 @@ struct PetListView: View {
                                 .frame(width: 36, height: 36)
                                 .glassEffect()
                         }
-                    } .padding(20)
-                }
+                    }
+                }.padding(20)
                 .navigationBarHidden(true)
                 .searchable(text: $searchPet)
                 .searchToolbarBehavior(.minimize)
