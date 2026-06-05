@@ -22,6 +22,17 @@ struct MediaThumbnailView: View {
                     Image(name)
                         .resizable()
                         .scaledToFill()
+                case .photoURL(let url):
+                    AsyncImage(url: url) { phase in
+                        switch phase {
+                        case .success(let image):
+                            image.resizable().scaledToFill()
+                        case .failure:
+                            Color.gray.opacity(0.3)
+                        default:
+                            Color.gray.opacity(0.15)
+                        }
+                    }
                 case .video:
                     if let thumbnail = videoThumbnail {
                         Image(uiImage: thumbnail)
@@ -32,7 +43,7 @@ struct MediaThumbnailView: View {
                     }
                 }
             }
-
+            
             if case .video = media {
                 Circle()
                     .fill(.white.opacity(0.85))
@@ -60,6 +71,8 @@ struct MediaThumbnailView: View {
             switch media {
             case .photo(let name):
                 PhotoFullScreenView(imageName: name)
+            case .photoURL(let url):
+                PhotoURLFullScreenView(url: url)
             case .video(let url):
                 VideoFullScreenView(url: url)
             }

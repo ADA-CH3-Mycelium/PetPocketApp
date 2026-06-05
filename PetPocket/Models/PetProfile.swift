@@ -9,8 +9,9 @@ import Foundation
 import AVKit
 
 enum MediaAttachment {
-    case photo(String)
-    case video(URL)
+    case photo(String)      // local asset name
+    case photoURL(URL)      // remote image (Supabase Storage)
+    case video(URL)         // remote or local video
 }
 
 // MARK: - Pet

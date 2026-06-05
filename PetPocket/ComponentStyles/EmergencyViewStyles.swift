@@ -8,6 +8,7 @@
 import Foundation
 import SwiftUI
 import MapKit
+import UIKit
 
 var mockContact: [ContactCardItem] = [
     ContactCardItem(
@@ -69,12 +70,13 @@ struct ContactCard: View {
                         .font(.caption)
                     
                     Button {
-                        print("copy phone num pressed")
+                        UIPasteboard.general.string = contact.phone
                     } label: {
                         Image(systemName: "square.on.square")
                             .font(.caption2)
                             .foregroundColor(.secondary)
                     }
+                    .buttonStyle(.plain)
                     
                                         
                 }

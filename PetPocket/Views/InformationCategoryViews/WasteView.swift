@@ -24,6 +24,8 @@ struct WasteView: View {
             ScrollView(.vertical, showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 24) {
 
+                    if isEditing { EditHintBanner() }
+
                     // MARK: Routine section
                     VStack(alignment: .leading, spacing: 10) {
                         CategoryHeader(item: headers[0])

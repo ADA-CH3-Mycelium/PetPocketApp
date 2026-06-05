@@ -107,6 +107,7 @@ struct FeedingMealInsert: Encodable {
     let notes: String?
     let iconName: String?
     let mediaUrl: String?
+    let mediaType: String?   // "photo" | "video"
     let sortOrder: Int?
 
     enum CodingKeys: String, CodingKey {
@@ -115,6 +116,7 @@ struct FeedingMealInsert: Encodable {
         case mealName  = "meal_name"
         case iconName  = "icon_name"
         case mediaUrl  = "media_url"
+        case mediaType = "media_type"
         case sortOrder = "sort_order"
     }
 }
@@ -125,12 +127,14 @@ struct FeedingMealUpdate: Encodable {
     let notes: String?
     let iconName: String?
     let mediaUrl: String?
+    let mediaType: String?   // "photo" | "video"
 
     enum CodingKeys: String, CodingKey {
         case time, notes
         case mealName = "meal_name"
         case iconName = "icon_name"
         case mediaUrl = "media_url"
+        case mediaType = "media_type"
     }
 }
 
@@ -198,9 +202,10 @@ struct EmergencyContactRow: Decodable, Identifiable {
     let name: String
     let role: String?
     let phone: String?
+    let description: String?
 
     enum CodingKeys: String, CodingKey {
-        case id, name, role, phone
+        case id, name, role, phone, description
     }
 }
 
@@ -209,10 +214,11 @@ struct EmergencyContactInsert: Encodable {
     let name: String
     let role: String?
     let phone: String?
+    let description: String?
     let sortOrder: Int?
 
     enum CodingKeys: String, CodingKey {
-        case name, role, phone
+        case name, role, phone, description
         case petId = "pet_id"
         case sortOrder = "sort_order"
     }
@@ -222,6 +228,7 @@ struct EmergencyContactUpdate: Encodable {
     let name: String
     let role: String?
     let phone: String?
+    let description: String?
 }
 
 // MARK: - Vet clinics

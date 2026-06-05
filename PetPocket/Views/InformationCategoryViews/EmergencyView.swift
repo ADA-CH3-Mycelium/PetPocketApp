@@ -34,6 +34,7 @@ struct EmergencyView: View {
             Color.background.ignoresSafeArea()
             ScrollView {
                 VStack(spacing: 30) {
+                    if isEditing { EditHintBanner() }
                     firstAidSection
                     contactsSection
                     clinicsSection
@@ -91,14 +92,14 @@ struct EmergencyView: View {
             } else {
                 VStack(spacing: 12) {
                     ForEach(detail.firstAid) { item in
-                        if isEditing {
-                            Button { editingFirstAid = item } label: {
-                                RoutineCard(item: item, isEmergency: true)
-                                    .overlay(alignment: .bottomTrailing) { editBadge }
-                            }.buttonStyle(.plain)
-                
-                            RoutineCard(item: item, isEmergency: true)
-                        }
+                        RoutineCard(item: item, isEmergency: true)
+                            .overlay {
+                                if isEditing {
+                                    Color.clear
+                                        .contentShape(Rectangle())
+                                        .onTapGesture { editingFirstAid = item }
+                                }
+                            }
                     }
                 }
             }
@@ -116,14 +117,14 @@ struct EmergencyView: View {
 
             VStack(spacing: 12) {
                 ForEach(detail.contacts, id: \.self) { contact in
-                    if isEditing {
-                        Button { editingContact = contact } label: {
-                            ContactCard(contact: contact)
-                                .overlay(alignment: .bottomTrailing) { editBadge }
-                        }.buttonStyle(.plain)
-                    } else {
-                        ContactCard(contact: contact)
-                    }
+                    ContactCard(contact: contact)
+                        .overlay {
+                            if isEditing {
+                                Color.clear
+                                    .contentShape(Rectangle())
+                                    .onTapGesture { editingContact = contact }
+                            }
+                        }
                 }
             }
 
@@ -142,29 +143,21 @@ struct EmergencyView: View {
             CategoryHeader(item: headers[2])
 
             ForEach(detail.clinics) { item in
-                if isEditing {
-                    Button { editingClinic = item } label: {
-                        VetClinicCard(item: item)
-                            .overlay(alignment: .bottomTrailing) { editBadge }
-                    }.buttonStyle(.plain)
-                } else {
-                    VetClinicCard(item: item)
-                }
+                VetClinicCard(item: item)
+                    .overlay {
+                        if isEditing {
+                            Color.clear
+                                .contentShape(Rectangle())
+                                .onTapGesture { editingClinic = item }
+                        }
+                    }
             }
 
             if isEditing {
                 AddCardButton { showAddClinic = true }
             }
         }
-    }
-
-    private var editBadge: some View {
-        Image(systemName: "pencil.circle.fill")
-            .font(.system(size: 22))
-            .foregroundStyle(.white, Color.primaryG)
-            .padding(6)
-    }
-}
+    }}
 
 #Preview {
     EmergencyView()

@@ -122,11 +122,16 @@ struct PetRepository {
     /// Uploads a meal photo to the `pet-media` bucket.
     /// Returns the public URL string, or throws on failure.
     func uploadMealPhoto(data: Data) async throws -> String {
+        try await uploadMealMedia(data: data, contentType: "image/jpeg", fileExtension: "jpg")
+    }
+
+    /// Uploads any meal media (photo or video) to the `pet-media` bucket.
+    func uploadMealMedia(data: Data, contentType: String, fileExtension: String) async throws -> String {
         let uid = try await currentUserId()
-        let path = "\(uid.uuidString.lowercased())/meals/\(UUID().uuidString.lowercased()).jpg"
+        let path = "\(uid.uuidString.lowercased())/meals/\(UUID().uuidString.lowercased()).\(fileExtension)"
         try await client.storage
             .from("pet-media")
-            .upload(path, data: data, options: FileOptions(contentType: "image/jpeg", upsert: true))
+            .upload(path, data: data, options: FileOptions(contentType: contentType, upsert: true))
         return try client.storage
             .from("pet-media")
             .getPublicURL(path: path)
@@ -153,6 +158,7 @@ struct PetRepository {
         notes: String?,
         iconName: String?,
         mediaUrl: String?,
+        mediaType: String?,
         sortOrder: Int?
     ) async throws -> FeedingMealRow {
         let payload = FeedingMealInsert(
@@ -162,6 +168,7 @@ struct PetRepository {
             notes: notes,
             iconName: iconName,
             mediaUrl: mediaUrl,
+            mediaType: mediaType,
             sortOrder: sortOrder
         )
         return try await client
@@ -183,14 +190,16 @@ struct PetRepository {
         time: String,
         notes: String?,
         iconName: String?,
-        mediaUrl: String?
+        mediaUrl: String?,
+        mediaType: String?
     ) async throws -> FeedingMealRow {
         let payload = FeedingMealUpdate(
             mealName: mealName,
             time: time,
             notes: notes,
             iconName: iconName,
-            mediaUrl: mediaUrl
+            mediaUrl: mediaUrl,
+            mediaType: mediaType
         )
         return try await client
             .from("feeding_meals")
@@ -286,18 +295,18 @@ struct PetRepository {
     }
 
     @discardableResult
-    func addContact(petId: UUID, name: String, role: String?, phone: String?, sortOrder: Int?) async throws -> EmergencyContactRow {
+    func addContact(petId: UUID, name: String, role: String?, phone: String?, description: String?, sortOrder: Int?) async throws -> EmergencyContactRow {
         try await client
             .from("emergency_contacts")
-            .insert(EmergencyContactInsert(petId: petId, name: name, role: role, phone: phone, sortOrder: sortOrder))
+            .insert(EmergencyContactInsert(petId: petId, name: name, role: role, phone: phone, description: description, sortOrder: sortOrder))
             .select().single().execute().value
     }
 
     @discardableResult
-    func updateContact(id: UUID, name: String, role: String?, phone: String?) async throws -> EmergencyContactRow {
+    func updateContact(id: UUID, name: String, role: String?, phone: String?, description: String?) async throws -> EmergencyContactRow {
         try await client
             .from("emergency_contacts")
-            .update(EmergencyContactUpdate(name: name, role: role, phone: phone))
+            .update(EmergencyContactUpdate(name: name, role: role, phone: phone, description: description))
             .eq("id", value: id.uuidString)
             .select().single().execute().value
     }

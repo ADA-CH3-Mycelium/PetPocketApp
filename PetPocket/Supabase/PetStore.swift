@@ -140,7 +140,8 @@ final class PetDetailStore {
                     title: row.mealName,
                     time: row.time,
                     description: row.notes ?? "",
-                    icon: row.iconName ?? "fork.knife"
+                    icon: row.iconName ?? "fork.knife",
+                    media: Self.mealMedia(url: row.mediaUrl, type: row.mediaType)
                 )
             }
 
@@ -152,15 +153,7 @@ final class PetDetailStore {
             careItems = try await careRows.map(Self.card)
             firstAid = try await emergencyRows.map(Self.card)
 
-            contacts = try await contactRows.map { row in
-                ContactCardItem(
-                    id: row.id,
-                    name: row.name,
-                    relationship: row.role ?? "",
-                    note: row.role ?? "",
-                    phone: row.phone ?? ""
-                )
-            }
+            contacts = try await contactRows.map { Self.contactItem($0) }
 
             clinics = try await clinicRows.map { Self.clinicItem($0) }
 
@@ -190,12 +183,19 @@ final class PetDetailStore {
 
     // MARK: Write — Meals
     @MainActor
+    /// Builds a MediaAttachment from a stored URL + media_type.
+    static func mealMedia(url: String?, type: String?) -> MediaAttachment? {
+        guard let url, !url.isEmpty, let u = URL(string: url) else { return nil }
+        return type == "video" ? .video(u) : .photoURL(u)
+    }
+
     func addMeal(
         mealName: String,
         time: String,
         notes: String?,
         iconName: String?,
-        mediaUrl: String?
+        mediaUrl: String?,
+        mediaType: String?
     ) async -> Bool {
         errorMessage = nil
         do {
@@ -206,6 +206,7 @@ final class PetDetailStore {
                 notes: notes.flatMap { $0.isEmpty ? nil : $0 },
                 iconName: iconName,
                 mediaUrl: mediaUrl,
+                mediaType: mediaType,
                 sortOrder: meals.count
             )
             meals.append(RoutineCardItem(
@@ -213,7 +214,8 @@ final class PetDetailStore {
                 title: newRow.mealName,
                 time: newRow.time,
                 description: newRow.notes ?? "",
-                icon: newRow.iconName ?? "fork.knife"
+                icon: newRow.iconName ?? "fork.knife",
+                media: Self.mealMedia(url: newRow.mediaUrl, type: newRow.mediaType)
             ))
             return true
         } catch {
@@ -230,7 +232,8 @@ final class PetDetailStore {
         time: String,
         notes: String?,
         iconName: String?,
-        mediaUrl: String?
+        mediaUrl: String?,
+        mediaType: String?
     ) async -> Bool {
         errorMessage = nil
         do {
@@ -240,14 +243,16 @@ final class PetDetailStore {
                 time: time,
                 notes: notes.flatMap { $0.isEmpty ? nil : $0 },
                 iconName: iconName,
-                mediaUrl: mediaUrl
+                mediaUrl: mediaUrl,
+                mediaType: mediaType
             )
             let updated = RoutineCardItem(
                 id: row.id,
                 title: row.mealName,
                 time: row.time,
                 description: row.notes ?? "",
-                icon: row.iconName ?? "fork.knife"
+                icon: row.iconName ?? "fork.knife",
+                media: Self.mealMedia(url: row.mediaUrl, type: row.mediaType)
             )
             if let idx = meals.firstIndex(where: { $0.id == id }) {
                 meals[idx] = updated
@@ -360,17 +365,28 @@ final class PetDetailStore {
 
     // MARK: Write — Emergency contacts
 
+    static func contactItem(_ row: EmergencyContactRow) -> ContactCardItem {
+        ContactCardItem(
+            id: row.id,
+            name: row.name,
+            relationship: row.role ?? "",
+            note: row.description ?? "",
+            phone: row.phone ?? ""
+        )
+    }
+
     @MainActor
-    func addContact(name: String, role: String, phone: String) async -> Bool {
+    func addContact(name: String, role: String, phone: String, description: String) async -> Bool {
         errorMessage = nil
         do {
             let row = try await repo.addContact(
                 petId: pet.id, name: name,
                 role: role.isEmpty ? nil : role,
                 phone: phone.isEmpty ? nil : phone,
+                description: description.isEmpty ? nil : description,
                 sortOrder: contacts.count
             )
-            contacts.append(ContactCardItem(id: row.id, name: row.name, relationship: row.role ?? "", note: row.role ?? "", phone: row.phone ?? ""))
+            contacts.append(Self.contactItem(row))
             return true
         } catch {
             errorMessage = error.localizedDescription
@@ -379,11 +395,16 @@ final class PetDetailStore {
     }
 
     @MainActor
-    func updateContact(id: UUID, name: String, role: String, phone: String) async -> Bool {
+    func updateContact(id: UUID, name: String, role: String, phone: String, description: String) async -> Bool {
         errorMessage = nil
         do {
-            let row = try await repo.updateContact(id: id, name: name, role: role.isEmpty ? nil : role, phone: phone.isEmpty ? nil : phone)
-            let updated = ContactCardItem(id: row.id, name: row.name, relationship: row.role ?? "", note: row.role ?? "", phone: row.phone ?? "")
+            let row = try await repo.updateContact(
+                id: id, name: name,
+                role: role.isEmpty ? nil : role,
+                phone: phone.isEmpty ? nil : phone,
+                description: description.isEmpty ? nil : description
+            )
+            let updated = Self.contactItem(row)
             if let i = contacts.firstIndex(where: { $0.id == id }) { contacts[i] = updated } else { contacts.append(updated) }
             return true
         } catch {

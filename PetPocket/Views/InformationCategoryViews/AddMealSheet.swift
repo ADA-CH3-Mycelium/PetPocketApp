@@ -22,9 +22,11 @@ struct AddMealSheet: View {
     @State private var description = ""
     @State private var selectedIcon = "fork.knife"
 
-    // Photo (optional)
+    // Media (optional) — photo or video
     @State private var photoItem: PhotosPickerItem? = nil
     @State private var selectedImage: UIImage? = nil
+    @State private var mediaData: Data? = nil
+    @State private var mediaIsVideo = false
 
     // State
     @State private var isSaving = false
@@ -102,27 +104,45 @@ struct AddMealSheet: View {
                             }
                         }
 
-                        // ── Photo (optional) ─────────────────────────
+                        // ── Photo / Video (optional) ─────────────────
                         formCard {
                             VStack(alignment: .leading, spacing: 12) {
                                 HStack {
-                                    sectionLabel("Photo")
+                                    sectionLabel("Photo or Video")
                                     Text("Optional")
                                         .font(.caption)
                                         .foregroundColor(.secondary)
                                 }
 
-                                if let img = selectedImage {
+                                if selectedImage != nil || mediaData != nil {
                                     ZStack(alignment: .topTrailing) {
-                                        Image(uiImage: img)
-                                            .resizable()
-                                            .scaledToFill()
-                                            .frame(maxWidth: .infinity)
-                                            .frame(height: 160)
-                                            .clipShape(RoundedRectangle(cornerRadius: 12))
+                                        if let img = selectedImage {
+                                            Image(uiImage: img)
+                                                .resizable()
+                                                .scaledToFill()
+                                                .frame(maxWidth: .infinity)
+                                                .frame(height: 160)
+                                                .clipShape(RoundedRectangle(cornerRadius: 12))
+                                        } else {
+                                            // video selected — show placeholder
+                                            RoundedRectangle(cornerRadius: 12)
+                                                .fill(Color.black.opacity(0.8))
+                                                .frame(maxWidth: .infinity)
+                                                .frame(height: 160)
+                                                .overlay(
+                                                    VStack(spacing: 6) {
+                                                        Image(systemName: "play.circle.fill")
+                                                            .font(.system(size: 40))
+                                                        Text("Video selected").font(.caption)
+                                                    }
+                                                    .foregroundColor(.white)
+                                                )
+                                        }
 
                                         Button {
                                             selectedImage = nil
+                                            mediaData = nil
+                                            mediaIsVideo = false
                                             photoItem = nil
                                         } label: {
                                             Image(systemName: "xmark.circle.fill")
@@ -132,12 +152,12 @@ struct AddMealSheet: View {
                                         }
                                     }
                                 } else {
-                                    PhotosPicker(selection: $photoItem, matching: .images) {
+                                    PhotosPicker(selection: $photoItem, matching: .any(of: [.images, .videos])) {
                                         HStack(spacing: 10) {
                                             Image(systemName: "photo.badge.plus")
                                                 .font(.title3)
                                                 .foregroundColor(.primaryG)
-                                            Text("Add a photo")
+                                            Text("Add a photo or video")
                                                 .foregroundColor(.primaryG)
                                                 .fontWeight(.medium)
                                         }
@@ -147,12 +167,7 @@ struct AddMealSheet: View {
                                         .clipShape(RoundedRectangle(cornerRadius: 12))
                                     }
                                     .onChange(of: photoItem) { _, newItem in
-                                        Task {
-                                            if let data = try? await newItem?.loadTransferable(type: Data.self),
-                                               let ui = UIImage(data: data) {
-                                                selectedImage = ui
-                                            }
-                                        }
+                                        Task { await loadPicked(newItem) }
                                     }
                                 }
                             }
@@ -273,8 +288,17 @@ struct AddMealSheet: View {
         isSaving = true
 
         var uploadedUrl: String? = nil
-        if let img = selectedImage, let data = img.jpegData(compressionQuality: 0.8) {
-            uploadedUrl = try? await PetRepository.shared.uploadMealPhoto(data: data)
+        var mediaType: String? = nil
+        if let data = mediaData {
+            if mediaIsVideo {
+                uploadedUrl = try? await PetRepository.shared.uploadMealMedia(
+                    data: data, contentType: "video/quicktime", fileExtension: "mov")
+                mediaType = uploadedUrl != nil ? "video" : nil
+            } else {
+                uploadedUrl = try? await PetRepository.shared.uploadMealMedia(
+                    data: data, contentType: "image/jpeg", fileExtension: "jpg")
+                mediaType = uploadedUrl != nil ? "photo" : nil
+            }
         }
 
         let ok: Bool
@@ -286,7 +310,8 @@ struct AddMealSheet: View {
                 time: time.trimmingCharacters(in: .whitespaces),
                 notes: description.trimmingCharacters(in: .whitespaces),
                 iconName: selectedIcon,
-                mediaUrl: uploadedUrl
+                mediaUrl: uploadedUrl,
+                mediaType: mediaType
             )
         } else {
             ok = await detail.addMeal(
@@ -294,11 +319,29 @@ struct AddMealSheet: View {
                 time: time.trimmingCharacters(in: .whitespaces),
                 notes: description.trimmingCharacters(in: .whitespaces),
                 iconName: selectedIcon,
-                mediaUrl: uploadedUrl
+                mediaUrl: uploadedUrl,
+                mediaType: mediaType
             )
         }
         isSaving = false
         if ok { dismiss() }
+    }
+
+    /// Loads the picked photo OR video. Photo → downscaled JPEG; anything that
+    /// isn't a decodable image is treated as a video (raw data uploaded as-is).
+    private func loadPicked(_ item: PhotosPickerItem?) async {
+        guard let item,
+              let data = try? await item.loadTransferable(type: Data.self) else { return }
+        if let ui = UIImage(data: data) {
+            let resized = ui.mealDownscaled(maxDimension: 1024)
+            selectedImage = resized
+            mediaData = resized.jpegData(compressionQuality: 0.8)
+            mediaIsVideo = false
+        } else {
+            selectedImage = nil
+            mediaData = data
+            mediaIsVideo = true
+        }
     }
 
     private func deleteCard() async {
@@ -307,6 +350,18 @@ struct AddMealSheet: View {
         let ok = await detail.deleteMeal(id: editing.id)
         isDeleting = false
         if ok { dismiss() }
+    }
+}
+
+private extension UIImage {
+    /// Aspect-fit downscale so the longest side <= maxDimension. No upscaling.
+    func mealDownscaled(maxDimension: CGFloat) -> UIImage {
+        let longest = max(size.width, size.height)
+        guard longest > maxDimension else { return self }
+        let scale = maxDimension / longest
+        let newSize = CGSize(width: size.width * scale, height: size.height * scale)
+        let renderer = UIGraphicsImageRenderer(size: newSize)
+        return renderer.image { _ in draw(in: CGRect(origin: .zero, size: newSize)) }
     }
 }
 

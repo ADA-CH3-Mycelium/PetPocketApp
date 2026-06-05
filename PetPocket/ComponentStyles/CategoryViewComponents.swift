@@ -161,16 +161,31 @@ struct TappableRoutineCard: View {
                 onEditTap(item)
             } label: {
                 RoutineCard(item: item, isEmergency: false)
-                    .overlay(alignment: .bottomTrailing) {
-                        Image(systemName: "pencil.circle.fill")
-                            .font(.system(size: 22))
-                            .foregroundStyle(.white, Color.primaryG)
-                            .padding(6)
-                    }
             }
             .buttonStyle(.plain)
         } else {
             RoutineCard(item: item, isEmergency: false)
         }
+    }
+}
+
+// MARK: - Edit Hint Banner
+// Shown below the header while in edit mode.
+
+struct EditHintBanner: View {
+    var body: some View {
+        HStack(spacing: 6) {
+            Image(systemName: "hand.tap.fill")
+            Text("Press a card to edit")
+        }
+        .font(.caption)
+        .fontWeight(.medium)
+        .foregroundColor(.primaryG)
+        .padding(.horizontal, 12)
+        .padding(.vertical, 8)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(Color.primaryG.opacity(0.08))
+        .clipShape(RoundedRectangle(cornerRadius: 10))
+        .transition(.move(edge: .top).combined(with: .opacity))
     }
 }

@@ -26,6 +26,8 @@ struct FoodView: View {
             ScrollView(.vertical, showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 24) {
 
+                    if isEditing { EditHintBanner() }
+
                     // MARK: Alert section
                     VStack(alignment: .leading, spacing: 10) {
                         CategoryHeader(item: headers[0])
@@ -43,12 +45,7 @@ struct FoodView: View {
 
                         if isEditing {
                             Button { showDietaryEdit = true } label: {
-                                dietaryCard.overlay(alignment: .bottomTrailing) {
-                                    Image(systemName: "pencil.circle.fill")
-                                        .font(.system(size: 22))
-                                        .foregroundStyle(.white, Color.alertRed)
-                                        .padding(6)
-                                }
+                                dietaryCard
                             }
                             .buttonStyle(.plain)
                         } else {

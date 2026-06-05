@@ -16,6 +16,7 @@ struct ContactSheet: View {
     @State private var name = ""
     @State private var role = ""
     @State private var phone = ""
+    @State private var contactDescription = ""
     @State private var isSaving = false
     @State private var isDeleting = false
     @State private var showDeleteConfirm = false
@@ -36,6 +37,8 @@ struct ContactSheet: View {
                                 field("Relationship", "e.g. Neighbour", $role)
                                 Divider()
                                 field("Phone", "e.g. 0912xxxx", $phone, keyboard: .phonePad)
+                                Divider()
+                                field("Description", "e.g. Has spare keys, knows the routine", $contactDescription)
                             }
                         }
 
@@ -82,6 +85,7 @@ struct ContactSheet: View {
             .onAppear {
                 if let e = editing {
                     name = e.name; role = e.relationship; phone = e.phone
+                    contactDescription = e.note
                 }
             }
             .alert("Delete this contact?", isPresented: $showDeleteConfirm) {
@@ -112,11 +116,12 @@ struct ContactSheet: View {
         let n = name.trimmingCharacters(in: .whitespaces)
         let r = role.trimmingCharacters(in: .whitespaces)
         let p = phone.trimmingCharacters(in: .whitespaces)
+        let d = contactDescription.trimmingCharacters(in: .whitespaces)
         let ok: Bool
         if let editing {
-            ok = await detail.updateContact(id: editing.id, name: n, role: r, phone: p)
+            ok = await detail.updateContact(id: editing.id, name: n, role: r, phone: p, description: d)
         } else {
-            ok = await detail.addContact(name: n, role: r, phone: p)
+            ok = await detail.addContact(name: n, role: r, phone: p, description: d)
         }
         isSaving = false
         if ok { dismiss() }
