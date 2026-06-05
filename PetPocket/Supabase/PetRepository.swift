@@ -43,15 +43,34 @@ struct PetRepository {
             .value
     }
 
-    /// Pets the user can see but does not own (i.e. shared with them as sitter).
+    /// Pets the user has been explicitly granted sitter access to via pet_access.
     func fetchSittingPets() async throws -> [PetRow] {
         let uid = try await currentUserId()
-        let all: [PetRow] = try await client
-            .from("pets")
-            .select()
+
+        // Step 1: get the pet IDs this user is an active sitter for
+        struct AccessRow: Decodable {
+            let petId: UUID
+            enum CodingKeys: String, CodingKey { case petId = "pet_id" }
+        }
+        let granted: [AccessRow] = try await client
+            .from("pet_access")
+            .select("pet_id")
+            .eq("sitter_id", value: uid.uuidString)
+            .eq("is_active", value: true)
             .execute()
             .value
-        return all.filter { $0.ownerId != uid }
+
+        guard !granted.isEmpty else { return [] }
+
+        // Step 2: fetch only those specific pets
+        let ids = granted.map { $0.petId.uuidString }
+        return try await client
+            .from("pets")
+            .select()
+            .in("id", values: ids)
+            .order("created_at", ascending: true)
+            .execute()
+            .value
     }
 
     @discardableResult
@@ -100,7 +119,22 @@ struct PetRepository {
             .absoluteString
     }
 
+    /// Uploads a meal photo to the `pet-media` bucket.
+    /// Returns the public URL string, or throws on failure.
+    func uploadMealPhoto(data: Data) async throws -> String {
+        let uid = try await currentUserId()
+        let path = "\(uid.uuidString.lowercased())/meals/\(UUID().uuidString.lowercased()).jpg"
+        try await client.storage
+            .from("pet-media")
+            .upload(path, data: data, options: FileOptions(contentType: "image/jpeg", upsert: true))
+        return try client.storage
+            .from("pet-media")
+            .getPublicURL(path: path)
+            .absoluteString
+    }
+
     // MARK: Category content
+
     func fetchMeals(petId: UUID) async throws -> [FeedingMealRow] {
         try await client
             .from("feeding_meals")
@@ -111,6 +145,71 @@ struct PetRepository {
             .value
     }
 
+    @discardableResult
+    func addMeal(
+        petId: UUID,
+        mealName: String,
+        time: String,
+        notes: String?,
+        iconName: String?,
+        mediaUrl: String?,
+        sortOrder: Int?
+    ) async throws -> FeedingMealRow {
+        let payload = FeedingMealInsert(
+            petId: petId,
+            mealName: mealName,
+            time: time,
+            notes: notes,
+            iconName: iconName,
+            mediaUrl: mediaUrl,
+            sortOrder: sortOrder
+        )
+        return try await client
+            .from("feeding_meals")
+            .insert(payload)
+            .select()
+            .single()
+            .execute()
+            .value
+    }
+
+    /// Updates an existing meal. Optional fields left nil are omitted from the
+    /// PATCH (synthesized Encodable uses encodeIfPresent), so e.g. a text-only
+    /// edit won't wipe an existing media_url.
+    @discardableResult
+    func updateMeal(
+        id: UUID,
+        mealName: String,
+        time: String,
+        notes: String?,
+        iconName: String?,
+        mediaUrl: String?
+    ) async throws -> FeedingMealRow {
+        let payload = FeedingMealUpdate(
+            mealName: mealName,
+            time: time,
+            notes: notes,
+            iconName: iconName,
+            mediaUrl: mediaUrl
+        )
+        return try await client
+            .from("feeding_meals")
+            .update(payload)
+            .eq("id", value: id.uuidString)
+            .select()
+            .single()
+            .execute()
+            .value
+    }
+
+    func deleteMeal(id: UUID) async throws {
+        try await client
+            .from("feeding_meals")
+            .delete()
+            .eq("id", value: id.uuidString)
+            .execute()
+    }
+
     func fetchDietary(petId: UUID) async throws -> [DietaryRestrictionRow] {
         try await client
             .from("dietary_restrictions")
@@ -118,6 +217,25 @@ struct PetRepository {
             .eq("pet_id", value: petId.uuidString)
             .execute()
             .value
+    }
+
+    /// Replaces a pet's dietary restrictions. One row per pet; allergies and
+    /// restricted are stored as comma-separated text. Delete-then-insert.
+    func replaceDietary(petId: UUID, allergies: [String], restricted: [String]) async throws {
+        try await client
+            .from("dietary_restrictions")
+            .delete()
+            .eq("pet_id", value: petId.uuidString)
+            .execute()
+
+        let a = allergies.joined(separator: ", ")
+        let r = restricted.joined(separator: ", ")
+        guard !a.isEmpty || !r.isEmpty else { return }   // nothing to store
+
+        try await client
+            .from("dietary_restrictions")
+            .insert(DietaryInsert(petId: petId, allergies: a, restricted: r))
+            .execute()
     }
 
     func fetchCareItems(petId: UUID, category: String) async throws -> [CareItemRow] {
@@ -131,6 +249,32 @@ struct PetRepository {
             .value
     }
 
+    @discardableResult
+    func addCareItem(
+        petId: UUID, category: String,
+        title: String, content: String, icon: String, sortOrder: Int?
+    ) async throws -> CareItemRow {
+        let payload = CareItemInsert(
+            petId: petId, category: category, itemType: "card",
+            title: title, content: content, icon: icon, sortOrder: sortOrder
+        )
+        return try await client
+            .from("care_items").insert(payload).select().single().execute().value
+    }
+
+    @discardableResult
+    func updateCareItem(id: UUID, title: String, content: String, icon: String) async throws -> CareItemRow {
+        try await client
+            .from("care_items")
+            .update(CareItemUpdate(title: title, content: content, icon: icon))
+            .eq("id", value: id.uuidString)
+            .select().single().execute().value
+    }
+
+    func deleteCareItem(id: UUID) async throws {
+        try await client.from("care_items").delete().eq("id", value: id.uuidString).execute()
+    }
+
     func fetchContacts(petId: UUID) async throws -> [EmergencyContactRow] {
         try await client
             .from("emergency_contacts")
@@ -141,6 +285,27 @@ struct PetRepository {
             .value
     }
 
+    @discardableResult
+    func addContact(petId: UUID, name: String, role: String?, phone: String?, sortOrder: Int?) async throws -> EmergencyContactRow {
+        try await client
+            .from("emergency_contacts")
+            .insert(EmergencyContactInsert(petId: petId, name: name, role: role, phone: phone, sortOrder: sortOrder))
+            .select().single().execute().value
+    }
+
+    @discardableResult
+    func updateContact(id: UUID, name: String, role: String?, phone: String?) async throws -> EmergencyContactRow {
+        try await client
+            .from("emergency_contacts")
+            .update(EmergencyContactUpdate(name: name, role: role, phone: phone))
+            .eq("id", value: id.uuidString)
+            .select().single().execute().value
+    }
+
+    func deleteContact(id: UUID) async throws {
+        try await client.from("emergency_contacts").delete().eq("id", value: id.uuidString).execute()
+    }
+
     func fetchClinics(petId: UUID) async throws -> [VetClinicRow] {
         try await client
             .from("vet_clinics")
@@ -148,6 +313,27 @@ struct PetRepository {
             .eq("pet_id", value: petId.uuidString)
             .execute()
             .value
+    }
+
+    @discardableResult
+    func addClinic(petId: UUID, name: String, address: String?, phone: String?, isPrimary: Bool?) async throws -> VetClinicRow {
+        try await client
+            .from("vet_clinics")
+            .insert(VetClinicInsert(petId: petId, name: name, address: address, phone: phone, isPrimary: isPrimary))
+            .select().single().execute().value
+    }
+
+    @discardableResult
+    func updateClinic(id: UUID, name: String, address: String?, phone: String?, isPrimary: Bool?) async throws -> VetClinicRow {
+        try await client
+            .from("vet_clinics")
+            .update(VetClinicUpdate(name: name, address: address, phone: phone, isPrimary: isPrimary))
+            .eq("id", value: id.uuidString)
+            .select().single().execute().value
+    }
+
+    func deleteClinic(id: UUID) async throws {
+        try await client.from("vet_clinics").delete().eq("id", value: id.uuidString).execute()
     }
 
     // MARK: Access sharing

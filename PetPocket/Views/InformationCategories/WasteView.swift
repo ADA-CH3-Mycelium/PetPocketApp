@@ -77,9 +77,28 @@ struct WasteView: View {
                 
                 Spacer()
 
-            }.padding(20)
+                    Spacer()
+                }.padding(20)
+            }
+            .navigationTitle("Waste Routine")
+            .navigationBarTitleDisplayMode(.inline)
+            .tint(Color.primaryG)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    EditMenuButton(isEditing: $isEditing)
+                }
+            }
+            .sheet(isPresented: $showAddItem) {
+                CareItemSheet(detail: detail, category: "waste")
+                    .presentationDetents([.large])
+                    .presentationCornerRadius(24)
+            }
+            .sheet(item: $editingItem) { item in
+                CareItemSheet(detail: detail, category: "waste", editing: item)
+                    .presentationDetents([.large])
+                    .presentationCornerRadius(24)
+            }
         }
-
     }
 }
 

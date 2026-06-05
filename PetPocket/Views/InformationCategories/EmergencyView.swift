@@ -50,6 +50,48 @@ struct EmergencyView: View {
             Color.background.ignoresSafeArea()
             ScrollView {
                 VStack(spacing: 30) {
+                    firstAidSection
+                    contactsSection
+                    clinicsSection
+                }.padding(20)
+            }
+        }
+        .navigationTitle("Emergency Guidelines")
+        .navigationBarTitleDisplayMode(.inline)
+        .tint(Color.primaryG)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                EditMenuButton(isEditing: $isEditing)
+            }
+        }
+        // First aid sheets
+        .sheet(isPresented: $showAddFirstAid) {
+            CareItemSheet(detail: detail, category: "emergency")
+                .presentationDetents([.large]).presentationCornerRadius(24)
+        }
+        .sheet(item: $editingFirstAid) { item in
+            CareItemSheet(detail: detail, category: "emergency", editing: item)
+                .presentationDetents([.large]).presentationCornerRadius(24)
+        }
+        // Contact sheets
+        .sheet(isPresented: $showAddContact) {
+            ContactSheet(detail: detail)
+                .presentationDetents([.large]).presentationCornerRadius(24)
+        }
+        .sheet(item: $editingContact) { item in
+            ContactSheet(detail: detail, editing: item)
+                .presentationDetents([.large]).presentationCornerRadius(24)
+        }
+        // Clinic sheets
+        .sheet(isPresented: $showAddClinic) {
+            ClinicSheet(detail: detail)
+                .presentationDetents([.large]).presentationCornerRadius(24)
+        }
+        .sheet(item: $editingClinic) { item in
+            ClinicSheet(detail: detail, editing: item)
+                .presentationDetents([.large]).presentationCornerRadius(24)
+        }
+    }
 
                     // First Aid Guide
                     VStack(alignment: .leading, spacing: 10) {
@@ -89,6 +131,7 @@ struct EmergencyView: View {
                             ForEach(mockContact, id: \.self) { contact in
                                 ContactCard(contact: contact)
                             }
+                            .frame(width: 240)
                         }
                     }
 
@@ -114,13 +157,45 @@ struct EmergencyView: View {
                         }
 
                     }
+                }
+            }
 
-                }.padding(20)
+            if isEditing {
+                AddCardButton { showAddContact = true }
             }
         }
         .navigationTitle("Emergency Guidelines")
         .navigationBarTitleDisplayMode(.inline)
 
+    }
+
+    // MARK: Clinics
+    private var clinicsSection: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            CategoryHeader(item: headers[2])
+
+            ForEach(detail.clinics) { item in
+                if isEditing {
+                    Button { editingClinic = item } label: {
+                        VetClinicCard(item: item)
+                            .overlay(alignment: .topTrailing) { editBadge }
+                    }.buttonStyle(.plain)
+                } else {
+                    VetClinicCard(item: item)
+                }
+            }
+
+            if isEditing {
+                AddCardButton { showAddClinic = true }
+            }
+        }
+    }
+
+    private var editBadge: some View {
+        Image(systemName: "pencil.circle.fill")
+            .font(.system(size: 22))
+            .foregroundStyle(.white, Color.primaryG)
+            .padding(6)
     }
 }
 

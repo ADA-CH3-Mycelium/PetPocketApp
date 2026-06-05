@@ -87,19 +87,19 @@ struct RoutineCard: View {
                     Image(systemName: item.icon)
                         .font(.caption)
 
-                    Text(
-                        item.time.isEmpty
-                            ? item.title : "\(item.title) • \(item.time)"
-                    )
-                    .font(.headline)
-                    .fontWeight(.bold)
+                        Text(
+                            item.time.isEmpty
+                                ? item.title : "\(item.title) • \(item.time)"
+                        )
+                        .font(.headline)
+                        .fontWeight(.bold)
 
-                }.foregroundColor(Color.primaryG)
+                    }.foregroundColor(Color.primaryG)
 
-                Text(item.description)
-                    .font(.body)
-                    
-            }
+                    Text(item.description)
+                        .font(.body)
+
+                }
 
 Spacer(minLength: 7)
             // right

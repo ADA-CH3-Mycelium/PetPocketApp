@@ -86,26 +86,71 @@ struct FeedingMealRow: Decodable, Identifiable {
     let id: UUID
     let mealName: String
     let time: String
-    let amount: String
     let notes: String?
     let iconName: String?
     let mediaUrl: String?
     let mediaType: String?
 
     enum CodingKeys: String, CodingKey {
-        case id, time, amount, notes
-        case mealName = "meal_name"
-        case iconName = "icon_name"
-        case mediaUrl = "media_url"
+        case id, time, notes
+        case mealName  = "meal_name"
+        case iconName  = "icon_name"
+        case mediaUrl  = "media_url"
         case mediaType = "media_type"
     }
 }
 
+struct FeedingMealInsert: Encodable {
+    let petId: UUID
+    let mealName: String
+    let time: String
+    let notes: String?
+    let iconName: String?
+    let mediaUrl: String?
+    let sortOrder: Int?
+
+    enum CodingKeys: String, CodingKey {
+        case time, notes
+        case petId     = "pet_id"
+        case mealName  = "meal_name"
+        case iconName  = "icon_name"
+        case mediaUrl  = "media_url"
+        case sortOrder = "sort_order"
+    }
+}
+
+struct FeedingMealUpdate: Encodable {
+    let mealName: String
+    let time: String
+    let notes: String?
+    let iconName: String?
+    let mediaUrl: String?
+
+    enum CodingKeys: String, CodingKey {
+        case time, notes
+        case mealName = "meal_name"
+        case iconName = "icon_name"
+        case mediaUrl = "media_url"
+    }
+}
+
 // MARK: - Dietary restrictions
+// One row per pet. `allergies` / `restricted` are comma-separated text.
 struct DietaryRestrictionRow: Decodable, Identifiable {
     let id: UUID
-    let type: String   // "allergy" | "restricted"
-    let item: String
+    let allergies: String
+    let restricted: String
+}
+
+struct DietaryInsert: Encodable {
+    let petId: UUID
+    let allergies: String
+    let restricted: String
+
+    enum CodingKeys: String, CodingKey {
+        case allergies, restricted
+        case petId = "pet_id"
+    }
 }
 
 // MARK: - Care items (waste / care / emergency text content)
@@ -124,6 +169,29 @@ struct CareItemRow: Decodable, Identifiable {
     }
 }
 
+struct CareItemInsert: Encodable {
+    let petId: UUID
+    let category: String       // "waste" | "care" | "emergency"
+    let itemType: String       // "card"
+    let title: String
+    let content: String
+    let icon: String
+    let sortOrder: Int?
+
+    enum CodingKeys: String, CodingKey {
+        case category, title, content, icon
+        case petId = "pet_id"
+        case itemType = "item_type"
+        case sortOrder = "sort_order"
+    }
+}
+
+struct CareItemUpdate: Encodable {
+    let title: String
+    let content: String
+    let icon: String
+}
+
 // MARK: - Emergency contacts
 struct EmergencyContactRow: Decodable, Identifiable {
     let id: UUID
@@ -134,6 +202,26 @@ struct EmergencyContactRow: Decodable, Identifiable {
     enum CodingKeys: String, CodingKey {
         case id, name, role, phone
     }
+}
+
+struct EmergencyContactInsert: Encodable {
+    let petId: UUID
+    let name: String
+    let role: String?
+    let phone: String?
+    let sortOrder: Int?
+
+    enum CodingKeys: String, CodingKey {
+        case name, role, phone
+        case petId = "pet_id"
+        case sortOrder = "sort_order"
+    }
+}
+
+struct EmergencyContactUpdate: Encodable {
+    let name: String
+    let role: String?
+    let phone: String?
 }
 
 // MARK: - Vet clinics
@@ -148,6 +236,32 @@ struct VetClinicRow: Decodable, Identifiable {
 
     enum CodingKeys: String, CodingKey {
         case id, name, address, phone, latitude, longitude
+        case isPrimary = "is_primary"
+    }
+}
+
+struct VetClinicInsert: Encodable {
+    let petId: UUID
+    let name: String
+    let address: String?
+    let phone: String?
+    let isPrimary: Bool?
+
+    enum CodingKeys: String, CodingKey {
+        case name, address, phone
+        case petId = "pet_id"
+        case isPrimary = "is_primary"
+    }
+}
+
+struct VetClinicUpdate: Encodable {
+    let name: String
+    let address: String?
+    let phone: String?
+    let isPrimary: Bool?
+
+    enum CodingKeys: String, CodingKey {
+        case name, address, phone
         case isPrimary = "is_primary"
     }
 }
