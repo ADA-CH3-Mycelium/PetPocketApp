@@ -54,13 +54,13 @@ struct LoginView: View {
                                 text: $password
                             )
 
-                            HStack {
-                                Spacer()
-
-                                Button("Forgot Password?") {}
-                                    .foregroundColor(.primaryG)
-                                    .font(.caption)
-                            }
+//                            HStack {
+//                                Spacer()
+//
+//                                Button("Forgot Password?") {}
+//                                    .foregroundColor(.primaryG)
+//                                    .font(.caption)
+//                            }
 
                             PrimaryButton(
                                 title: isLoggingIn ? "Logging in…" : "Login",
@@ -77,10 +77,10 @@ struct LoginView: View {
                             }
 
                             HStack {
-                                Divider()
+//                                Divider()
                                 Text("OR CONTINUE WITH")
                                     .foregroundColor(.secondary)
-                                Divider()
+//                                Divider()
                             }
 
                             HStack {

@@ -64,11 +64,11 @@ struct MediaThumbnailView: View {
                 VideoFullScreenView(url: url)
             }
         }
-    }
+    }		
 
     private func makeThumbnail(from url: URL) async -> UIImage? {
         await Task.detached(priority: .background) {
-            let asset = AVAsset(url: url)
+            let asset = AVURLAsset(url: url)
             let generator = AVAssetImageGenerator(asset: asset)
             generator.appliesPreferredTrackTransform = true
             let time = CMTime(seconds: 1, preferredTimescale: 60)

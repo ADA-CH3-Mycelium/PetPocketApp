@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct PetListView: View {
+    @Environment(AuthManager.self) private var auth
     @State private var store = PetStore()
     @State private var showAddModal = false
     @State private var navigateToOwnPet = false
@@ -35,14 +36,26 @@ struct PetListView: View {
                     VStack(alignment: .leading, spacing: 30) {
 
                         // Your Pets header row
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text("Here Are Your Pets 🐾")
-                                .font(.title2)
-                                .fontWeight(.bold)
-                                .foregroundColor(.primary)
-                            Text(subtitle)
-                                .font(.caption)
-                                .foregroundColor(.primaryG)
+                        HStack(alignment: .top) {
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text("Here Are Your Pets 🐾")
+                                    .font(.title2)
+                                    .fontWeight(.bold)
+                                    .foregroundColor(.primary)
+                                Text(subtitle)
+                                    .font(.caption)
+                                    .foregroundColor(.primaryG)
+                            }
+                            Spacer()
+                            Button {
+                                Task { await auth.signOut() }
+                            } label: {
+                                Image(systemName: "rectangle.portrait.and.arrow.right")
+                                    .font(.system(size: 18, weight: .medium))
+                                    .foregroundColor(.primaryG)
+                                    .padding(8)
+                                    .glassEffect()
+                            }
                         }
 
                         // Pet cards
