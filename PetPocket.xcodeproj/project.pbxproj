@@ -113,6 +113,43 @@
 			knownRegions = (
 				en,
 				Base,
+				hr,
+				vi,
+				id,
+				cs,
+				fr,
+				th,
+				hi,
+				ar,
+				he,
+				ja,
+				pt_PT,
+				uk,
+				ca,
+				it,
+				tr,
+				sv,
+				pt,
+				sk,
+				es,
+				zh_TW,
+				el,
+				zh_CN,
+				pl,
+				ko,
+				hu,
+				nb,
+				ms,
+				fr_CA,
+				ro,
+				da,
+				ru,
+				nl,
+				es_MX,
+				en_GB,
+				pt_BR,
+				fi,
+				de,
 			);
 			mainGroup = 7FDBD2032FC7E1C30006BE09;
 			minimizedProjectReferenceProxies = 1;
@@ -279,7 +316,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 4YBFFYG9L2;
+				DEVELOPMENT_TEAM = H9J3TN99GS;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -312,7 +349,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 4YBFFYG9L2;
+				DEVELOPMENT_TEAM = H9J3TN99GS;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;

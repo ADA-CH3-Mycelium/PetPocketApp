@@ -9,25 +9,32 @@
 import SwiftUI
 
 struct PrimaryButton: View {
-
+    
     let title: String
+    let isEnabled: Bool
     let action: () -> Void
-
+    
     var body: some View {
         Button(action: action) {
             Text(title)
                 .font(.headline)
                 .foregroundColor(.white)
-                .frame(maxWidth: .infinity)
-                .padding()
+                .padding(.vertical, 10)
+                .padding(.horizontal, 40)
                 .background(
-                    Color(
-                        red: 69/255,
-                        green: 109/255,
-                        blue: 82/255
-                    )
+                    isEnabled
+                    ? Color.accent
+                    : Color.gray.opacity(0.5)
                 )
-                .cornerRadius(18)
+                .cornerRadius(50)
+                .glassEffect()
         }
+        .disabled(!isEnabled)
+    }
+}
+
+#Preview {
+    PrimaryButton(title: "Login", isEnabled: true) {
+        print("yay")
     }
 }

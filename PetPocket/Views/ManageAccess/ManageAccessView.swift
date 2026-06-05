@@ -139,8 +139,3 @@ struct ManageAccessView: View {
     }
 }
 
-#Preview {
-    NavigationStack {
-        ManageAccessView()
-    }
-}

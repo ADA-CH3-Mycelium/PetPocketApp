@@ -18,7 +18,6 @@ struct GenerateCodeView: View {
     @State private var errorMessage: String?
 
     var body: some View {
-        NavigationStack {
             ZStack {
                 Color.background.ignoresSafeArea()
                 
@@ -93,7 +92,9 @@ struct GenerateCodeView: View {
                 }
                 .padding()
             }
-            .task { await generate() }
+            .task {
+                await generate()
+            }
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button {
@@ -135,7 +136,7 @@ struct GenerateCodeView: View {
 //                    .buttonStyle(.plain)                    .frame(width: 44, height: 44)
                 }
             }
-        }
+        
     }
 
     private func generate() async {

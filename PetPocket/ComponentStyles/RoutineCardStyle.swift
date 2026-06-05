@@ -86,7 +86,7 @@ struct RoutineCard: View {
         HStack(alignment: .top) {
             // left
             VStack(alignment: .leading, spacing: 5) {
-                HStack {
+                HStack(spacing: 2) {
                     Image(systemName: item.icon)
                         .font(.caption)
 
@@ -104,16 +104,17 @@ struct RoutineCard: View {
 
             }
 
-            Spacer()
-
+            Spacer(minLength: 7)
             // right
             VStack(alignment: .trailing, spacing: 7) {
+                // media
                 if item.media != nil {
                     if let media = item.media {
                         MediaThumbnailView(media: media)
                     }
                 }
 
+                // clarify btn
                 if isEmergency != true {
                     ClarifyButtonStyle(action: { showClarifySheet = true })
                         .offset(y: 2)
@@ -121,9 +122,10 @@ struct RoutineCard: View {
             }
         }
         .padding(20)
+        .frame(maxWidth: .infinity)
         .clipShape(RoundedRectangle(cornerRadius: 16))
         .glassEffect(
-            .regular.tint(colorScheme == .dark ? .clear : .white),
+            //            .regular.tint(colorScheme == .dark ? .clear : .white),
             in: .rect(cornerRadius: 16)
         )
         .sheet(isPresented: $showClarifySheet) {

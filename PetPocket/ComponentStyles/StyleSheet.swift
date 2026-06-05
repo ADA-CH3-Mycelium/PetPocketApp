@@ -19,9 +19,19 @@ struct greenEdgeCard: ViewModifier {
             }
             .background {
                 RoundedRectangle(cornerRadius: 24)
-                    .fill(Color(.systemBackground))
+                    .fill(Color(.clear))
+                    .opacity(0.1)
                     .shadow(color: Color.primaryG, radius: 0, x: -4, y: 0)
             }
+    }
+}
+
+// login section headers
+struct onBoardingSectionHeaderStyle: ViewModifier {
+    func body(content: Content) -> some View {
+        content
+            .textCase(.uppercase)
+            .font(.caption)
     }
 }
 

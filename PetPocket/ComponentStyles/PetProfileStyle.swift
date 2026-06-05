@@ -46,51 +46,29 @@ var catItem: [CategoryItem2] = [
     )
     ]
 
-// TWO COL GRID
 struct TwCoColGrid: View {
     var catItem: [CategoryItem2]
+    var onTap: (ScreenViews) -> Void
     let cols = [
         GridItem(.flexible(), spacing: 20),
         GridItem(.flexible(), spacing: 20),
     ]
 
     var body: some View {
-
         LazyVGrid(columns: cols, spacing: 20) {
             ForEach(catItem, id: \.self) { item in
-                // colour
-//                let col = item.isAlert ? Color.alertRed : Color.primaryG
-                NavigationLink(value: item.targetScreen) {
-                    ZStack() {
-                        //Color.black.opacity(0.2)
-                        RadialGradient(
-                            gradient: Gradient(colors: [Color.primaryG, .clear]),
-                            center: .bottomTrailing,
-                            startRadius: 0,
-                            endRadius: 300
-                                               
-                        ).opacity(0.95)
+                Button(action: { onTap(item.targetScreen) }) {
+                    ZStack {
+                        Color.primaryG.opacity(0.25)
 
-                        // icon
                         Image(systemName: item.icon)
                             .font(.system(size: 80))
-                            .foregroundColor(Color.primaryG.opacity(0.5))
-                            .blendMode(.hardLight)
-                            .offset(x: 70, y: 25)
-                        
-                        // text label
-                        Text(item.label)
-                            .font(.body)
-                            .foregroundColor(
-                                item.isAlert
-                                    ? Color.alertRed
-                                    : .primary
-                            )
-
-                        Image(systemName: item.icon)
-                            .font(.largeTitle)
-                            .foregroundColor(Color.primaryG.opacity(0.75))
+                            .foregroundColor(Color.primaryG.opacity(0.2))
                             .offset(x: 65, y: 25)
+
+                        Text(item.label)
+                            .font(.headline)
+                            .foregroundColor(.primary)
 
                     }
                     .frame(maxWidth: .infinity)
@@ -100,20 +78,10 @@ struct TwCoColGrid: View {
                         .regular.tint(Color.primaryG.opacity(0.10)),
                         in: .rect(cornerRadius: 16)
                     )
-
                 }
+                .buttonStyle(.plain)
             }
-
         }
-
-    }
-
-}
-
-#Preview {
-    ZStack {
-        Color.background.ignoresSafeArea()
-        TwCoColGrid(catItem: catItem)
     }
 }
 
@@ -125,7 +93,7 @@ struct CategoryHeader: View {
     
     var body: some View {
         HStack(spacing: 2) {
-            Image(systemName: item.icon)
+            //Image(systemName: item.icon)
             Text(item.label)
                 .font(.headline)
                 .fontWeight(.bold)

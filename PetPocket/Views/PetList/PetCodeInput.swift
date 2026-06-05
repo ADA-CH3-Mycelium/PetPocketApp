@@ -1,0 +1,177 @@
+//
+//  ConectPastePetCode.swift
+//  PetPocket
+//
+//  Created by Michel Pierce on 28/05/26.
+//
+
+import SwiftUI
+
+struct PetCodeInput: View {
+    @Environment(\.dismiss) private var dismiss
+
+//    let store: PetStore
+
+    @State private var code = ""
+    @State private var isJoining = false
+
+    var body: some View {
+        ScrollView {
+            VStack(spacing: 20) {
+                // Header text
+                VStack(spacing: 6) {
+                    Text("Connect with Pet Owner")
+                        .font(.title2)
+                        .fontWeight(.bold)
+                        .foregroundColor(.primary)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+
+                    Text("Start caring for their pet friend together")
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                }
+
+                // Code input card
+                VStack(alignment: .leading, spacing: 12) {
+                    Text("PawPocket Code")
+                        .font(.subheadline)
+                        .fontWeight(.medium)
+                        .foregroundColor(.primary)
+
+                    HStack(spacing: 10) {
+                        TextField("000 000", text: $code)
+                            .font(.system(size: 22, weight: .semibold, design: .monospaced))
+                            .keyboardType(.numberPad)
+                            .padding(12)
+                            .background(Color(.systemGray6))
+                            .clipShape(RoundedRectangle(cornerRadius: 10))
+
+                        Button(action: {
+                            if let clipboard = UIPasteboard.general.string {
+                                code = clipboard
+                            }
+                        }) {
+                            HStack(spacing: 6) {
+                                Image(systemName: "doc.on.clipboard")
+                                    .font(.system(size: 15, weight: .medium))
+                                Text("Paste")
+                                    .font(.system(size: 15, weight: .medium))
+                            }
+                            .foregroundColor(.primaryG)
+                            .padding(.horizontal, 14)
+                            .padding(.vertical, 12)
+                            .background(Color.accentColor.opacity(0.1))
+                            .clipShape(RoundedRectangle(cornerRadius: 10))
+                        }
+                    }
+
+                    Text("Enter the 6-digit code shared by the pet owner.")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+                .padding(16)
+                .background(Color(.systemBackground))
+                .clipShape(RoundedRectangle(cornerRadius: 18))
+                .shadow(color: .black.opacity(0.05), radius: 10, x: 0, y: 3)
+
+                // Join button
+                Button(action: {
+//                    Task { await join() }
+                    isJoining = true
+                        
+                        // 2. Launch an asynchronous task so the UI remains responsive
+                        Task {
+                            // Wait for 3 seconds (available in iOS 16+)
+                            try? await Task.sleep(for: .seconds(3))
+                            
+                            // 3. Dismiss the view
+                            // (SwiftUI safely handles this on the main thread automatically inside a Task)
+                            dismiss()
+                        }
+                }) {
+                    Text(isJoining ? "Joining…" : "Join Pet Profile")
+                        .font(.system(size: 16, weight: .semibold))
+                        .frame(maxWidth: 220)
+                        .foregroundColor(.white)
+                        .padding(.horizontal, 28)
+                        .padding(.vertical, 14)
+                        .background(Color.primaryG)
+                        .clipShape(RoundedRectangle(cornerRadius: 14))
+                }
+                .frame(maxWidth: .infinity, alignment: .center)
+                .disabled(isJoining || code.trimmingCharacters(in: .whitespaces).isEmpty)
+
+//                if let error = store.errorMessage {
+//                    Text(error)
+//                        .font(.caption)
+//                        .foregroundColor(.red)
+//                        .multilineTextAlignment(.center)
+//                        .frame(maxWidth: .infinity)
+//                }
+
+                Spacer(minLength: 40)
+
+                // Help card
+                VStack(alignment: .leading, spacing: 6) {
+                    HStack(spacing: 8) {
+                        Image(systemName: "questionmark.circle.fill")
+                            .foregroundColor(.primaryG)
+                        Text("Where do I find the code?")
+                            .font(.subheadline)
+                            .fontWeight(.semibold)
+                            .foregroundColor(.primaryG)
+                    }
+
+                    Text("The pet owner can generate this code in their Pet Settings > Share Access. Codes are valid for 24 hours.")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                        .lineSpacing(3)
+                }
+                .padding(16)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .background(Color(.systemBackground))
+                .clipShape(RoundedRectangle(cornerRadius: 18))
+                .shadow(color: .black.opacity(0.05), radius: 10, x: 0, y: 3)
+            }
+            .padding(20)
+        }
+        .background(Color(.systemGroupedBackground))
+        .navigationBarBackButtonHidden(true)
+        .toolbar {
+            ToolbarItem(placement: .topBarLeading) {
+                Button(action: { dismiss() }) {
+                    HStack(spacing: 4) {
+                        Image(systemName: "chevron.left")
+                            .font(.system(size: 16, weight: .semibold))
+                            .foregroundStyle(Color.primaryG)
+                        Text("Back")
+                            .font(.system(size: 16))
+                            .foregroundStyle(Color.primaryG)
+                        
+                    }
+                    .foregroundColor(.accentColor)
+                }
+            }
+            ToolbarItem(placement: .principal) {
+                Text("PawPocket")
+                    .font(.headline)
+                    .fontWeight(.bold)
+                    .foregroundStyle(Color.primaryG)
+            }
+        }
+    }
+
+//    private func join() async {
+//        isJoining = true
+//        let ok = await store.redeem(code: code)
+//        isJoining = false
+//        if ok { dismiss() }
+//    }
+}
+//
+//#Preview {
+//    NavigationStack {
+//        PetCodeInput()
+//    }
+//}

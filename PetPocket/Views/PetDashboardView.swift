@@ -13,6 +13,9 @@ struct PetDashboardView: View {
     @State private var showingGenerateCode = false
     @State private var showingChatPage = false
     
+    
+    @State private var selectedScreen: ScreenViews? = nil
+    
     let pet: PetRow
     @State private var detail: PetDetailStore
     
@@ -129,7 +132,9 @@ struct PetDashboardView: View {
                         Text("Here are my habits and needs 🐾")
                             .font(.body)
                         
-                        TwCoColGrid(catItem: catItem)
+                        TwCoColGrid(catItem: catItem) { screen in
+                            selectedScreen = screen
+                        }
                     }
                     .padding(20)
                     .offset(y: -65)
@@ -180,8 +185,11 @@ struct PetDashboardView: View {
                 .navigationDestination(isPresented: $showingChatPage) {
                     ClarifySheetView(pet: pet, isInNavigationStack: true)
                 }
-                .navigationDestination(for: ScreenViews.self) { screen in
-                    switch screen {
+                .navigationDestination(isPresented: Binding(
+                    get: { selectedScreen != nil },
+                    set: { if !$0 { selectedScreen = nil } }
+                )) {
+                    switch selectedScreen {
                     case .food:
                         FoodView().environment(detail)
                     case .waste:
@@ -190,6 +198,8 @@ struct PetDashboardView: View {
                         CareView().environment(detail)
                     case .emergency:
                         EmergencyView().environment(detail)
+                    case nil:
+                        EmptyView()
                     }
                 }
                 .sheet(isPresented: $showingGenerateCode) {
