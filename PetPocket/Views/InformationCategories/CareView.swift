@@ -77,28 +77,9 @@ struct CareView: View {
 
                 Spacer()
 
-                    Spacer()
-                }.padding(20)
-            }
-            .navigationTitle("Care Notes")
-            .navigationBarTitleDisplayMode(.inline)
-            .tint(Color.primaryG)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    EditMenuButton(isEditing: $isEditing)
-                }
-            }
-            .sheet(isPresented: $showAddItem) {
-                CareItemSheet(detail: detail, category: "care")
-                    .presentationDetents([.large])
-                    .presentationCornerRadius(24)
-            }
-            .sheet(item: $editingItem) { item in
-                CareItemSheet(detail: detail, category: "care", editing: item)
-                    .presentationDetents([.large])
-                    .presentationCornerRadius(24)
-            }
+            }.padding(20)
         }
+
     }
 }
 

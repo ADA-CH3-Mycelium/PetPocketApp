@@ -88,16 +88,16 @@ struct PetItem: Hashable, Identifiable {
     let gender: String
     let age: String
     let breed: String
-    let photoUrl: String?   // nil when no photo uploaded yet
+    let image: String
     let type: PetCardType
     
-    init(id: UUID, name: String, gender: String, age: String, breed: String, photoUrl: String?, type: PetCardType) {
+    init(id: UUID, name: String, gender: String, age: String, breed: String, image: String, type: PetCardType) {
         self.id = id
         self.name = name
         self.gender = gender
         self.age = age
         self.breed = breed
-        self.photoUrl = photoUrl
+        self.image = image
         self.type = type
     }
 }

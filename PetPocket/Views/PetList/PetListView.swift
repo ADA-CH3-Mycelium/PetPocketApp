@@ -65,38 +65,15 @@ struct PetListView: View {
                             PetListCard(item: PetItem(
                                 id: pet.id,
                                 name: pet.name,
-                                gender: pet.gender ?? "",
-                                age: pet.ageDescription,
-                                breed: pet.breed ?? "",
-                                photoUrl: pet.photoUrl,
-                                type: .owning
-                            ))
-                        }
-                        .buttonStyle(.plain)
-                    }
-
-                    if !store.sittingPets.isEmpty {
-                        Text("Pets you're caring for")
-                            .font(.headline)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .padding(.top, 8)
-                        ForEach(store.sittingPets) { pet in
-                            NavigationLink(value: pet) {
-                                PetListCard(item: PetItem(
-                                    id: pet.id,
-                                    name: pet.name,
-                                    gender: pet.gender ?? "",
-                                    age: pet.ageDescription,
-                                    breed: pet.breed ?? "",
-                                    photoUrl: pet.photoUrl,
-                                    // Sitter owner info — will be replaced in Phase 5
-                                    // when ManageAccess fetches real owner profiles
-                                    type: .sitting(
-                                        sitter: "Owner",
-                                        sitterImage: "",
-                                        dateRange: ""
-                                    )
-                                ))
+                                gender: pet.gender,
+                                age: pet.age,
+                                breed: pet.breed,
+                                image: pet.image,
+                                type: pet.type,
+                            )
+                            )
+                            .onTapGesture {
+                                navigateToDashboard = true
                             }
                         }
                         

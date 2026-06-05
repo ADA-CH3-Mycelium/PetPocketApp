@@ -89,47 +89,57 @@ struct PetDashboardView: View {
                             .foregroundStyle(Color.primaryG)
                     }
                 }
-                .navigationDestination(for: ScreenViews.self) { screen in
-                    switch screen {
-                    case .food:
-                        FoodView().environment(detail)
-                    case .waste:
-                        WasteView().environment(detail)
-                    case .care:
-                        CareView().environment(detail)
-                    case .emergency:
-                        EmergencyView().environment(detail)
+                
+                // menu
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Menu {
+                        Button(action: { showingManageAccess = true }) {
+                            Label(
+                                "Manage access",
+                                systemImage: "person.badge.key"
+                            )
+                        }
+                        Button(action: {}) {
+                            Label("Edit information", systemImage: "pencil")
+                        }
+                        Button(action: { showingGenerateCode = true }) {
+                            Label(
+                                "Generate new code",
+                                systemImage: "qrcode"
+                            )
+                        }
+                    } label: {
+                        Image(systemName: "ellipsis")
+                            .imageScale(.large)
+                            .rotationEffect(Angle(degrees: 90))
+                            .foregroundColor(Color.primaryG)
                     }
                 }
-                .sheet(isPresented: $showingGenerateCode) {
-                    GenerateCodeView(petId: pet.id)
-                }
+                
+            }
         }
-        .environment(detail)
-        .task { await detail.loadIfNeeded() }
+        .navigationDestination(isPresented: Binding(
+            get: { selectedScreen != nil },
+            set: { if !$0 { selectedScreen = nil } }
+        )) {
+            switch selectedScreen {
+            case .food:      FoodView()
+            case .waste:     WasteView()
+            case .care:      CareView()
+            case .emergency: EmergencyView()
+            case nil:        EmptyView()
+            }
+        }
+        .navigationDestination(isPresented: $showingManageAccess) {
+            ManageAccessView()
+        }
+        .sheet(isPresented: $showingGenerateCode) {
+            GenerateCodeView()
+        }
+        
     }
-    
-    private var subtitle: String {
-        [pet.ageDescription, pet.gender, pet.breed]
-            .compactMap { $0 }
-            .filter { !$0.isEmpty }
-            .joined(separator: "  •  ")
-    }
+}
 
-    private var petPhotoPlaceholder: some View {
-        Rectangle()
-            .fill(
-                LinearGradient(
-                    colors: [Color.primaryG.opacity(0.3), Color.primaryG.opacity(0.1)],
-                    startPoint: .top,
-                    endPoint: .bottom
-                )
-            )
-            .overlay(
-                Image(systemName: "pawprint.fill")
-                    .font(.system(size: 80))
-                    .foregroundColor(Color.primaryG.opacity(0.4))
-            )
-    }
-    
+#Preview {
+    PetDashboardView()
 }
