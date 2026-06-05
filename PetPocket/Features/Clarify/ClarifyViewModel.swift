@@ -8,6 +8,7 @@
 import Foundation
 import SwiftUI
 import Auth
+import Realtime
 
 @Observable
 class ClarifyViewModel {
@@ -22,6 +23,9 @@ class ClarifyViewModel {
     var isLoading: Bool = false
     var errorMessage: String?
     var profileCache: [UUID: Profile] = [:]
+    private var messageChannel: RealtimeChannelV2?
+    private var threadChannel: RealtimeChannelV2?
+    private var threadsListChannel: RealtimeChannelV2?
     
     init(pet: PetRow? = nil, category: ClarifyCategory? = nil) {
         self.pet = pet
@@ -129,6 +133,7 @@ class ClarifyViewModel {
         if let existing = openThreadsInPet.first(where: { $0.title == routineTitle }) {
             currentThread = existing
             await loadMessages(threadId: existing.id)
+            await subscribeToThreadUpdates(threadId: existing.id)
             return true
         }
         currentThread = nil
@@ -141,8 +146,17 @@ class ClarifyViewModel {
         isLoading = true
         defer { isLoading = false }
         
+        // Subscribe FIRST so events during fetch get captured
+        await subscribeToMessages(threadId: threadId)
+        
         do {
-            messages = try await ClarifyRepository.shared.fetchMessages(threadId: threadId)
+            let fetched = try await ClarifyRepository.shared.fetchMessages(threadId: threadId)
+            
+            // Merge: fetched + any realtime-arrived during fetch (dedup by id)
+            let fetchedIds = Set(fetched.map { $0.id })
+            let realtimeOnly = messages.filter { !fetchedIds.contains($0.id) }
+            messages = (fetched + realtimeOnly).sorted { $0.createdAt < $1.createdAt }
+            
             let senderIds = Array(Set(messages.map { $0.senderId }))
             await loadProfiles(forSenderIds: senderIds)
         } catch {
@@ -154,6 +168,7 @@ class ClarifyViewModel {
     func selectThread(_ thread: ClarifyThread) async {
         currentThread = thread
         await loadMessages(threadId: thread.id)
+        await subscribeToThreadUpdates(threadId: thread.id)
     }
     
     @MainActor
@@ -209,5 +224,113 @@ class ClarifyViewModel {
         let name = displayName(for: senderId).uppercased()
         let role = roleLabel(for: senderId)
         return "\(name) (\(role))"
+    }
+
+    @MainActor
+    func subscribeToMessages(threadId: UUID) async {
+        await unsubscribeMessages()
+        
+        messageChannel = await ClarifyRepository.shared.subscribeToMessages(
+            threadId: threadId,
+            onInsert: { [weak self] message in
+                Task { @MainActor in
+                    guard let self else { return }
+                    // Dedup: skip if message already in list (sent locally)
+                    guard !self.messages.contains(where: { $0.id == message.id }) else { return }
+                    self.messages.append(message)
+                    await self.loadProfiles(forSenderIds: [message.senderId])
+                }
+            }
+        )
+    }
+
+    @MainActor
+    func unsubscribeMessages() async {
+        if let channel = messageChannel {
+            await ClarifyRepository.shared.unsubscribe(channel)
+            messageChannel = nil
+        }
+    }
+    
+    @MainActor
+    func subscribeToThreadUpdates(threadId: UUID) async {
+        await unsubscribeThread()
+        
+        threadChannel = await ClarifyRepository.shared.subscribeToThreadUpdates(
+            threadId: threadId,
+            onUpdate: { [weak self] isResolved in
+                Task { @MainActor in
+                    guard let self else { return }
+                    guard var thread = self.currentThread, thread.id == threadId else { return }
+                    thread.isResolved = isResolved
+                    self.currentThread = thread
+                    
+                    // If resolved, remove from open threads
+                    if isResolved {
+                        self.openThreadsInPet.removeAll { $0.id == threadId }
+                    }
+                }
+            }
+        )
+    }
+
+    @MainActor
+    func unsubscribeThread() async {
+        if let channel = threadChannel {
+            await ClarifyRepository.shared.unsubscribe(channel)
+            threadChannel = nil
+        }
+    }
+    
+    @MainActor
+    func subscribeToThreadsForPet() async {
+        guard let pet = pet else { return }
+        await unsubscribeThreadsList()
+        
+        threadsListChannel = await ClarifyRepository.shared.subscribeToThreadsForPet(
+            petId: pet.id,
+            onInsert: { [weak self] thread in
+                Task { @MainActor in
+                    guard let self else { return }
+                    // Dedup: skip if thread already in list
+                    guard !self.openThreadsInPet.contains(where: { $0.id == thread.id }) else { return }
+                    // Only show unresolved threads in inbox
+                    guard !thread.isResolved else { return }
+                    self.openThreadsInPet.append(thread)
+                    // Resort by updatedAt desc (consistent with fetchInboxThreads order)
+                    self.openThreadsInPet.sort { $0.updatedAt > $1.updatedAt }
+                }
+            }
+        )
+    }
+    
+    @MainActor
+    func resubscribeAll() async {
+        // Re-fetch threads list (catch any created during background)
+        await loadThreads()
+        
+        // Re-subscribe to pet-level threads list (Milestone C)
+        await subscribeToThreadsForPet()
+        
+        // Re-fetch + re-subscribe messages + thread updates for current thread
+        if let thread = currentThread {
+            await loadMessages(threadId: thread.id)
+            await subscribeToThreadUpdates(threadId: thread.id)
+        }
+    }
+
+    @MainActor
+    func unsubscribeAllChannels() async {
+        await unsubscribeMessages()
+        await unsubscribeThread()
+        await unsubscribeThreadsList()
+    }
+
+    @MainActor
+    func unsubscribeThreadsList() async {
+        if let channel = threadsListChannel {
+            await ClarifyRepository.shared.unsubscribe(channel)
+            threadsListChannel = nil
+        }
     }
 }

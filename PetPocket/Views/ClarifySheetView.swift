@@ -16,6 +16,7 @@ struct ClarifySheetView: View {
     var routineTitle: String? = nil
     var initialThread: ClarifyThread? = nil
 
+    @Environment(\.scenePhase) private var scenePhase
     @Environment(\.dismiss) var dismiss
     @State private var messageText = ""
     @State private var isSidebarOpen = false
@@ -162,15 +163,46 @@ struct ClarifySheetView: View {
                 {
                     inboxEmptyState
                 } else {
-                    ScrollView {
-                        VStack(spacing: 16) {
-                            ForEach(viewModel.messages) { message in
-                                ChatBubbleView(
-                                    message: messageModel(from: message)
-                                )
+                    VStack(spacing: 0) {
+
+                        if viewModel.currentThread?.isResolved == true {
+                            HStack(spacing: 8) {
+                                Image(systemName: "checkmark.seal.fill")
+                                    .foregroundColor(.green)
+                                Text("This thread was resolved")
+                                    .font(.subheadline)
+                                    .foregroundColor(.secondary)
+                                Spacer()
+                            }
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 12)
+                        }
+
+                        ScrollViewReader { proxy in
+                            ScrollView {
+                                VStack(spacing: 16) {
+                                    ForEach(viewModel.messages) { message in
+                                        ChatBubbleView(
+                                            message: messageModel(from: message)
+                                        )
+                                        .id(message.id)
+                                    }
+                                }
+                                .padding(16)
+                            }
+                            .onChange(of: viewModel.messages.count) { _, _ in
+                                if let lastId = viewModel.messages.last?.id {
+                                    withAnimation(
+                                        .spring(
+                                            response: 0.3,
+                                            dampingFraction: 0.8
+                                        )
+                                    ) {
+                                        proxy.scrollTo(lastId, anchor: .bottom)
+                                    }
+                                }
                             }
                         }
-                        .padding(16)
                     }
                 }
 
@@ -209,6 +241,8 @@ struct ClarifySheetView: View {
                     }
                     .padding(.horizontal, 16)
                     .padding(.vertical, 12)
+                    .disabled(viewModel.currentThread?.isResolved == true)
+                    .opacity(viewModel.currentThread?.isResolved == true ? 0.5 : 1.0)
                 }
             }
             // Dim overlay
@@ -256,6 +290,7 @@ struct ClarifySheetView: View {
         .task {
             await viewModel.loadCurrentUser()
             await viewModel.loadThreads()
+            await viewModel.subscribeToThreadsForPet()
 
             // Determine which thread to open as default
             if let thread = initialThread {
@@ -269,6 +304,27 @@ struct ClarifySheetView: View {
                 await viewModel.selectThread(mostRecent)
             }
             initialLoadComplete = true
+        }
+        .onChange(of: scenePhase) { _, newPhase in
+            switch newPhase {
+            case .background:
+                Task {
+                    await viewModel.unsubscribeAllChannels()
+                }
+            case .active:
+                Task {
+                    await viewModel.resubscribeAll()
+                }
+            default:
+                break
+            }
+        }
+        .onDisappear {
+            Task {
+                await viewModel.unsubscribeMessages()
+                await viewModel.unsubscribeThread()
+                await viewModel.unsubscribeThreadsList()
+            }
         }
     }
 
