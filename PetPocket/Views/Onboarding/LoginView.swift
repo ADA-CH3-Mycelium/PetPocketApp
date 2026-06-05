@@ -125,36 +125,36 @@ struct LoginView: View {
                                 }
                             }
                         )
-                        .frame(width: 140, height: 30)
+                        //.frame(width: 140, height: 30)
                         //.frame(height: 50)
                         .padding(.horizontal, 16)
 
                         // sign in with google button
-                        Button {
-                            print("sign in w google btn pressed")
-                        } label: {
-                            HStack(spacing: 3) {
-                                Image("google")
-                                    .resizable()
-                                    .frame(width: 10, height: 10)
-
-                                Text("Sign in with Google")
-                                    .font(.caption)
-                                    .foregroundColor(.primary)
-
-                            }
-
-                        }
-                        .background(
-                            RoundedRectangle(cornerRadius: 6).stroke(
-                                Color.black,
-                                lineWidth: 1
-                            )
-                        )
-                        .frame(height: 29)
-                        .buttonStyle(.borderedProminent)
-                        .tint(.white)
-                        .buttonBorderShape(.roundedRectangle(radius: 6))
+//                        Button {
+//                            print("sign in w google btn pressed")
+//                        } label: {
+//                            HStack(spacing: 3) {
+//                                Image("google")
+//                                    .resizable()
+//                                    .frame(width: 10, height: 10)
+//
+//                                Text("Sign in with Google")
+//                                    .font(.caption)
+//                                    .foregroundColor(.primary)
+//
+//                            }
+//
+//                        }
+//                        .background(
+//                            RoundedRectangle(cornerRadius: 6).stroke(
+//                                Color.black,
+//                                lineWidth: 1
+//                            )
+//                        )
+//                        .frame(height: 29)
+//                        .buttonStyle(.borderedProminent)
+//                        .tint(.white)
+//                        .buttonBorderShape(.roundedRectangle(radius: 6))
 
                     }
                 }
