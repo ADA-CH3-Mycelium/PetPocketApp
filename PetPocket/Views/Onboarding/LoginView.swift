@@ -126,7 +126,7 @@ struct LoginView: View {
                             }
                         )
                         //.frame(width: 140, height: 30)
-                        //.frame(height: 50)
+                        .frame(height: 50)
                         .padding(.horizontal, 16)
 
                         // sign in with google button
