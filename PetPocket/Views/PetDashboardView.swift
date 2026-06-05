@@ -32,7 +32,7 @@ struct PetDashboardView: View {
                     // PROFILE IMG
                     Image("Dog")
                         .resizable()
-                    
+                        .opacity(0.8)
                         .scaledToFill()
                         .frame(width: 400, height: 500)
                         .mask(
@@ -72,7 +72,8 @@ struct PetDashboardView: View {
                     Text("Here are my habits and needs 🐾")
                         .font(.headline)
                     
-                    TwCoColGrid(catItem: catItem) { screen in
+                    TwCoColGrid(catItem: catItem)
+                    { screen in
                         selectedScreen = screen
                     }
                 }
@@ -84,27 +85,30 @@ struct PetDashboardView: View {
                 // clarify chat
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button(action: {}) {
-                        Image(systemName: "questionmark.bubble.fill")
+                        Image(systemName: "bubble.left.and.bubble.right.fill")
                             .imageScale(.large)
-                            .foregroundStyle(Color.primaryG)
+                            
                     }
                 }
                 
                 // menu
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Menu {
+                        // edit
+                        Button(action: {}) {
+                            Label("Edit information", systemImage: "pencil")
+                        }
+                        // manage access
                         Button(action: { showingManageAccess = true }) {
                             Label(
                                 "Manage access",
                                 systemImage: "person.badge.key"
                             )
                         }
-                        Button(action: {}) {
-                            Label("Edit information", systemImage: "pencil")
-                        }
+                        // generate code
                         Button(action: { showingGenerateCode = true }) {
                             Label(
-                                "Generate new code",
+                                "Invitation code",
                                 systemImage: "qrcode"
                             )
                         }
@@ -112,7 +116,7 @@ struct PetDashboardView: View {
                         Image(systemName: "ellipsis")
                             .imageScale(.large)
                             .rotationEffect(Angle(degrees: 90))
-                            .foregroundColor(Color.primaryG)
+                            
                     }
                 }
                 

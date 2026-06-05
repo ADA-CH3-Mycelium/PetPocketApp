@@ -118,8 +118,19 @@ struct EmergencyView: View {
                 }.padding(20)
             }
         }
-        .navigationTitle("Emergency Guidelines")
+        .navigationTitle("My Emergency Guidelines")
         .navigationBarTitleDisplayMode(.inline)
+        // edit btn
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Button(action: {
+                    isEditing.toggle()
+                }) {
+                    Image(systemName: "pencil")
+
+                }
+            }
+        }
 
     }
 }

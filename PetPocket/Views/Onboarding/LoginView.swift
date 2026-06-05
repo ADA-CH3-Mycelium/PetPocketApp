@@ -37,13 +37,17 @@ struct LoginView: View {
                                         .font(.caption)
                                         .foregroundStyle(Color.secondary)
 
-                                    TextField("email@example.com", text: $email)
+                                    TextField("", text: $email, prompt:
+                                    Text("email@example.com")
+                                        .foregroundColor(Color(uiColor: .placeholderText))
+                                    )
                                         .textContentType(.emailAddress)
                                         .autocapitalization(.none)
                                         .keyboardType(.emailAddress)
                                         .disableAutocorrection(true)
-                                        .textContentType(.emailAddress)
-                                        .foregroundColor(.secondary)
+                                        .foregroundColor(.primary)
+                                        .tint(.primary)
+                                        
                                 }
                             } header: {
                                 Text("Email address")
@@ -69,26 +73,27 @@ struct LoginView: View {
                                 Text("Password")
                                     .textCase(.uppercase)
                                     .font(.caption)
+                            } footer: {
+                                // forgot password
+                                Text("Forgot Password?")
+                                    .foregroundColor(.secondary)
+                                    .onTapGesture {
+                                        print("forgot password btn pressed")
+                                    }
+
                             }
 
                         }
                         .listSectionSpacing(.compact)
-                        .frame(height: 185)
+                        .frame(height: 200)
+                        .scrollDisabled(true)
                         .scrollContentBackground(.hidden)
-
-                        // forgot password
-                        Button("Forgot Password?") {
-                            print("forgot password btn pressed")
-                        }
-                        .padding(.horizontal, 20)
-                        .foregroundColor(.secondary)
-                        .font(.caption)
 
                     }
 
                     // login
                     PrimaryButton(
-                        title: "Login",
+                        title: "Log in",
                         isEnabled: isLoginValid
                     ) {
                         navigateToLogin = false
@@ -97,67 +102,69 @@ struct LoginView: View {
                     }
 
                 }.padding(.top, 16)
+                
+                //alternative log in
 
-                VStack(spacing: 10) {
-                    Text("OR")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-
-                    HStack {
-
-                        // sign in with apple button
-                        SignInWithAppleButton(
-                            .signIn,  // Options: .signIn, .continue, .signUp
-                            onRequest: { request in
-                                // Request specific user scopes
-                                request.requestedScopes = [.fullName, .email]
-                            },
-                            onCompletion: { result in
-                                switch result {
-                                case .success(let authorization):
-                                    // Handle successful token exchange
-                                    print("Auth success: \(authorization)")
-                                case .failure(let error):
-                                    // Handle authentication errors
-                                    print(
-                                        "Auth failed: \(error.localizedDescription)"
-                                    )
-                                }
-                            }
-                        )
-                        //.frame(width: 140, height: 30)
-                        .frame(height: 50)
-                        .padding(.horizontal, 16)
-
-                        // sign in with google button
-//                        Button {
-//                            print("sign in w google btn pressed")
-//                        } label: {
-//                            HStack(spacing: 3) {
-//                                Image("google")
-//                                    .resizable()
-//                                    .frame(width: 10, height: 10)
+//                VStack(spacing: 10) {
+//                    Text("OR")
+//                        .font(.caption)
+//                        .foregroundColor(.secondary)
 //
-//                                Text("Sign in with Google")
-//                                    .font(.caption)
-//                                    .foregroundColor(.primary)
+//                    HStack {
 //
+//                        // sign in with apple button
+//                        SignInWithAppleButton(
+//                            .signIn,  // Options: .signIn, .continue, .signUp
+//                            onRequest: { request in
+//                                // Request specific user scopes
+//                                request.requestedScopes = [.fullName, .email]
+//                            },
+//                            onCompletion: { result in
+//                                switch result {
+//                                case .success(let authorization):
+//                                    // Handle successful token exchange
+//                                    print("Auth success: \(authorization)")
+//                                case .failure(let error):
+//                                    // Handle authentication errors
+//                                    print(
+//                                        "Auth failed: \(error.localizedDescription)"
+//                                    )
+//                                }
 //                            }
-//
-//                        }
-//                        .background(
-//                            RoundedRectangle(cornerRadius: 6).stroke(
-//                                Color.black,
-//                                lineWidth: 1
-//                            )
 //                        )
-//                        .frame(height: 29)
-//                        .buttonStyle(.borderedProminent)
-//                        .tint(.white)
-//                        .buttonBorderShape(.roundedRectangle(radius: 6))
-
-                    }
-                }
+//                        //.frame(width: 140, height: 30)
+//                        .frame(height: 50)
+//                        .padding(.horizontal, 16)
+//
+//                        // sign in with google button
+////                        Button {
+////                            print("sign in w google btn pressed")
+////                        } label: {
+////                            HStack(spacing: 3) {
+////                                Image("google")
+////                                    .resizable()
+////                                    .frame(width: 10, height: 10)
+////
+////                                Text("Sign in with Google")
+////                                    .font(.caption)
+////                                    .foregroundColor(.primary)
+////
+////                            }
+////
+////                        }
+////                        .background(
+////                            RoundedRectangle(cornerRadius: 6).stroke(
+////                                Color.black,
+////                                lineWidth: 1
+////                            )
+////                        )
+////                        .frame(height: 29)
+////                        .buttonStyle(.borderedProminent)
+////                        .tint(.white)
+////                        .buttonBorderShape(.roundedRectangle(radius: 6))
+//
+//                    }
+//                }
 
                 // DONT HAVE ACC?
                 HStack(spacing: 5) {
@@ -175,6 +182,7 @@ struct LoginView: View {
                 Spacer()
 
             }
+            .padding(.vertical, 16)
         }
 
     }

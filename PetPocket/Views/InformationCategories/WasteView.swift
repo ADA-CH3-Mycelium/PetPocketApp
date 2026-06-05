@@ -78,6 +78,20 @@ struct WasteView: View {
                 Spacer()
 
             }.padding(20)
+                .navigationTitle("My Waste Routine")
+            .navigationBarTitleDisplayMode(.inline)
+
+            // edit btn
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button(action: {
+                        isEditing.toggle()
+                    }) {
+                        Image(systemName: "pencil")
+
+                    }
+                }
+            }
         }
 
     }

@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct FoodView: View {
-    @State private var isEditing: Bool = false
+    @State private var isEditing: Bool = true
     
     // headers
     private let foodCategoryHeaders: [CategoryHeaderItem] = [
@@ -101,6 +101,17 @@ struct FoodView: View {
             }
             .navigationTitle(Text("My Food Routine"))
             .navigationBarTitleDisplayMode(.inline)
+                // edit btn
+                .toolbar {
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        Button(action: {
+                            isEditing.toggle()
+                        }) {
+                            Image(systemName: "pencil")
+
+                        }
+                    }
+                }
             
         }
         

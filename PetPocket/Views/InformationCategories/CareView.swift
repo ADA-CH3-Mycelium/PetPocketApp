@@ -78,6 +78,19 @@ struct CareView: View {
                 Spacer()
 
             }.padding(20)
+                .navigationTitle("My Additional Care Notes")
+            .navigationBarTitleDisplayMode(.inline)
+                // edit btn
+                .toolbar {
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        Button(action: {
+                            isEditing.toggle()
+                        }) {
+                            Image(systemName: "pencil")
+
+                        }
+                    }
+                }
         }
 
     }
