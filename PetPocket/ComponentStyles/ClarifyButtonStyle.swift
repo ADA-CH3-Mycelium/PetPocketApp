@@ -21,11 +21,10 @@ struct ClarifyButtonStyle: View {
                 navigate = true
             }
         }) {
-            Image(systemName: "questionmark.bubble.fill")
+            Image(systemName: "bubble.left.and.bubble.right.fill")
                 .font(.caption2)
                 .fontWeight(.light)
-                .foregroundStyle(.white)
-                .frame(width: 26, height: 26)
+                .frame(width: 30, height: 30)
                 .glassEffect(.regular.tint(.secondaryG.opacity(1)))
         }
         .navigationDestination(isPresented: $navigate) {

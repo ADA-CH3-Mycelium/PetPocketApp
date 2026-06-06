@@ -64,10 +64,10 @@ struct PetDashboardView: View {
         ZStack {
                 Color.background.ignoresSafeArea()
                 
-                Text("🐾")
-                    .font(.system(size: 130, weight: .bold, design: .rounded))
-                    .offset(x: 140, y: 350)
-                    .opacity(0.3)
+            Image(systemName: "bubbles.and.sparkles.fill")
+                .font(.system(size: 130, weight: .bold, design: .rounded))
+                .foregroundColor(Color.secondaryG)
+                .offset(x: 130, y: 370)
                 
                 
                 //ScrollView {
@@ -179,32 +179,63 @@ struct PetDashboardView: View {
                     }
                     
                 }
-                .navigationDestination(isPresented: $showingManageAccess) {
-                    ManageAccessView()
-                }
-                .navigationDestination(isPresented: $showingChatPage) {
-                    ClarifySheetView(pet: pet, isInNavigationStack: true)
-                }
-                .navigationDestination(isPresented: Binding(
-                    get: { selectedScreen != nil },
-                    set: { if !$0 { selectedScreen = nil } }
-                )) {
-                    switch selectedScreen {
-                    case .food:
-                        FoodView().environment(detail)
-                    case .waste:
-                        WasteView().environment(detail)
-                    case .care:
-                        CareView().environment(detail)
-                    case .emergency:
-                        EmergencyView().environment(detail)
-                    case nil:
-                        EmptyView()
+                .offset(y: -100)
+                
+                // Categories
+                
+                VStack(alignment: .leading, spacing: 10) {
+                    Text("Here are my habits and needs 🐾")
+                        .font(.headline)
+                    
+                    TwCoColGrid(catItem: catItem)
+                    { screen in
+                        selectedScreen = screen
                     }
                 }
-                .sheet(isPresented: $showingGenerateCode) {
-                    GenerateCodeView(petId: pet.id)
+                .padding(20)
+                .offset(y: -65)
+            }
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                // clarify chat
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button(action: {}) {
+                        Image(systemName: "bubble.left.and.bubble.right.fill")
+                            .imageScale(.large)
+                            
+                    }
                 }
+                
+                // menu
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Menu {
+                        // edit
+                        Button(action: {}) {
+                            Label("Edit information", systemImage: "pencil")
+                        }
+                        // manage access
+                        Button(action: { showingManageAccess = true }) {
+                            Label(
+                                "Manage access",
+                                systemImage: "person.badge.key"
+                            )
+                        }
+                        // generate code
+                        Button(action: { showingGenerateCode = true }) {
+                            Label(
+                                "Invitation code",
+                                systemImage: "qrcode"
+                            )
+                        }
+                    } label: {
+                        Image(systemName: "ellipsis")
+                            .imageScale(.large)
+                            .rotationEffect(Angle(degrees: 90))
+                            
+                    }
+                }
+                
+            }
         }
         .environment(detail)
         .task { await detail.loadIfNeeded() }

@@ -54,7 +54,7 @@ struct WasteView: View {
                     Spacer()
                 }.padding(20)
             }
-            .navigationTitle("Waste Routine")
+            .navigationTitle(" My Waste Routine")
             .navigationBarTitleDisplayMode(.inline)
             .tint(Color.primaryG)
             .toolbar {

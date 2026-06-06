@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct FoodView: View {
+<<<<<<< HEAD
     @Environment(PetDetailStore.self) private var detail
     @State private var isEditing = false
     @State private var showAddMeal = false
@@ -17,6 +18,15 @@ struct FoodView: View {
     private let headers: [CategoryHeaderItem] = [
         CategoryHeaderItem(icon: "exclamationmark.triangle.fill", label: "Dietary Alert"),
         CategoryHeaderItem(icon: "clock.arrow.circlepath",        label: "Daily Feeding Routine"),
+=======
+    @State private var isEditing: Bool = true
+    
+    // headers
+    private let foodCategoryHeaders: [CategoryHeaderItem] = [
+        CategoryHeaderItem(icon: "clock.arrow.circlepath", label: "Daily Feeding Routine"),
+        CategoryHeaderItem(icon: "text.pad.header", label: "Additional Notes"),
+        
+>>>>>>> ec7ca579bc04693ee540ef2bbcd2a101c549c504
     ]
 
     var body: some View {

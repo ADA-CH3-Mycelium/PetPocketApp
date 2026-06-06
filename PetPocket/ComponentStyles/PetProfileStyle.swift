@@ -59,7 +59,7 @@ struct TwCoColGrid: View {
             ForEach(catItem, id: \.self) { item in
                 Button(action: { onTap(item.targetScreen) }) {
                     ZStack {
-                        Color.primaryG.opacity(0.25)
+                        //Color.secondaryG.opacity(1)
 
                         Image(systemName: item.icon)
                             .font(.system(size: 80))
@@ -75,7 +75,7 @@ struct TwCoColGrid: View {
                     .frame(height: 100)
                     .clipShape(RoundedRectangle(cornerRadius: 16))
                     .glassEffect(
-                        .regular.tint(Color.primaryG.opacity(0.10)),
+                        .regular.tint(Color.secondaryG.opacity(1)),
                         in: .rect(cornerRadius: 16)
                     )
                 }
@@ -84,6 +84,13 @@ struct TwCoColGrid: View {
         }
     }
 }
+//
+//#Preview {
+//    ZStack {
+//        Color.background.ignoresSafeArea()
+//        TwCoColGrid(catItem: catItem)
+//    }
+//}
 
 // MARK: - Category Page Headers
 

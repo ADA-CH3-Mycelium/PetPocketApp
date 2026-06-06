@@ -18,18 +18,18 @@ struct PrimaryButton: View {
         Button(action: action) {
             Text(title)
                 .font(.headline)
-                .foregroundColor(.white)
+                .textCase(.uppercase)
                 .padding(.vertical, 10)
                 .padding(.horizontal, 40)
-                .background(
-                    isEnabled
-                    ? Color.accent
-                    : Color.gray.opacity(0.5)
-                )
                 .cornerRadius(50)
-                .glassEffect()
+                //.glassEffect()
         }
+        .buttonStyle(.glassProminent)
         .disabled(!isEnabled)
+        .tint(isEnabled
+              ? Color.accent
+              : Color.gray.opacity(0.5))
+        
     }
 }
 

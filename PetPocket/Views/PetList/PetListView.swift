@@ -51,83 +51,82 @@ struct PetListView: View {
         NavigationStack {
         ZStack {
             Color.background.ignoresSafeArea()
-            
+
             ScrollView {
                 VStack(alignment: .leading, spacing: 30) {
-                    
-                    // Your Pet header row
-                    HStack(alignment: .top) {
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text("Here Are Your Pets 🐾")
-                                .font(.title2)
-                                .fontWeight(.bold)
-                                .foregroundColor(.primary)
-                            Text("\(store.ownedPets.count + store.sittingPets.count) friends are under your care")
-                                .font(.caption)
-                                .foregroundColor(.primaryG)
-                        }
-                        Spacer()
-                        // sign out
-                        Button {
-                            Task { await AuthManager.shared.signOut() }
-                        } label: {
-                            Image(systemName: "rectangle.portrait.and.arrow.right")
-                                .font(.title3)
-                                .foregroundColor(.alertRed)
-                        }
-                    }
-                    
-                    // Pet cards — from Supabase via PetStore
-                    VStack(spacing: 16) {
-                        ForEach(store.ownedPets) { row in
-                            PetListCard(item: card(for: row, type: .owning))
-                                .onTapGesture {
-                                    selectedPet = row
-                                    navigateToDashboard = true
-                                }
-                        }
-                        ForEach(store.sittingPets) { row in
-                            PetListCard(item: card(for: row, type: .sitting(sitter: "", sitterImage: "", dateRange: "")))
-                                .onTapGesture {
-                                    selectedPet = row
-                                    navigateToDashboard = true
-                                }
-                        }
 
-                        // add new pet
-                        Button(action: { showAddModal = true }) {
-                            Image(systemName: "plus")
-                                .fontWeight(.bold)
-                                .frame(width: 36, height: 36)
-                                .glassEffect()
-                        }
-                    }.padding(20)
-                        .navigationBarHidden(true)
-                        .searchable(text: $searchPet)
-                        .searchToolbarBehavior(.minimize)
-                        .navigationDestination(isPresented: $navigateToDashboard) {
-                            if let pet = selectedPet {
-                                PetDashboardView(pet: pet)
+                    // Pet cards
+                    VStack(spacing: 16) {
+                        ForEach(mockData) { pet in
+                            PetListCard(
+                                item: PetItem(
+                                    id: pet.id,
+                                    name: pet.name,
+                                    gender: pet.gender,
+                                    age: pet.age,
+                                    breed: pet.breed,
+                                    image: pet.image,
+                                    type: pet.type,
+                                )
+                            )
+                            .onTapGesture {
+                                navigateToDashboard = true
                             }
                         }
-                        .navigationDestination(isPresented: $navigateToOwnPet) {
-                            AddingNewPetForm(store: store)
+
+//                        // add new pet
+//                        Button(action: { showAddModal = true }) {
+//                            Image(systemName: "plus")
+//                                .fontWeight(.bold)
+//                                .frame(width: 36, height: 36)
+//                                .glassEffect()
+//                        }
+                    }
+                }.padding(20)
+                    // header
+                    .navigationTitle(Text("Here Are Your Pets 🐾"))
+                    .navigationSubtitle(Text("2 friends are under your care"))
+                    .navigationBarTitleDisplayMode(.large)
+                // toolbar
+                    .searchable(text: $searchPet)
+                    //.searchToolbarBehavior(.minimize)
+                    .toolbar {
+                        
+                        // search btn
+                        DefaultToolbarItem(kind: .search, placement: .bottomBar)
+                        ToolbarSpacer(placement: .bottomBar)
+                        
+                        // add btn
+                        ToolbarItem(placement: .bottomBar) {
+                            
+                            Button(action: {
+                                showAddModal.toggle()
+                            }) {
+                                
+                                Image(systemName: "plus")
+                            }
                         }
-                        .navigationDestination(isPresented: $navigateToSitPet) {
-                            PetCodeInput(store: store)
-                        }
-                        .sheet(isPresented: $showAddModal) {
-                            AddPetModal(
-                                isPresented: $showAddModal,
-                                onOwnPet: { navigateToOwnPet = true },
-                                onSitPet: { navigateToSitPet = true }
-                            )
-                            .presentationDetents([.height(400)])
-                            .presentationCornerRadius(24)
-                        }
-                        .task { await store.load() }
-                        .refreshable { await store.load() }
-                }
+                        
+
+                    }
+                    .navigationDestination(isPresented: $navigateToDashboard) {
+                        PetDashboardView()
+                    }
+                    .navigationDestination(isPresented: $navigateToOwnPet) {
+                        AddingNewPetForm()
+                    }
+                    .navigationDestination(isPresented: $navigateToSitPet) {
+                        PetCodeInput()
+                    }
+                    .sheet(isPresented: $showAddModal) {
+                        AddPetModal(
+                            isPresented: $showAddModal,
+                            onOwnPet: { navigateToOwnPet = true },
+                            onSitPet: { navigateToSitPet = true }
+                        )
+                        .presentationDetents([.height(400)])
+                        .presentationCornerRadius(24)
+                    }
             }
         }
         }
