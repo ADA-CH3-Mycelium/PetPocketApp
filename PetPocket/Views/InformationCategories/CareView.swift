@@ -61,7 +61,6 @@ struct CareView: View {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     EditMenuButton(isEditing: $isEditing)
                 }
-<<<<<<< HEAD
             }
             .sheet(isPresented: $showAddItem) {
                 CareItemSheet(detail: detail, category: "care")
@@ -73,45 +72,6 @@ struct CareView: View {
                     .presentationDetents([.large])
                     .presentationCornerRadius(24)
             }
-=======
-
-                VStack(alignment: .center, spacing: 10) {
-                    // header
-                    CategoryHeader(item: careCategoryHeaders[1])
-
-                    // items
-                    AddNotesStyle(item: mockCareAdditionalNotes[0])
-
-                    //add btn
-                    if isEditing {
-                        Button(action: {
-                            print("add additional notes btn pressed")
-                        }) {
-                            Image(systemName: "plus")
-                                .font(.system(size: 24, weight: .semibold))
-                                .padding(10)
-                                .glassEffect()
-                        }.padding(.bottom, 20)
-                    }
-                }
-
-                Spacer()
-
-            }.padding(20)
-                .navigationTitle("My Additional Care Notes")
-            .navigationBarTitleDisplayMode(.inline)
-                // edit btn
-                .toolbar {
-                    ToolbarItem(placement: .navigationBarTrailing) {
-                        Button(action: {
-                            isEditing.toggle()
-                        }) {
-                            Image(systemName: "pencil")
-
-                        }
-                    }
-                }
->>>>>>> ec7ca579bc04693ee540ef2bbcd2a101c549c504
         }
     }
 }

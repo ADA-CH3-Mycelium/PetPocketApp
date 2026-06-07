@@ -8,25 +8,16 @@
 import SwiftUI
 
 struct FoodView: View {
-<<<<<<< HEAD
     @Environment(PetDetailStore.self) private var detail
     @State private var isEditing = false
     @State private var showAddMeal = false
     @State private var editingMeal: RoutineCardItem? = nil
     @State private var showDietaryEdit = false
-
-    private let headers: [CategoryHeaderItem] = [
-        CategoryHeaderItem(icon: "exclamationmark.triangle.fill", label: "Dietary Alert"),
-        CategoryHeaderItem(icon: "clock.arrow.circlepath",        label: "Daily Feeding Routine"),
-=======
-    @State private var isEditing: Bool = true
     
     // headers
-    private let foodCategoryHeaders: [CategoryHeaderItem] = [
+    private let headers: [CategoryHeaderItem] = [
         CategoryHeaderItem(icon: "clock.arrow.circlepath", label: "Daily Feeding Routine"),
         CategoryHeaderItem(icon: "text.pad.header", label: "Additional Notes"),
-        
->>>>>>> ec7ca579bc04693ee540ef2bbcd2a101c549c504
     ]
 
     var body: some View {

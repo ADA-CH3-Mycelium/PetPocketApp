@@ -46,6 +46,12 @@ enum Secrets {
 //#else
 let supabase = SupabaseClient(
     supabaseURL: Secrets.supabaseURL,
-    supabaseKey: Secrets.supabaseAnonKey
+    supabaseKey: Secrets.supabaseAnonKey,
+    options: SupabaseClientOptions(
+        auth: SupabaseClientOptions.AuthOptions(
+            storage: KeychainLocalStorage(service: "PetPocket", accessGroup: nil),
+            emitLocalSessionAsInitialSession: true
+        )
+    )
 )
 //#endif

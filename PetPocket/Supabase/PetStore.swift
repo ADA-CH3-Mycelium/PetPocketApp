@@ -24,6 +24,7 @@ final class PetStore {
 
     @MainActor
     func load() async {
+        print("🔄 PetStore.load() called")  // ← add this
         isLoading = true
         errorMessage = nil
         do {
@@ -33,8 +34,10 @@ final class PetStore {
             profileName = try await profile.name
             ownedPets = try await owned
             sittingPets = try await sitting
+            print("✅ Loaded \(ownedPets.count) owned, \(sittingPets.count) sitting")  // ← add this
         } catch {
             errorMessage = error.localizedDescription
+            print("❌ PetStore load error:", error)  // ← add this
         }
         isLoading = false
     }

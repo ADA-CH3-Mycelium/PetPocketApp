@@ -62,126 +62,70 @@ struct PetDashboardView: View {
     
     var body: some View {
         ZStack {
-                Color.background.ignoresSafeArea()
-                
+            Color.background.ignoresSafeArea()
+            
             Image(systemName: "bubbles.and.sparkles.fill")
                 .font(.system(size: 130, weight: .bold, design: .rounded))
                 .foregroundColor(Color.secondaryG)
                 .offset(x: 130, y: 370)
-                
-                
-                //ScrollView {
-                // Applying the explicit layout padding here cleanly covers the entire page structure
-                VStack(alignment: .leading) {
-                    ZStack(alignment: .bottomLeading) {
-                        // PROFILE IMG — loads from Supabase Storage URL, placeholder if nil
-                        Group {
-                            if let urlString = pet.photoUrl, let url = URL(string: urlString) {
-                                AsyncImage(url: url) { phase in
-                                    switch phase {
-                                    case .success(let image):
-                                        image
-                                            .resizable()
-                                            .scaledToFill()
-                                    case .failure, .empty:
-                                        petPhotoPlaceholder
-                                    @unknown default:
-                                        petPhotoPlaceholder
-                                    }
+            
+            
+            //ScrollView {
+            // Applying the explicit layout padding here cleanly covers the entire page structure
+            VStack(alignment: .leading) {
+                ZStack(alignment: .bottomLeading) {
+                    // PROFILE IMG — loads from Supabase Storage URL, placeholder if nil
+                    Group {
+                        if let urlString = pet.photoUrl, let url = URL(string: urlString) {
+                            AsyncImage(url: url) { phase in
+                                switch phase {
+                                case .success(let image):
+                                    image
+                                        .resizable()
+                                        .scaledToFill()
+                                case .failure, .empty:
+                                    petPhotoPlaceholder
+                                @unknown default:
+                                    petPhotoPlaceholder
                                 }
-                            } else {
-                                petPhotoPlaceholder
                             }
+                        } else {
+                            petPhotoPlaceholder
                         }
-                        .frame(width: 400, height: 500)
-                        .mask(
-                            LinearGradient(
-                                gradient: Gradient(stops: [
-                                    .init(color: .black, location: 0.0),
-                                    .init(color: .black, location: 0.75),
-                                    .init(color: .clear, location: 1),
-                                ]),
-                                startPoint: .top,
-                                endPoint: .bottom
-                            )
-                        )
-                        
-                        // TEXT
-                        VStack(alignment: .leading) {
-                            Text("Hi, I'm")
-                                .font(.body)
-                            //.fontWeight(.semibold)
-                            //.foregroundColor(.gray)
-                            Text(pet.name)
-                                .font(.largeTitle)
-                                .bold()
-                            
-                            Text(subtitle)
-                                .foregroundColor(.gray)
-                        }
-                        .padding(20)
-                        .offset(y: 30)
-                        
                     }
-                    .offset(y: -100)
-
+                    .frame(width: 400, height: 500)
+                    .mask(
+                        LinearGradient(
+                            gradient: Gradient(stops: [
+                                .init(color: .black, location: 0.0),
+                                .init(color: .black, location: 0.75),
+                                .init(color: .clear, location: 1),
+                            ]),
+                            startPoint: .top,
+                            endPoint: .bottom
+                        )
+                    )
                     
-                    // Categories
-                    
-                    VStack(alignment: .leading, spacing: 10) {
-                        Text("Here are my habits and needs 🐾")
+                    // TEXT
+                    VStack(alignment: .leading) {
+                        Text("Hi, I'm")
                             .font(.body)
+                        //.fontWeight(.semibold)
+                        //.foregroundColor(.gray)
+                        Text(pet.name)
+                            .font(.largeTitle)
+                            .bold()
                         
-                        TwCoColGrid(catItem: catItem) { screen in
-                            selectedScreen = screen
-                        }
+                        Text(subtitle)
+                            .foregroundColor(.gray)
                     }
                     .padding(20)
-                    .offset(y: -65)
-                }
-                .navigationBarTitleDisplayMode(.inline)
-                .toolbar {
-                    // clarify chat
-                    ToolbarItem(placement: .navigationBarTrailing) {
-                        Button(action: {
-                            showingChatPage = true
-                        }) {
-                            Image(systemName: "questionmark.bubble.fill")
-                                .imageScale(.large)
-                                .foregroundStyle(Color.primaryG)
-                        }
-                    }
-                    
-                    // menu
-                    ToolbarItem(placement: .navigationBarTrailing) {
-                        Menu {
-                            Button(action: { showingManageAccess = true }) {
-                                Label(
-                                    "Manage access",
-                                    systemImage: "person.badge.key"
-                                )
-                            }
-                            Button(action: {}) {
-                                Label("Edit information", systemImage: "pencil")
-                            }
-                            Button(action: { showingGenerateCode = true }) {
-                                Label(
-                                    "Generate new code",
-                                    systemImage: "qrcode"
-                                )
-                            }
-                        } label: {
-                            Image(systemName: "ellipsis")
-                                .imageScale(.large)
-                                .rotationEffect(Angle(degrees: 90))
-                                .foregroundColor(Color.primaryG)
-                        }
-                    }
+                    .offset(y: 30)
                     
                 }
                 .offset(y: -100)
                 
-                // Categories
+                // Categori es
                 
                 VStack(alignment: .leading, spacing: 10) {
                     Text("Here are my habits and needs 🐾")
@@ -195,6 +139,33 @@ struct PetDashboardView: View {
                 .padding(20)
                 .offset(y: -65)
             }
+
+            .navigationDestination(isPresented: $showingManageAccess) {
+                ManageAccessView()
+            }
+            .navigationDestination(isPresented: $showingChatPage) {
+                ClarifySheetView(pet: pet, isInNavigationStack: true)
+            }
+            .navigationDestination(isPresented: Binding(
+                get: { selectedScreen != nil },
+                set: { if !$0 { selectedScreen = nil } }
+            )) {
+                switch selectedScreen {
+                case .food:
+                    FoodView().environment(detail)
+                case .waste:
+                    WasteView().environment(detail)
+                case .care:
+                    CareView().environment(detail)
+                case .emergency:
+                    EmergencyView().environment(detail)
+                case nil:
+                    EmptyView()
+                }
+            }
+            .sheet(isPresented: $showingGenerateCode) {
+                GenerateCodeView(petId: pet.id)
+            }
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 // clarify chat
@@ -202,7 +173,7 @@ struct PetDashboardView: View {
                     Button(action: {}) {
                         Image(systemName: "bubble.left.and.bubble.right.fill")
                             .imageScale(.large)
-                            
+                        
                     }
                 }
                 
@@ -231,7 +202,7 @@ struct PetDashboardView: View {
                         Image(systemName: "ellipsis")
                             .imageScale(.large)
                             .rotationEffect(Angle(degrees: 90))
-                            
+                        
                     }
                 }
                 
@@ -241,14 +212,15 @@ struct PetDashboardView: View {
         .task { await detail.loadIfNeeded() }
     }
     
-    private var subtitle: String {
+    
+    var subtitle: String {
         [pet.ageDescription, pet.gender, pet.breed]
             .compactMap { $0 }
             .filter { !$0.isEmpty }
             .joined(separator: "  •  ")
     }
-
-    private var petPhotoPlaceholder: some View {
+    
+    var petPhotoPlaceholder: some View {
         Rectangle()
             .fill(
                 LinearGradient(
@@ -263,5 +235,7 @@ struct PetDashboardView: View {
                     .foregroundColor(Color.primaryG.opacity(0.4))
             )
     }
-    
 }
+
+
+
