@@ -12,36 +12,15 @@ import PhotosUI
 struct AddMealSheet: View {
     @Environment(\.dismiss) private var dismiss
 
-    let detail: PetDetailStore
-    /// Pass an existing meal here to pre-fill fields for editing
-    var editing: RoutineCardItem? = nil
+    @State private var vm: AddMealViewModel
 
-    // Form fields
-    @State private var mealName = ""
-    @State private var time = ""
-    @State private var description = ""
-    @State private var selectedIcon = "fork.knife"
-
-    // Media (optional) — photo or video
+    // UI-only state
     @State private var photoItem: PhotosPickerItem? = nil
-    @State private var selectedImage: UIImage? = nil
-    @State private var mediaData: Data? = nil
-    @State private var mediaIsVideo = false
-
-    // State
-    @State private var isSaving = false
-    @State private var isDeleting = false
     @State private var showDeleteConfirm = false
     @State private var showSymbolPicker = false
 
-    private var isEditing: Bool { editing != nil }
-    private var title: String { isEditing ? "Edit Meal" : "Add Meal" }
-    private var saveLabel: String { isEditing ? "Save Changes" : "Add Meal" }
-
-    private var canSave: Bool {
-        !mealName.trimmingCharacters(in: .whitespaces).isEmpty &&
-        !time.trimmingCharacters(in: .whitespaces).isEmpty &&
-        !description.trimmingCharacters(in: .whitespaces).isEmpty
+    init(detail: PetDetailStore, editing: RoutineCardItem? = nil) {
+        _vm = State(initialValue: AddMealViewModel(detail: detail, editing: editing))
     }
 
     var body: some View {
@@ -56,7 +35,7 @@ struct AddMealSheet: View {
                         formCard {
                             Button { showSymbolPicker = true } label: {
                                 HStack(spacing: 14) {
-                                    Image(systemName: selectedIcon)
+                                    Image(systemName: vm.selectedIcon)
                                         .font(.title2)
                                         .foregroundColor(.white)
                                         .frame(width: 52, height: 52)
@@ -83,9 +62,9 @@ struct AddMealSheet: View {
                         // ── Meal name + Time ─────────────────────────
                         formCard {
                             VStack(spacing: 14) {
-                                field(label: "Meal Name", placeholder: "e.g. Breakfast", text: $mealName)
+                                field(label: "Meal Name", placeholder: "e.g. Breakfast", text: $vm.mealName)
                                 Divider()
-                                field(label: "Time", placeholder: "e.g. 8:00", text: $time)
+                                field(label: "Time", placeholder: "e.g. 8:00", text: $vm.time)
                             }
                         }
 
@@ -95,7 +74,7 @@ struct AddMealSheet: View {
                                 sectionLabel("Description")
                                 TextField(
                                     "e.g. 1 Cup Dry Kibble. Mix with warm water to soften the grains.",
-                                    text: $description,
+                                    text: $vm.description,
                                     axis: .vertical
                                 )
                                 .lineLimit(3...6)
@@ -114,9 +93,9 @@ struct AddMealSheet: View {
                                         .foregroundColor(.secondary)
                                 }
 
-                                if selectedImage != nil || mediaData != nil {
+                                if vm.selectedImage != nil || vm.mediaData != nil {
                                     ZStack(alignment: .topTrailing) {
-                                        if let img = selectedImage {
+                                        if let img = vm.selectedImage {
                                             Image(uiImage: img)
                                                 .resizable()
                                                 .scaledToFill()
@@ -140,9 +119,7 @@ struct AddMealSheet: View {
                                         }
 
                                         Button {
-                                            selectedImage = nil
-                                            mediaData = nil
-                                            mediaIsVideo = false
+                                            vm.clearMedia()
                                             photoItem = nil
                                         } label: {
                                             Image(systemName: "xmark.circle.fill")
@@ -167,14 +144,14 @@ struct AddMealSheet: View {
                                         .clipShape(RoundedRectangle(cornerRadius: 12))
                                     }
                                     .onChange(of: photoItem) { _, newItem in
-                                        Task { await loadPicked(newItem) }
+                                        Task { await vm.loadPicked(newItem) }
                                     }
                                 }
                             }
                         }
 
                         // ── Error ────────────────────────────────────
-                        if let error = detail.errorMessage {
+                        if let error = vm.errorMessage {
                             Text(error)
                                 .font(.caption)
                                 .foregroundColor(.red)
@@ -184,30 +161,30 @@ struct AddMealSheet: View {
 
                         // ── Save ─────────────────────────────────────
                         Button {
-                            Task { await save() }
+                            Task { if await vm.save() { dismiss() } }
                         } label: {
                             Group {
-                                if isSaving {
+                                if vm.isSaving {
                                     ProgressView().tint(.white)
                                 } else {
-                                    Text(saveLabel).fontWeight(.semibold)
+                                    Text(vm.saveLabel).fontWeight(.semibold)
                                 }
                             }
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 14)
-                            .background(canSave ? Color.primaryG : Color(.systemGray4))
+                            .background(vm.canSave ? Color.primaryG : Color(.systemGray4))
                             .foregroundColor(.white)
                             .clipShape(RoundedRectangle(cornerRadius: 14))
                         }
-                        .disabled(!canSave || isSaving || isDeleting)
+                        .disabled(!vm.canSave || vm.isSaving || vm.isDeleting)
 
                         // ── Delete (edit mode only) ──────────────────
-                        if isEditing {
+                        if vm.isEditing {
                             Button(role: .destructive) {
                                 showDeleteConfirm = true
                             } label: {
                                 Group {
-                                    if isDeleting {
+                                    if vm.isDeleting {
                                         ProgressView().tint(.red)
                                     } else {
                                         Label("Delete Meal", systemImage: "trash")
@@ -220,13 +197,13 @@ struct AddMealSheet: View {
                                 .background(Color.red.opacity(0.1))
                                 .clipShape(RoundedRectangle(cornerRadius: 14))
                             }
-                            .disabled(isSaving || isDeleting)
+                            .disabled(vm.isSaving || vm.isDeleting)
                         }
                     }
                     .padding(20)
                 }
             }
-            .navigationTitle(title)
+            .navigationTitle(vm.title)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
@@ -234,12 +211,12 @@ struct AddMealSheet: View {
                         .foregroundColor(.primaryG)
                 }
             }
-            .onAppear { prefill() }
+            .onAppear { vm.prefill() }
             .sheet(isPresented: $showSymbolPicker) {
-                SymbolPickerSheet(selection: $selectedIcon)
+                SymbolPickerSheet(selection: $vm.selectedIcon)
             }
             .alert("Delete this meal?", isPresented: $showDeleteConfirm) {
-                Button("Delete", role: .destructive) { Task { await deleteCard() } }
+                Button("Delete", role: .destructive) { Task { if await vm.deleteCard() { dismiss() } } }
                 Button("Cancel", role: .cancel) {}
             } message: {
                 Text("This permanently removes the meal card.")
@@ -274,95 +251,6 @@ struct AddMealSheet: View {
         }
     }
 
-    // MARK: - Helpers
-
-    private func prefill() {
-        guard let meal = editing else { return }
-        mealName      = meal.title
-        time          = meal.time
-        description   = meal.description
-        selectedIcon  = meal.icon
-    }
-
-    private func save() async {
-        isSaving = true
-
-        var uploadedUrl: String? = nil
-        var mediaType: String? = nil
-        if let data = mediaData {
-            if mediaIsVideo {
-                uploadedUrl = try? await PetRepository.shared.uploadMealMedia(
-                    data: data, contentType: "video/quicktime", fileExtension: "mov")
-                mediaType = uploadedUrl != nil ? "video" : nil
-            } else {
-                uploadedUrl = try? await PetRepository.shared.uploadMealMedia(
-                    data: data, contentType: "image/jpeg", fileExtension: "jpg")
-                mediaType = uploadedUrl != nil ? "photo" : nil
-            }
-        }
-
-        let ok: Bool
-        if let editing {
-            // EDIT: update the existing row, don't insert a new one.
-            ok = await detail.updateMeal(
-                id: editing.id,
-                mealName: mealName.trimmingCharacters(in: .whitespaces),
-                time: time.trimmingCharacters(in: .whitespaces),
-                notes: description.trimmingCharacters(in: .whitespaces),
-                iconName: selectedIcon,
-                mediaUrl: uploadedUrl,
-                mediaType: mediaType
-            )
-        } else {
-            ok = await detail.addMeal(
-                mealName: mealName.trimmingCharacters(in: .whitespaces),
-                time: time.trimmingCharacters(in: .whitespaces),
-                notes: description.trimmingCharacters(in: .whitespaces),
-                iconName: selectedIcon,
-                mediaUrl: uploadedUrl,
-                mediaType: mediaType
-            )
-        }
-        isSaving = false
-        if ok { dismiss() }
-    }
-
-    /// Loads the picked photo OR video. Photo → downscaled JPEG; anything that
-    /// isn't a decodable image is treated as a video (raw data uploaded as-is).
-    private func loadPicked(_ item: PhotosPickerItem?) async {
-        guard let item,
-              let data = try? await item.loadTransferable(type: Data.self) else { return }
-        if let ui = UIImage(data: data) {
-            let resized = ui.mealDownscaled(maxDimension: 1024)
-            selectedImage = resized
-            mediaData = resized.jpegData(compressionQuality: 0.8)
-            mediaIsVideo = false
-        } else {
-            selectedImage = nil
-            mediaData = data
-            mediaIsVideo = true
-        }
-    }
-
-    private func deleteCard() async {
-        guard let editing else { return }
-        isDeleting = true
-        let ok = await detail.deleteMeal(id: editing.id)
-        isDeleting = false
-        if ok { dismiss() }
-    }
-}
-
-private extension UIImage {
-    /// Aspect-fit downscale so the longest side <= maxDimension. No upscaling.
-    func mealDownscaled(maxDimension: CGFloat) -> UIImage {
-        let longest = max(size.width, size.height)
-        guard longest > maxDimension else { return self }
-        let scale = maxDimension / longest
-        let newSize = CGSize(width: size.width * scale, height: size.height * scale)
-        let renderer = UIGraphicsImageRenderer(size: newSize)
-        return renderer.image { _ in draw(in: CGRect(origin: .zero, size: newSize)) }
-    }
 }
 
 #Preview {

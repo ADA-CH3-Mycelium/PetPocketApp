@@ -13,15 +13,7 @@ struct LoginView: View {
     @Binding var navigateToLogin: Bool
     @Binding var navigateToPetList: Bool
     @Binding var navigateToRegister: Bool
-    @State private var email = ""
-        @State private var password = ""
-
-    private var isLoginValid: Bool {
-        let emailValid = email.contains("@") && email.contains(".")
-
-        return emailValid
-            && !password.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
-    }
+    @State private var vm = AuthViewModel()
 
     var body: some View {
         ZStack {
@@ -37,7 +29,7 @@ struct LoginView: View {
                                         .font(.caption)
                                         .foregroundStyle(Color.secondary)
 
-                                    TextField("", text: $email, prompt:
+                                    TextField("", text: $vm.email, prompt:
                                     Text("email@example.com")
                                         .foregroundColor(Color(uiColor: .placeholderText))
                                     )
@@ -61,7 +53,7 @@ struct LoginView: View {
                                         .font(.caption)
                                         .foregroundStyle(Color.secondary)
 
-                                    TextField("Enter password", text: $password)
+                                    TextField("Enter password", text: $vm.password)
                                         .textContentType(.emailAddress)
                                         .autocapitalization(.none)
                                         .keyboardType(.emailAddress)
@@ -94,17 +86,16 @@ struct LoginView: View {
                     // login
                     PrimaryButton(
                         title: "Log in",
-                        isEnabled: isLoginValid
+                        isEnabled: vm.isLoginValid
                     ) {
                         Task {
-                            await AuthManager.shared.signIn(email: email, password: password)
-                            if AuthManager.shared.isAuthenticated {
+                            if await vm.login() {
                                 navigateToLogin = false   // dismiss; root gate swaps to PetListView
                             }
                         }
                     }
 
-                    if let err = AuthManager.shared.errorMessage {
+                    if let err = vm.errorMessage {
                         Text(err)
                             .font(.caption)
                             .foregroundColor(.alertRed)

@@ -14,39 +14,12 @@ struct PetListView: View {
     @State private var navigateToDashboard = false
     @State private var searchPet: String = ""
     @State private var selectedPet: PetRow? = nil
-    @State private var store: PetStore
-    
+    @State private var vm: PetListViewModel
+
     init(store: PetStore = PetStore()) {
-        _store = State(initialValue: store)
+        _vm = State(initialValue: PetListViewModel(store: store))
     }
-    
-    // PetRow (DB) -> PetItem (UI card)
-    private func card(for row: PetRow, type: PetCardType) -> PetItem {
-        PetItem(
-            id: row.id,
-            name: row.name,
-            gender: row.gender ?? "",
-            age: Self.ageText(from: row.dateOfBirth),
-            breed: row.breed ?? "",
-            image: "",
-            photoUrl: row.photoUrl,
-            type: type
-        )
-    }
-    
-    private static let dobFormatter: DateFormatter = {
-        let f = DateFormatter()
-        f.dateFormat = "yyyy-MM-dd"
-        f.locale = Locale(identifier: "en_US_POSIX")
-        return f
-    }()
-    
-    private static func ageText(from iso: String?) -> String {
-        guard let iso, let dob = dobFormatter.date(from: iso) else { return "" }
-        let years = Calendar.current.dateComponents([.year], from: dob, to: .now).year ?? 0
-        return years > 0 ? "\(years)" : ""
-    }
-    
+
     var body: some View {
         NavigationStack {
             ZStack {
@@ -57,15 +30,15 @@ struct PetListView: View {
                         
                         // Pet cards
                         VStack(spacing: 16) {
-                            ForEach(store.ownedPets) { row in
-                                PetListCard(item: card(for: row, type: .owning))
+                            ForEach(vm.ownedPets) { row in
+                                PetListCard(item: vm.card(for: row, type: .owning))
                                     .onTapGesture {
                                         selectedPet = row
                                         navigateToDashboard = true
                                     }
                             }
-                            ForEach(store.sittingPets) { row in
-                                PetListCard(item: card(for: row, type: .sitting(sitter: "", sitterImage: "", dateRange: "")))
+                            ForEach(vm.sittingPets) { row in
+                                PetListCard(item: vm.card(for: row, type: .sitting(sitter: "", sitterImage: "", dateRange: "")))
                                     .onTapGesture {
                                         selectedPet = row
                                         navigateToDashboard = true
@@ -83,7 +56,7 @@ struct PetListView: View {
                     }.padding(20)
                     // header
                         .navigationTitle(Text("Here Are Your Pets 🐾"))
-                        .navigationSubtitle(Text("\(store.ownedPets.count + store.sittingPets.count) friends are under your care"))
+                        .navigationSubtitle(Text("\(vm.petCount) friends are under your care"))
                         .navigationBarTitleDisplayMode(.large)
                     // toolbar
                         .searchable(text: $searchPet)
@@ -96,7 +69,7 @@ struct PetListView: View {
                             
                             ToolbarItem(placement: .topBarTrailing){
                                 Button {
-                                    Task { await AuthManager.shared.signOut() }
+                                    Task { await vm.signOut() }
                                 } label: {
                                     Image(systemName: "rectangle.portrait.and.arrow.right")
                                         .font(.title3)
@@ -123,10 +96,10 @@ struct PetListView: View {
                             }
                         }
                         .navigationDestination(isPresented: $navigateToOwnPet) {
-                            AddingNewPetForm(store: store)
+                            AddingNewPetForm(store: vm.store)
                         }
                         .navigationDestination(isPresented: $navigateToSitPet) {
-                            PetCodeInput(store: store)
+                            PetCodeInput(store: vm.store)
                         }
                         .sheet(isPresented: $showAddModal) {
                             AddPetModal(
@@ -137,8 +110,8 @@ struct PetListView: View {
                             .presentationDetents([.height(400)])
                             .presentationCornerRadius(24)
                         }
-                        .task { await store.load() }
-                        .refreshable { await store.load() }
+                        .task { await vm.load() }
+                        .refreshable { await vm.load() }
                 }
             }
         }

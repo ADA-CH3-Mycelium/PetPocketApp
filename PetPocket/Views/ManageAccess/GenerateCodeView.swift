@@ -10,12 +10,12 @@ import SwiftUI
 struct GenerateCodeView: View {
     @Environment(\.dismiss) var dismiss
 
-    let petId: UUID
-
-    @State private var codeString = "------"
+    @State private var vm: GenerateCodeViewModel
     @State private var copyStatusFeedback = "Copy"
-    @State private var isGenerating = false
-    @State private var errorMessage: String?
+
+    init(petId: UUID) {
+        _vm = State(initialValue: GenerateCodeViewModel(petId: petId))
+    }
 
     var body: some View {
             ZStack {
@@ -40,7 +40,7 @@ struct GenerateCodeView: View {
                             .foregroundColor(.secondary)
                         
                         HStack(spacing: 0) {
-                            Text(codeString)
+                            Text(vm.codeString)
                                 .font(.system(.title, design: .monospaced))
                                 .bold()
                                 .frame(maxWidth: .infinity)
@@ -50,7 +50,7 @@ struct GenerateCodeView: View {
                             
                             // High-Accessibility Sized Action Button
                             Button(action: {
-                                UIPasteboard.general.string = codeString
+                                UIPasteboard.general.string = vm.codeString
                                 copyStatusFeedback = "Copied!"
                                 DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
                                     copyStatusFeedback = "Copy"
@@ -71,13 +71,13 @@ struct GenerateCodeView: View {
                             .padding(.leading, 8)
                         }
                         
-                        Text(isGenerating
+                        Text(vm.isGenerating
                              ? "Generating a fresh code…"
                              : "Share the 6-digit code to the pet sitter. Valid for 48 hours.")
                             .font(.caption)
                             .foregroundColor(.secondary)
 
-                        if let errorMessage {
+                        if let errorMessage = vm.errorMessage {
                             Text(errorMessage)
                                 .font(.caption)
                                 .foregroundColor(.red)
@@ -93,7 +93,7 @@ struct GenerateCodeView: View {
                 .padding()
             }
             .task {
-                await generate()
+                await vm.generate()
             }
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
@@ -137,18 +137,6 @@ struct GenerateCodeView: View {
                 }
             }
         
-    }
-
-    private func generate() async {
-        guard codeString == "------" else { return }   // only once
-        isGenerating = true
-        errorMessage = nil
-        do {
-            codeString = try await PetRepository.shared.generateAccessCode(petId: petId)
-        } catch {
-            errorMessage = error.localizedDescription
-        }
-        isGenerating = false
     }
 }
 
