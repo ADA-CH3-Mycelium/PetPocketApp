@@ -199,6 +199,6 @@ struct ClinicSheet: View {
     }
 }
 
-#Preview {
-    ClinicSheet(detail: PetDetailStore(pet: .sample))
-}
+//#Preview {
+//    ClinicSheet(detail: PetDetailStore(pet: .sample))
+//}

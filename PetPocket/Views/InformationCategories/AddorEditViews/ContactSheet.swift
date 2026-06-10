@@ -214,7 +214,7 @@ struct ContactSheet: View {
         if ok { dismiss() }
     }
 }
-
-#Preview {
-    ContactSheet(detail: PetDetailStore(pet: .sample))
-}
+//
+//#Preview {
+//    ContactSheet(detail: PetDetailStore(pet: .sample))
+//}

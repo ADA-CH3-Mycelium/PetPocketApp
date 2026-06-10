@@ -112,7 +112,7 @@ struct FoodView: View {
     }
 }
 
-#Preview {
-    FoodView()
-        .environment(PetDetailStore(pet: .sample))
-}
+//#Preview {
+//    FoodView()
+//        .environment(PetDetailStore(pet: .sample))
+//}

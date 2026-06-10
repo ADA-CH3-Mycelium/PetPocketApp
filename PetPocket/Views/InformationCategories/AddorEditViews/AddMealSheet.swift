@@ -376,10 +376,10 @@ struct AddMealSheet: View {
     }
 }
 
-
-#Preview {
-    AddMealSheet(detail: PetDetailStore(pet: .sample))
-}
+//
+//#Preview {
+//    AddMealSheet(detail: PetDetailStore(pet: .sample))
+//}
 
 
 extension UIImage {

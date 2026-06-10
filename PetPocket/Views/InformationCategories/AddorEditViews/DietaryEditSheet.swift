@@ -191,7 +191,7 @@ struct DietaryEditSheet: View {
         if ok { dismiss() }
     }
 }
-
-#Preview {
-    DietaryEditSheet(detail: PetDetailStore(pet: .sample))
-}
+//
+//#Preview {
+//    DietaryEditSheet(detail: PetDetailStore(pet: .sample))
+//}

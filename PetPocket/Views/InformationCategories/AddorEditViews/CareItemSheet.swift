@@ -225,6 +225,6 @@ struct CareItemSheet: View {
     }
 }
 
-#Preview {
-    CareItemSheet(detail: PetDetailStore(pet: .sample), category: "care")
-}
+//#Preview {
+//    CareItemSheet(detail: PetDetailStore(pet: .sample), category: "care")
+//}
