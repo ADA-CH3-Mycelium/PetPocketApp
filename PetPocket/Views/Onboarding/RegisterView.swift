@@ -79,19 +79,19 @@ struct RegisterView: View {
                                     .font(.caption)
                                     .foregroundStyle(Color.secondary)
                                 SecureField("Repeat Password", text: $vm.confirmPassword)
-                                    .textContentType(.newPassword)
+                                    .textContentType(.password)
                                     .foregroundColor(.secondary)
                             }
                         } header: {
                             Text("Confirm password")
                                 .modifier(onBoardingSectionHeaderStyle())
                         } footer: {
-                            if vm.password == vm.confirmPassword {
-                                
+                            if !vm.password.isEmpty && !vm.confirmPassword.isEmpty && vm.password != vm.confirmPassword {
                                 Text("Passwords do not match")
                                     .foregroundColor(.red)
+                                    .font(.caption)
+                                    .frame(maxWidth: .infinity, alignment: .trailing)
                             }
-                            
                         }
                         
                     }

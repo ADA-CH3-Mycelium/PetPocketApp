@@ -14,12 +14,14 @@ struct LoginView: View {
     @Binding var navigateToPetList: Bool
     @Binding var navigateToRegister: Bool
     @State private var vm = AuthViewModel()
+    @State private var showPassword = false
 
     var body: some View {
         NavigationStack {
             ZStack {
                 Color.background.ignoresSafeArea()
                 VStack(spacing: 30) {
+<<<<<<< HEAD
                     VStack(spacing: 30) {
                         VStack(alignment: .trailing, spacing: 5) {
                             Form {
@@ -38,12 +40,35 @@ struct LoginView: View {
                                             .disableAutocorrection(true)
                                             .foregroundColor(.primary)
                                             .tint(.primary)
+=======
+                    VStack(alignment: .trailing, spacing: 5) {
+                        Form {
+                            // email
+                            Section {
+                                HStack {
+                                    Image(systemName: "envelope")
+                                        .font(.caption)
+                                        .foregroundStyle(Color.secondary)
+
+                                    TextField("", text: $vm.email, prompt:
+                                    Text("email@example.com")
+                                        .foregroundColor(Color(uiColor: .placeholderText))
+                                    )
+                                        .opacity(0.3)
+                                        .textContentType(.emailAddress)
+                                        .autocapitalization(.none)
+                                        .keyboardType(.emailAddress)
+                                        .disableAutocorrection(true)
+                                        .foregroundColor(.primary)
+                                        .tint(.primary)
+>>>>>>> beandfe-final
                                         
                                     }
                                 } header: {
                                     Text("Email address")
                                         .modifier(onBoardingSectionHeaderStyle())
                                 }
+<<<<<<< HEAD
                                 
                                 // password
                                 Section {
@@ -73,6 +98,46 @@ struct LoginView: View {
                                     
                                 }
                                 
+=======
+                            } header: {
+                                Text("Email address")
+                                    .modifier(onBoardingSectionHeaderStyle())
+                            }
+
+                            // password
+                            Section {
+                                HStack {
+                                    Image(systemName: "lock")
+                                        .font(.caption)
+                                        .foregroundStyle(Color.secondary)
+
+                                    if showPassword {
+                                        TextField("Enter password", text: $vm.password)
+                                            .textContentType(.password)
+                                            .autocapitalization(.none)
+                                            .disableAutocorrection(true)
+                                            .foregroundColor(.primary)
+                                    } else {
+                                        SecureField("Enter password", text: $vm.password)
+                                            .textContentType(.password)
+                                            .autocapitalization(.none)
+                                            .disableAutocorrection(true)
+                                            .foregroundColor(.primary)
+                                    }
+
+                                    Button {
+                                        showPassword.toggle()
+                                    } label: {
+                                        Image(systemName: showPassword ? "eye.slash" : "eye")
+                                            .foregroundColor(.secondary)
+                                    }
+                                    .buttonStyle(.plain)
+                                }
+                            } header: {
+                                Text("Password")
+                                    .textCase(.uppercase)
+                                    .font(.caption)
+>>>>>>> beandfe-final
                             }
                             .listSectionSpacing(.compact)
                             .frame(height: 250)
@@ -194,7 +259,7 @@ struct LoginView: View {
                         print ("login pressed")
                         Task {
                             if await vm.login() {
-                                navigateToLogin = false   // dismiss; root gate swaps to PetListView
+                                navigateToLogin = false
                             }
                         }
                         
