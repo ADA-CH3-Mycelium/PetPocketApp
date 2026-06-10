@@ -12,17 +12,7 @@ struct RegisterView: View {
     @Binding var navigateToLogin: Bool
     @Binding var navigateToPetList: Bool
     @Binding var navigateToRegister: Bool
-    @State private var name = ""
-    @State private var email = ""
-    @State private var password = ""
-    @State private var confirmPassword = ""
-
-    private var isRegisterValid: Bool {
-        !name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
-            && !email.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
-            && !password.isEmpty && !confirmPassword.isEmpty
-            && password == confirmPassword
-    }
+    @State private var vm = AuthViewModel()
 
     var body: some View {
         NavigationStack {
@@ -37,8 +27,8 @@ struct RegisterView: View {
                                 Image(systemName: "person")
                                     .font(.caption)
                                     .foregroundStyle(Color.secondary)
-                                TextField("Name", text: $name)
-                                
+                                TextField("Name", text: $vm.name)
+
                             }
                         } header: {
                             Text("Enter Your Name")
@@ -51,7 +41,7 @@ struct RegisterView: View {
                                 Image(systemName: "envelope")
                                     .font(.caption)
                                     .foregroundStyle(Color.secondary)
-                                TextField("@example.com", text: $email)
+                                TextField("email@example.com", text: $vm.email)
                                     .textContentType(.emailAddress)
                                     .autocapitalization(.none)
                                     .keyboardType(.emailAddress)
@@ -70,7 +60,7 @@ struct RegisterView: View {
                                 Image(systemName: "lock")
                                     .font(.caption)
                                     .foregroundStyle(Color.secondary)
-                                SecureField("Password", text: $password)
+                                SecureField("Password", text: $vm.password)
                                     .textContentType(.newPassword)
                                     .foregroundColor(.secondary)
                             }
@@ -88,12 +78,9 @@ struct RegisterView: View {
                                 Image(systemName: "lock")
                                     .font(.caption)
                                     .foregroundStyle(Color.secondary)
-                                SecureField(
-                                    "Repeat Password",
-                                    text: $confirmPassword
-                                )
-                                .textContentType(.newPassword)
-                                .foregroundColor(.secondary)
+                                SecureField("Repeat Password", text: $vm.confirmPassword)
+                                    .textContentType(.newPassword)
+                                    .foregroundColor(.secondary)
                             }
                         } header: {
                             Text("Confirm password")
@@ -161,20 +148,15 @@ struct RegisterView: View {
                     Button {
                         print ("sign up pressed")
                         Task {
-                            await AuthManager.shared.signUp(
-                                email: email,
-                                password: password,
-                                name: name
-                            )
-                            if AuthManager.shared.isAuthenticated {
-                                navigateToRegister = false  // dismiss; root gate swaps to PetListView
+                            if await vm.register() {
+                                navigateToRegister = false   
                             }
                         }
                         
                     } label: {
                         Image(systemName: "checkmark")
-                            .disabled(!isRegisterValid)
-                            .foregroundStyle(isRegisterValid
+                            .disabled(!vm.isRegisterValid)
+                            .foregroundStyle(vm.isRegisterValid
                                   ? Color.accent
                                              : Color.secondary.opacity(0.7))
                     }

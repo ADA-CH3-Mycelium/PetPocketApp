@@ -13,15 +13,7 @@ struct LoginView: View {
     @Binding var navigateToLogin: Bool
     @Binding var navigateToPetList: Bool
     @Binding var navigateToRegister: Bool
-    @State private var email = ""
-        @State private var password = ""
-
-    private var isLoginValid: Bool {
-        let emailValid = email.contains("@") && email.contains(".")
-
-        return emailValid
-            && !password.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
-    }
+    @State private var vm = AuthViewModel()
 
     var body: some View {
         NavigationStack {
@@ -38,7 +30,7 @@ struct LoginView: View {
                                             .font(.caption)
                                             .foregroundStyle(Color.secondary)
                                         
-                                        TextField("@example.com", text: $email)
+                                        TextField("@example.com", text: $vm.email)
                                         
                                             .textContentType(.emailAddress)
                                             .autocapitalization(.none)
@@ -60,7 +52,7 @@ struct LoginView: View {
                                             .font(.caption)
                                             .foregroundStyle(Color.secondary)
                                         
-                                        TextField("Enter password", text: $password)
+                                        TextField("Enter password", text: $vm.password)
                                             .textContentType(.emailAddress)
                                             .autocapitalization(.none)
                                             .keyboardType(.emailAddress)
@@ -201,16 +193,15 @@ struct LoginView: View {
                     Button {
                         print ("login pressed")
                         Task {
-                            await AuthManager.shared.signIn(email: email, password: password)
-                            if AuthManager.shared.isAuthenticated {
+                            if await vm.login() {
                                 navigateToLogin = false   // dismiss; root gate swaps to PetListView
                             }
                         }
                         
                     } label: {
                         Image(systemName: "checkmark")
-                            .disabled(!isLoginValid)
-                            .foregroundStyle(isLoginValid
+                            .disabled(!vm.isLoginValid)
+                            .foregroundStyle(vm.isLoginValid
                                   ? Color.accent
                                              : Color.secondary.opacity(0.7))
                     }

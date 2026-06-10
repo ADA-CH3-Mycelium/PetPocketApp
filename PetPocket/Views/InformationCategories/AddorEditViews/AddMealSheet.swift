@@ -12,25 +12,10 @@ import SwiftUI
 struct AddMealSheet: View {
     @Environment(\.dismiss) private var dismiss
 
-    let detail: PetDetailStore
-    /// Pass an existing meal here to pre-fill fields for editing
-    var editing: RoutineCardItem? = nil
+    @State private var vm: AddMealViewModel
 
-    // Form fields
-    @State private var mealName = ""
-    @State private var time = ""
-    @State private var description = ""
-    @State private var selectedIcon = "fork.knife"
-
-    // Media (optional) — photo or video
+    // UI-only state
     @State private var photoItem: PhotosPickerItem? = nil
-    @State private var selectedImage: UIImage? = nil
-    @State private var mediaData: Data? = nil
-    @State private var mediaIsVideo = false
-
-    // State
-    @State private var isSaving = false
-    @State private var isDeleting = false
     @State private var showDeleteConfirm = false
     @State private var showSymbolPicker = false
 
@@ -42,6 +27,10 @@ struct AddMealSheet: View {
         !mealName.trimmingCharacters(in: .whitespaces).isEmpty
             && !time.trimmingCharacters(in: .whitespaces).isEmpty
             && !description.trimmingCharacters(in: .whitespaces).isEmpty
+    }
+
+    init(detail: PetDetailStore, editing: RoutineCardItem? = nil) {
+        _vm = State(initialValue: AddMealViewModel(detail: detail, editing: editing))
     }
 
     var body: some View {
@@ -77,12 +66,12 @@ struct AddMealSheet: View {
 
                                 // ── Meal name + Time ─────────────────────────
                                 VStack(alignment: .leading, spacing: 10) {
-                                    TextField("Meal Name", text: $mealName)
+                                    TextField("Meal Name", text: $vm.mealName)
                                         .padding(5)
 
                                     Divider()
 
-                                    TextField("8:00", text: $time)
+                                    TextField("8:00", text: $vm.time)
                                         .padding(5)
                                 }
 
@@ -98,7 +87,7 @@ struct AddMealSheet: View {
                         Section {
                             TextField(
                                 "Enter detailed meal description and instructions here.",
-                                text: $description,
+                                text: $vm.description,
                                 axis: .vertical
                             )
                             .lineLimit(4...8)
@@ -111,9 +100,9 @@ struct AddMealSheet: View {
                         // ── Photo / Video (optional) ─────────────────
                         Section {
 
-                            if selectedImage != nil || mediaData != nil {
+                            if vm.selectedImage != nil || vm.mediaData != nil {
                                 ZStack(alignment: .topTrailing) {
-                                    if let img = selectedImage {
+                                    if let img = vm.selectedImage {
                                         Image(uiImage: img)
                                             .resizable()
                                             .scaledToFill()
@@ -140,9 +129,9 @@ struct AddMealSheet: View {
                                     }
 
                                     Button {
-                                        selectedImage = nil
-                                        mediaData = nil
-                                        mediaIsVideo = false
+                                        vm.selectedImage = nil
+                                        vm.mediaData = nil
+                                        vm.mediaIsVideo = false
                                         photoItem = nil
                                     } label: {
                                         Image(systemName: "xmark.circle.fill")
@@ -189,7 +178,7 @@ struct AddMealSheet: View {
 
                        
                         // ── Delete (edit mode only) ──────────────────
-                        if isEditing {
+                        if vm.isEditing {
                             Button(role: .destructive) {
                                 showDeleteConfirm = true
                             } label: {
@@ -224,7 +213,7 @@ struct AddMealSheet: View {
                     }
 
             }
-            .navigationTitle(title)
+            .navigationTitle(vm.title)
             .navigationBarTitleDisplayMode(.inline)
             // toolbar
             .toolbar {
@@ -257,13 +246,13 @@ struct AddMealSheet: View {
                 }
 
             }
-            .onAppear { prefill() }
+            .onAppear { vm.prefill() }
             .sheet(isPresented: $showSymbolPicker) {
-                SymbolPickerSheet(selection: $selectedIcon)
+                SymbolPickerSheet(selection: $vm.selectedIcon)
             }
             .alert("Are you sure you want to delete this meal?", isPresented: $showDeleteConfirm) {
                 Button("Delete", role: .destructive) {
-                    Task { await deleteCard() }
+                    Task { await vm.deleteCard(){ dismiss() } }
                 }
                 Button("Cancel", role: .cancel) {}
             } message: {

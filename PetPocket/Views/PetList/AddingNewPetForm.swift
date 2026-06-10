@@ -12,20 +12,12 @@ struct AddingNewPetForm: View {
 
     @Environment(\.dismiss) private var dismiss
 
-    let store: PetStore
-
-    @State private var petName = ""
-    @State private var selectedGender = "Male"
-    @State private var age = "1"
-    @State private var showAgePicker: Bool = false
-    @State private var species = ""
-    @State private var breed = ""
-    @State private var selectedImage: UIImage? = nil
+    @State private var vm: AddNewPetViewModel
     @State private var pickedItem: PhotosPickerItem? = nil
-    @State private var imageData: Data? = nil
-    @State private var isSaving = false
 
-    let genders = ["Male", "Female"]
+    init(store: PetStore) {
+        _vm = State(initialValue: AddNewPetViewModel(store: store))
+    }
 
     var body: some View {
         ZStack {
@@ -41,7 +33,7 @@ struct AddingNewPetForm: View {
                         photoLibrary: .shared()
                     ) {
                         ZStack {
-                            if let image = selectedImage {
+                            if let image = vm.selectedImage {
                                 Image(uiImage: image)
                                     .resizable()
                                     .scaledToFill()
@@ -59,7 +51,7 @@ struct AddingNewPetForm: View {
                         }
                     }
                     .onChange(of: pickedItem) { _, newItem in
-                        Task { await loadPicked(newItem) }
+                        Task { await vm.loadPicked(newItem) }
                     }
                     .frame(maxWidth: .infinity, alignment: .center)
                     .listRowBackground(Color.clear)
@@ -67,7 +59,7 @@ struct AddingNewPetForm: View {
                     // Pet Name ------------------------------------
 
                     Section {
-                        TextField("Buddy", text: $petName)
+                        TextField("Buddy", text: $vm.petName)
 
                     } header: {
                         Text("Name")
@@ -78,8 +70,8 @@ struct AddingNewPetForm: View {
                     // SPECIES ------------------------------------
                     Section {
 
-                        TextField("Breed", text: $breed)
-                        TextField("Species (optional)", text: $species)
+                        TextField("Breed", text: $vm.breed)
+                        TextField("Species (optional)", text: $vm.species)
 
                     } header: {
                         Text("Breed")
@@ -89,7 +81,7 @@ struct AddingNewPetForm: View {
                     // AGE ------------------------------------
                     Section {
                         HStack {
-                            Text(age)
+                            Text(vm.age)
                             Spacer()
                             Text("years old")
                                 .foregroundStyle(Color.secondary)
@@ -101,7 +93,7 @@ struct AddingNewPetForm: View {
                         }
 
                         if showAgePicker {
-                            Picker("Age", selection: $age) {
+                            Picker("Age", selection: $vm.age) {
 
                                 ForEach(1...100, id: \.self) { number in
                                     Text("\(number)")
@@ -114,7 +106,7 @@ struct AddingNewPetForm: View {
                                     with: .opacity
                                 )
                             )
-                            .onChange(of: age) {
+                            .onChange(of: vm.age) {
                                 DispatchQueue.main.asyncAfter(
                                     deadline: .now() + 0.8
                                 ) {
@@ -135,7 +127,7 @@ struct AddingNewPetForm: View {
                     // GENDER ------------------------------------
                     Section {
                         Picker(
-                            selection: $selectedGender,
+                            selection: $vm.selectedGender,
                             label: Text("Gender")
                         ) {
                             ForEach(genders, id: \.self) {
@@ -170,36 +162,22 @@ struct AddingNewPetForm: View {
             .navigationSubtitle("Tell us about your companion")
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button(action: { Task { await save() } }) {
-                        //                        Text(isSaving ? "Saving…" : "Save")
+                    Button(action: { Task { await vm.save() } }) {
+                        //                        Text(vm.isSaving ? "Saving…" : "Save")
                         //                            .fontWeight(.semibold)
                         //                            .foregroundStyle(.primary)
 
                         Image(systemName: "checkmark")
                     }
                     .disabled(
-                        isSaving
-                            || petName.trimmingCharacters(in: .whitespaces)
+                        vm.isSaving
+                            || vm.petName.trimmingCharacters(in: .whitespaces)
                                 .isEmpty
                     )
                 }
             }
         }
 
-    }
-
-    private func save() async {
-        isSaving = true
-        let ok = await store.addPet(
-            name: petName.trimmingCharacters(in: .whitespaces),
-            gender: selectedGender,
-            ageText: age,
-            species: species,
-            breed: breed,
-            imageData: imageData
-        )
-        isSaving = false
-        if ok { dismiss() }
     }
 
     /// Loads the picked photo, downscales it, and keeps JPEG data for upload.

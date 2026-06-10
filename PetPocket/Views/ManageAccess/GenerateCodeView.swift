@@ -10,12 +10,12 @@ import SwiftUI
 struct GenerateCodeView: View {
     @Environment(\.dismiss) var dismiss
 
-    let petId: UUID
-
-    @State private var codeString = "------"
+    @State private var vm: GenerateCodeViewModel
     @State private var copyStatusFeedback = "Copy"
-    @State private var isGenerating = false
-    @State private var errorMessage: String?
+
+    init(petId: UUID) {
+        _vm = State(initialValue: GenerateCodeViewModel(petId: petId))
+    }
 
     var body: some View {
         NavigationStack {
@@ -25,7 +25,7 @@ struct GenerateCodeView: View {
                 VStack(alignment: .leading) {
                     Section {
                         HStack(spacing: 0) {
-                            Text(codeString)
+                            Text(vm.codeString)
                                 .font(.system(.title, design: .monospaced))
                                 .bold()
                                 .frame(maxWidth: .infinity)
@@ -35,7 +35,7 @@ struct GenerateCodeView: View {
                             
                             // copy btn
                             Button(action: {
-                                UIPasteboard.general.string = codeString
+                                UIPasteboard.general.string = vm.codeString
                                 copyStatusFeedback = "Copied!"
                                 DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
                                     copyStatusFeedback = "Copy"
@@ -60,7 +60,7 @@ struct GenerateCodeView: View {
                         Text("6-digit Invitation Code")
                             .modifier(onBoardingSectionHeaderStyle())
                     } footer: {
-                        Text(isGenerating
+                        Text(vm.isGenerating
                              ? "Generating a fresh code…"
                              : "Share the 6-digit code to the pet sitter. Valid for 48 hours.")
                         .font(.caption)
@@ -89,21 +89,9 @@ struct GenerateCodeView: View {
             .navigationBarTitleDisplayMode(.inline)
             .navigationSubtitle(Text("Generate a 6-digit code to invite a new pet sitter to your home."))
             .task {
-                await generate()
+                await vm.generate()
             }
         }
-    }
-
-    private func generate() async {
-        guard codeString == "------" else { return }   // only once
-        isGenerating = true
-        errorMessage = nil
-        do {
-            codeString = try await PetRepository.shared.generateAccessCode(petId: petId)
-        } catch {
-            errorMessage = error.localizedDescription
-        }
-        isGenerating = false
     }
 }
 
