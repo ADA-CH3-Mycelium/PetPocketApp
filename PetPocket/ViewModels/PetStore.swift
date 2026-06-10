@@ -46,7 +46,7 @@ final class PetStore {
     func addPet(
         name: String,
         gender: String,
-        ageText: String,
+        dateOfBirthString: String?,
         species: String,
         breed: String,
         imageData: Data? = nil
@@ -60,7 +60,7 @@ final class PetStore {
             _ = try await repo.createPet(
                 name: name,
                 gender: gender.isEmpty ? nil : gender,
-                dateOfBirth: Self.approxDOB(fromAgeText: ageText),
+                dateOfBirth: dateOfBirthString,
                 breed: breed.isEmpty ? nil : breed,
                 species: species.isEmpty ? nil : species,
                 photoUrl: photoUrl
@@ -84,17 +84,6 @@ final class PetStore {
             errorMessage = error.localizedDescription
             return false
         }
-    }
-
-    /// Best-effort: turn freeform age ("3", "3 yrs") into an ISO date of birth.
-    static func approxDOB(fromAgeText text: String) -> String? {
-        let digits = text.prefix { $0.isNumber }
-        guard let years = Int(digits), years >= 0 else { return nil }
-        guard let date = Calendar.current.date(byAdding: .year, value: -years, to: Date()) else { return nil }
-        let fmt = DateFormatter()
-        fmt.dateFormat = "yyyy-MM-dd"
-        fmt.timeZone = TimeZone(identifier: "UTC")
-        return fmt.string(from: date)
     }
 }
 

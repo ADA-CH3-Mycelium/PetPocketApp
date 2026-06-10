@@ -14,7 +14,6 @@ struct AddingNewPetForm: View {
 
     @State private var vm: AddNewPetViewModel
     @State private var pickedItem: PhotosPickerItem? = nil
-    @State private var showAgePicker: Bool = false
 
     init(store: PetStore) {
         _vm = State(initialValue: AddNewPetViewModel(store: store))
@@ -79,51 +78,18 @@ struct AddingNewPetForm: View {
                             .modifier(onBoardingSectionHeaderStyle())
                     }
 
-                    // AGE ------------------------------------
+                    // DATE OF BIRTH ------------------------------------
                     Section {
-                        HStack {
-                            Text(vm.age)
-                            Spacer()
-                            Text("years old")
-                                .foregroundStyle(Color.secondary)
-                        }
-                        .onTapGesture {
-                            withAnimation {
-                                showAgePicker.toggle()
-                            }
-                        }
-
-                        if showAgePicker {
-                            Picker("Age", selection: $vm.age) {
-
-                                ForEach(1...100, id: \.self) { number in
-                                    Text("\(number)")
-                                }
-                            }
-                            .pickerStyle(.wheel)
-                            .padding()
-                            .transition(
-                                .move(edge: .bottom).combined(
-                                    with: .opacity
-                                )
-                            )
-                            .onChange(of: vm.age) {
-                                DispatchQueue.main.asyncAfter(
-                                    deadline: .now() + 0.8
-                                ) {
-                                    withAnimation { showAgePicker = false }
-                                }
-                            }
-                        }
+                        DatePicker(
+                            "Date of Birth",
+                            selection: $vm.dateOfBirth,
+                            in: ...Date(),
+                            displayedComponents: .date
+                        )
                     } header: {
-                        Text("Age")
+                        Text("Date of Birth")
                             .modifier(onBoardingSectionHeaderStyle())
                     }
-
-                    .animation(
-                        .easeInOut(duration: 0.25),
-                        value: showAgePicker
-                    )
 
                     // GENDER ------------------------------------
                     Section {

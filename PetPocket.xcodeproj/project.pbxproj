@@ -316,10 +316,12 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 7;
-				DEVELOPMENT_TEAM = H9J3TN99GS;
+				DEVELOPMENT_TEAM = 4YBFFYG9L2;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = "PetPocket: Pet Sitter & Owner";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "PetPocket needs microphone permission to support speech-to-text features.";
+				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "PetPocket needs speech recognition permission to show live closed captions for videos.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -331,7 +333,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.1;
-				PRODUCT_BUNDLE_IDENTIFIER = com.michel.PetPocket;
+				PRODUCT_BUNDLE_IDENTIFIER = com.ccpkjba.PetPocket;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -350,10 +352,12 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 7;
-				DEVELOPMENT_TEAM = H9J3TN99GS;
+				DEVELOPMENT_TEAM = 4YBFFYG9L2;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = "PetPocket: Pet Sitter & Owner";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "PetPocket needs microphone permission to support speech-to-text features.";
+				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "PetPocket needs speech recognition permission to show live closed captions for videos.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -365,7 +369,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.1;
-				PRODUCT_BUNDLE_IDENTIFIER = com.michel.PetPocket;
+				PRODUCT_BUNDLE_IDENTIFIER = com.ccpkjba.PetPocket;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;

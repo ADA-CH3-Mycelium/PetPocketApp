@@ -20,7 +20,7 @@ final class AddNewPetViewModel {
 
     var petName = ""
     var selectedGender = "Male"
-    var age = ""
+    var dateOfBirth = Date()
     var species = ""
     var breed = ""
     var selectedImage: UIImage?
@@ -38,10 +38,15 @@ final class AddNewPetViewModel {
     @discardableResult
     func save() async -> Bool {
         isSaving = true
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd"
+        formatter.timeZone = TimeZone(identifier: "UTC")
+        let dobString = formatter.string(from: dateOfBirth)
+
         let ok = await store.addPet(
             name: petName.trimmingCharacters(in: .whitespaces),
             gender: selectedGender,
-            ageText: age,
+            dateOfBirthString: dobString,
             species: species,
             breed: breed,
             imageData: imageData
