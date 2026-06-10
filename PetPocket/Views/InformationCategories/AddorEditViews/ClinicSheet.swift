@@ -9,10 +9,10 @@ import SwiftUI
 
 struct ClinicSheet: View {
     @Environment(\.dismiss) private var dismiss
-
+    
     let detail: PetDetailStore
     var editing: VetClinicCardItem? = nil
-
+    
     @State private var name = ""
     @State private var address = ""
     @State private var phone = ""
@@ -22,15 +22,15 @@ struct ClinicSheet: View {
     @State private var isSaving = false
     @State private var isDeleting = false
     @State private var showDeleteConfirm = false
-
+    
     private var isEditing: Bool { editing != nil }
     private var canSave: Bool { !name.trimmingCharacters(in: .whitespaces).isEmpty }
-
+    
     var body: some View {
         NavigationStack {
             ZStack {
                 Color(.background).ignoresSafeArea()
-
+                
                 Form {
                     // clinic name -------------------------
                     Section {
@@ -59,10 +59,21 @@ struct ClinicSheet: View {
                             .modifier(onBoardingSectionHeaderStyle())
                     }
                     
+                    Section{
+                        
+                        
+                        HStack(spacing: 12) {
+                            field("Latitude", "e.g. 40.7128", $latitudeText, keyboard: .numbersAndPunctuation)
+                            field("Longitude", "e.g. -74.0060", $longitudeText, keyboard: .numbersAndPunctuation)
+                        }
+                        Text("Used to pin the clinic on the map. Leave blank to hide the map.")
+                            .font(.caption2).foregroundColor(.secondary)
+                    }
+                    
                     // set as default clinic -------------------------
                     Section {
                         Toggle("Set as primary clinic", isOn: $isPrimary)
-                            //.tint(Color.primaryG)
+                        //.tint(Color.primaryG)
                     }
                     
                     
@@ -78,7 +89,7 @@ struct ClinicSheet: View {
                                     Image(systemName: "trash")
                                     Text("Delete")
                                 }.padding(10)
-
+                                
                             }
                         }
                         .foregroundColor(.secondary)
@@ -92,21 +103,14 @@ struct ClinicSheet: View {
                 }
                 .scrollContentBackground(.hidden)
                 .listSectionSpacing(.compact)
-
-//                                HStack(spacing: 12) {
-//                                    field("Latitude", "e.g. 40.7128", $latitudeText, keyboard: .numbersAndPunctuation)
-//                                    field("Longitude", "e.g. -74.0060", $longitudeText, keyboard: .numbersAndPunctuation)
-//                                }
-//                                Text("Used to pin the clinic on the map. Leave blank to hide the map.")
-//                                    .font(.caption2).foregroundColor(.secondary)
-
-                        
-                        // error msg
-                        if let error = detail.errorMessage {
-                            Text(error).font(.caption).foregroundColor(.red)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                        }
-
+                
+                
+                // error msg
+                if let error = detail.errorMessage {
+                    Text(error).font(.caption).foregroundColor(.red)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                }
+                
                 
             }
             .navigationTitle(isEditing ? "Edit Clinic" : "Add Clinic")
@@ -122,25 +126,25 @@ struct ClinicSheet: View {
                             .foregroundColor(.gray)
                     }
                 }
-
+                
                 // save changes
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button {
                         print("save changes btn pressed")
                         Task {
                             await save()
-
+                            
                         }
                     } label: {
                         Image(systemName: "checkmark")
                             .foregroundStyle(
                                 isSaving ? Color.secondary : Color.accent
                             )
-
+                        
                     }
                     .disabled(!canSave || isSaving || isDeleting)
                 }
-
+                
             }
             .onAppear {
                 if let e = editing {
@@ -156,14 +160,14 @@ struct ClinicSheet: View {
             } message: { Text("This will permanently delete the clinic forever.") }
         }
     }
-
+    
     @ViewBuilder
     private func formCard<C: View>(@ViewBuilder content: () -> C) -> some View {
         content().padding(16).background(Color(.systemBackground))
             .clipShape(RoundedRectangle(cornerRadius: 16))
             .shadow(color: .black.opacity(0.04), radius: 8, x: 0, y: 2)
     }
-
+    
     @ViewBuilder
     private func field(_ label: String, _ placeholder: String, _ text: Binding<String>, keyboard: UIKeyboardType = .default) -> some View {
         VStack(alignment: .leading, spacing: 6) {
@@ -172,7 +176,7 @@ struct ClinicSheet: View {
                 .textFieldStyle(.plain).font(.body).keyboardType(keyboard)
         }
     }
-
+    
     private func save() async {
         isSaving = true
         let ok: Bool
@@ -189,7 +193,7 @@ struct ClinicSheet: View {
         isSaving = false
         if ok { dismiss() }
     }
-
+    
     private func deleteClinic() async {
         guard let editing else { return }
         isDeleting = true

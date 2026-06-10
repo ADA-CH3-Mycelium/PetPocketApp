@@ -95,10 +95,9 @@ struct RegisterView: View {
                         }
                         
                     }
-                    
                     .listSectionSpacing(.compact)
                     //.frame(height: 185)
-                    .scrollDisabled(true)
+                    .scrollDisabled(false)
                     .padding(.top, 16)
                     .scrollContentBackground(.hidden)
                     
