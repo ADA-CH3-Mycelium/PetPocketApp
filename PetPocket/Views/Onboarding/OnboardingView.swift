@@ -42,13 +42,15 @@ struct OnboardingView: View {
                         navigateToLogin.toggle()
 
                     } label: {
-                        Text("Log in")
+                        Text("Login")
                             .font(.headline)
                             .textCase(.uppercase)
                             .padding(.vertical, 10)
                             .padding(.horizontal, 40)
                     }
                     .buttonStyle(.glassProminent)
+                    .tint(.accent)
+                       
                     // log in sheet
                     .sheet(isPresented: $navigateToLogin) {
                         LoginView(
@@ -56,7 +58,7 @@ struct OnboardingView: View {
                             navigateToPetList: $navigateToPetList,
                             navigateToRegister: $navigateToRegister
                         )
-                        .presentationDetents([.large])
+                        .presentationDetents([.height(700)])
                         .presentationDragIndicator(.visible)
                     }
 
@@ -65,7 +67,7 @@ struct OnboardingView: View {
                         RegisterView(navigateToLogin: $navigateToLogin,
                                      navigateToPetList: $navigateToPetList,
                                      navigateToRegister: $navigateToRegister)
-                            .presentationDetents([.large])
+                            .presentationDetents([.height(700)])
                             .presentationDragIndicator(.visible)
                     }
                     //navigate to pet list view
@@ -81,7 +83,8 @@ struct OnboardingView: View {
                         }
                         .foregroundColor(.primaryG)
                         .fontWeight(.semibold)
-                    } .padding(.bottom, 20)
+                    }
+                        .padding(.top, 35)
 
                 }.padding(40)
             }

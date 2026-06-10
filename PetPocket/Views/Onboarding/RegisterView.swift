@@ -25,10 +25,10 @@ struct RegisterView: View {
     }
 
     var body: some View {
-
-        ZStack {
-            Color.background.ignoresSafeArea()
-
+        NavigationStack {
+            ZStack {
+                Color.background.ignoresSafeArea()
+                
                 VStack(spacing: 20) {
                     Form {
                         //name
@@ -38,20 +38,20 @@ struct RegisterView: View {
                                     .font(.caption)
                                     .foregroundStyle(Color.secondary)
                                 TextField("Name", text: $name)
-
+                                
                             }
                         } header: {
                             Text("Enter Your Name")
                                 .modifier(onBoardingSectionHeaderStyle())
                         }
-
+                        
                         // email
                         Section {
                             HStack {
                                 Image(systemName: "envelope")
                                     .font(.caption)
                                     .foregroundStyle(Color.secondary)
-                                TextField("email@example.com", text: $email)
+                                TextField("@example.com", text: $email)
                                     .textContentType(.emailAddress)
                                     .autocapitalization(.none)
                                     .keyboardType(.emailAddress)
@@ -88,54 +88,98 @@ struct RegisterView: View {
                                 Image(systemName: "lock")
                                     .font(.caption)
                                     .foregroundStyle(Color.secondary)
-                                SecureField("Repeat Password", text: $confirmPassword)
-                                    .textContentType(.newPassword)
-                                    .foregroundColor(.secondary)
+                                SecureField(
+                                    "Repeat Password",
+                                    text: $confirmPassword
+                                )
+                                .textContentType(.newPassword)
+                                .foregroundColor(.secondary)
                             }
                         } header: {
                             Text("Confirm password")
                                 .modifier(onBoardingSectionHeaderStyle())
+                        } footer: {
+                            if password == confirmPassword {
+                                
+                                Text("Passwords do not match")
+                                    .foregroundColor(.red)
+                            }
+                            
                         }
                         
                     }
-
+                    
                     .listSectionSpacing(.compact)
                     //.frame(height: 185)
+                    .scrollDisabled(true)
+                    .padding(.top, 16)
                     .scrollContentBackground(.hidden)
-
-                    PrimaryButton(
-                        title: "Sign up",
-                        isEnabled: isRegisterValid
-                    ) {
-                        Task {
-                            await AuthManager.shared.signUp(email: email, password: password, name: name)
-                            if AuthManager.shared.isAuthenticated {
-                                navigateToRegister = false   // dismiss; root gate swaps to PetListView
-                            }
-                        }
-                    }
-
+                    
+//                    PrimaryButton(
+//                        title: "Sign up",
+//                        isEnabled: isRegisterValid
+//                    ) {
+//                        Task {
+//                            await AuthManager.shared.signUp(
+//                                email: email,
+//                                password: password,
+//                                name: name
+//                            )
+//                            if AuthManager.shared.isAuthenticated {
+//                                navigateToRegister = false  // dismiss; root gate swaps to PetListView
+//                            }
+//                        }
+//                    }
+                    
                     if let err = AuthManager.shared.errorMessage {
                         Text(err)
                             .font(.caption)
-                            .foregroundColor(.alertRed)
+                            .foregroundColor(.red)
                     }
-
+                    
                     // already have acc?
                     HStack(spacing: 5) {
                         Text("Already have an account?")
-                        Button("Log in") {
+                        Button("Login") {
                             print("have acc log in btn pressed")
                             navigateToLogin = true
                             navigateToRegister = false
                         }
-                            .foregroundColor(.primaryG)
-                            .fontWeight(.semibold)
+                        .foregroundColor(.primaryG)
+                        .fontWeight(.semibold)
                     }.font(.caption)
+                        .padding(.top, 30)
                 }
-
-            
-            .padding()
+                
+                .padding(.vertical, 16)
+            }
+            .navigationTitle("Create a New Account")
+            .navigationBarTitleDisplayMode(.inline)
+            // sign up
+            .toolbar {
+                ToolbarItem (placement: .navigationBarTrailing) {
+                    Button {
+                        print ("sign up pressed")
+                        Task {
+                            await AuthManager.shared.signUp(
+                                email: email,
+                                password: password,
+                                name: name
+                            )
+                            if AuthManager.shared.isAuthenticated {
+                                navigateToRegister = false  // dismiss; root gate swaps to PetListView
+                            }
+                        }
+                        
+                    } label: {
+                        Image(systemName: "checkmark")
+                            .disabled(!isRegisterValid)
+                            .foregroundStyle(isRegisterValid
+                                  ? Color.accent
+                                             : Color.secondary.opacity(0.7))
+                    }
+                }
+            }
         }
 
     }

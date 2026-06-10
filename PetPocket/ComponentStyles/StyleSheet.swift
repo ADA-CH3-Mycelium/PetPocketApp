@@ -31,7 +31,8 @@ struct onBoardingSectionHeaderStyle: ViewModifier {
     func body(content: Content) -> some View {
         content
             .textCase(.uppercase)
-            .font(.caption)
+            .font(.subheadline)
+            .foregroundStyle(Color(.primaryG))
     }
 }
 

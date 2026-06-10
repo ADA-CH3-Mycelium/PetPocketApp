@@ -21,22 +21,53 @@ struct DietaryEditSheet: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                Color(.systemGroupedBackground).ignoresSafeArea()
+                Color(.background).ignoresSafeArea()
 
-                ScrollView {
-                    VStack(spacing: 20) {
+                VStack(spacing: 20) {
 
                         // ── Allergies ────────────────────────────────
+                        
+//                        Form {
+//                            Section {
+//                                TextField(
+//                                    "Chocolate, Chicken, ...",
+//                                    text: $allergiesText
+//                                )
+//                                
+//                                .disableAutocorrection(true)
+//                                .autocapitalization(.none)
+//                         
+//                            } header: {
+//                                HStack(spacing: 2) {
+//                                    Image(
+//                                        systemName:
+//                                            "exclamationmark.triangle.fill"
+//                                    )
+//                                    .foregroundStyle(Color.red)
+//                                    
+//                                    Text("Allergies")
+//                                } .modifier(onBoardingSectionHeaderStyle())
+//                                    
+//                            }
+//                            
+//                            
+//                        } .scrollContentBackground(.hidden)
+                        
                         formCard {
                             VStack(alignment: .leading, spacing: 8) {
                                 HStack(spacing: 6) {
-                                    Image(systemName: "exclamationmark.triangle.fill")
-                                        .foregroundColor(.alertRed)
+                                    Image(
+                                        systemName:
+                                            "exclamationmark.triangle.fill"
+                                    )
+                                    .foregroundColor(.accent)
                                     sectionLabel("Allergies")
                                 }
-                                Text("Foods the pet must never have. Separate with commas.")
-                                    .font(.caption)
-                                    .foregroundColor(.secondary)
+                                Text(
+                                    "Separate with commas"
+                                )
+                                .font(.caption)
+                                .foregroundColor(.secondary)
                                 TextField(
                                     "e.g. Chocolate, Chicken",
                                     text: $allergiesText,
@@ -53,12 +84,14 @@ struct DietaryEditSheet: View {
                             VStack(alignment: .leading, spacing: 8) {
                                 HStack(spacing: 6) {
                                     Image(systemName: "hand.raised.fill")
-                                        .foregroundColor(.alertRed)
+                                        .foregroundColor(.red)
                                     sectionLabel("Restricted")
                                 }
-                                Text("Limit or avoid these. Separate with commas.")
-                                    .font(.caption)
-                                    .foregroundColor(.secondary)
+                                Text(
+                                    "Limit or avoid these. Separate with commas."
+                                )
+                                .font(.caption)
+                                .foregroundColor(.secondary)
                                 TextField(
                                     "e.g. Grapes, Onion, Shellfish",
                                     text: $restrictedText,
@@ -69,6 +102,8 @@ struct DietaryEditSheet: View {
                                 .font(.body)
                             }
                         }
+                    
+                    Spacer()
 
                         if let error = detail.errorMessage {
                             Text(error)
@@ -78,34 +113,43 @@ struct DietaryEditSheet: View {
                                 .padding(.horizontal, 4)
                         }
 
-                        // ── Save ─────────────────────────────────────
-                        Button {
-                            Task { await save() }
-                        } label: {
-                            Group {
-                                if isSaving { ProgressView().tint(.white) }
-                                else { Text("Save Changes").fontWeight(.semibold) }
-                            }
-                            .frame(maxWidth: .infinity)
-                            .padding(.vertical, 14)
-                            .background(Color.primaryG)
-                            .foregroundColor(.white)
-                            .clipShape(RoundedRectangle(cornerRadius: 14))
-                        }
-                        .disabled(isSaving)
                     }
                     .padding(20)
-                }
+                
             }
             .navigationTitle("Dietary Restrictions")
             .navigationBarTitleDisplayMode(.inline)
+            // toolbar
             .toolbar {
+                // cancel
                 ToolbarItem(placement: .navigationBarLeading) {
-                    Button("Cancel") { dismiss() }.foregroundColor(.primaryG)
+                    Button { dismiss() }
+                    label: {
+                        Image(systemName: "xmark")
+                            .foregroundColor(.gray)
+                    }
                 }
+
+                // save changes
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button {
+                        print("save changes btn pressed")
+                        Task {
+                            await save()
+
+                        }
+                    } label: {
+                        Image(systemName: "checkmark")
+                            .foregroundStyle(isSaving ? Color.secondary : Color.accent)
+                            
+                    }
+                    
+                    .disabled(isSaving)
+                }
+
             }
             .onAppear {
-                allergiesText  = detail.allergies.joined(separator: ", ")
+                allergiesText = detail.allergies.joined(separator: ", ")
                 restrictedText = detail.restricted.joined(separator: ", ")
             }
         }

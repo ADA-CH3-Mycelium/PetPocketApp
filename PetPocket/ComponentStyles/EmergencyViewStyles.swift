@@ -85,20 +85,15 @@ struct ContactCard: View {
                     //.padding(.top, 5)
 
             }
-
-            // call btn
-//            Image(systemName: "phone.fill")
-//                .foregroundColor(Color.green)
-//                .frame(width: 44, height: 44)
-//                .glassEffect()
             
 
         }
         .padding()
-        .glassEffect(
-            .regular.tint(colorScheme == .dark ? .clear :.accent.opacity(0.02)),
-            in: .rect(cornerRadius: 16)
-        )
+        .modifier(greenEdgeCard())
+//        .glassEffect(
+//            .regular.tint(colorScheme == .dark ? .clear :.accent.opacity(0.02)),
+//            in: .rect(cornerRadius: 16)
+//        )
     }
 }
 
@@ -137,19 +132,6 @@ struct VetClinicCard: View {
                 }
                 .font(.caption)
                     .foregroundStyle(.secondary)
-                
-                
-                    // call btn
-//                    Button(action: {}) {
-//                        HStack(spacing: 6) {
-//                            Image(systemName: "phone.fill")
-//                            Text("Call Vet")
-//                        }
-//                        .font(.caption)
-//                        .padding(.horizontal, 16)
-//                        .padding(.vertical, 7)
-//                        .glassEffect(in: .rect(cornerRadius: 12))
-//                    }
 
                 // map — only when real coordinates are set
                 if let lat = item.latitude, let lon = item.longitude {

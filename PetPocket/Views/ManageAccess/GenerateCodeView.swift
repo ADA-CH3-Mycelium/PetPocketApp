@@ -18,27 +18,12 @@ struct GenerateCodeView: View {
     @State private var errorMessage: String?
 
     var body: some View {
+        NavigationStack {
             ZStack {
                 Color.background.ignoresSafeArea()
                 
-                VStack(spacing: 24) {
-                    VStack(spacing: 8) {
-                        Text("Connect with Pet Sitter")
-                            .font(.title2)
-                            .bold()
-                        Text("Start sharing your pet's information with the sitter.")
-                            .font(.subheadline)
-                            .foregroundColor(.secondary)
-                    }
-                    .padding(.top, 1)
-                    
-                    // Central Numeric Key Area Card
-                    VStack(alignment: .leading, spacing: 12) {
-                        Text("Collaboration Code")
-                            .font(.caption)
-                            .bold()
-                            .foregroundColor(.secondary)
-                        
+                VStack(alignment: .leading) {
+                    Section {
                         HStack(spacing: 0) {
                             Text(codeString)
                                 .font(.system(.title, design: .monospaced))
@@ -48,7 +33,7 @@ struct GenerateCodeView: View {
                                 .background(Color.gray.opacity(0.05))
                                 .cornerRadius(10)
                             
-                            // High-Accessibility Sized Action Button
+                            // copy btn
                             Button(action: {
                                 UIPasteboard.general.string = codeString
                                 copyStatusFeedback = "Copied!"
@@ -62,81 +47,51 @@ struct GenerateCodeView: View {
                                         .font(.caption2)
                                         .bold()
                                 }
-                                .foregroundColor(.white)
-                                .padding()
-                                .frame(width: 80, height: 68)
-                                .background(.accent)
-                                .cornerRadius(10)
+                                .padding(8)
+                                
                             }
+                            .buttonStyle(.glassProminent)
+                            .tint(.accent)
+                            .buttonBorderShape(.roundedRectangle(radius: 12))
                             .padding(.leading, 8)
                         }
                         
+                    } header: {
+                        Text("6-digit Invitation Code")
+                            .modifier(onBoardingSectionHeaderStyle())
+                    } footer: {
                         Text(isGenerating
                              ? "Generating a fresh code…"
                              : "Share the 6-digit code to the pet sitter. Valid for 48 hours.")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-
-                        if let errorMessage {
-                            Text(errorMessage)
-                                .font(.caption)
-                                .foregroundColor(.red)
-                        }
+                        .font(.caption)
+                        .foregroundColor(.secondary)
                     }
-                    .padding()
-                    .background(.accent.opacity(0.1))
-                    .cornerRadius(16)
-                    .shadow(color: Color.black.opacity(0.02), radius: 10)
-
-                    Spacer()
+                    
+                    Button("Generate a new code") {
+                        Task { await generate() }
+                    }
+                    .buttonStyle(.glassProminent)
+                    .tint(Color.primaryG)
+                    .padding(.top, 30)
+                    
+                    if let errorMessage {
+                        Text(errorMessage)
+                            .font(.caption)
+                            .foregroundColor(.red)
+                    }
+                    
+                    
                 }
                 .padding()
+                
             }
+            .navigationTitle(Text("Invite a New Sitter"))
+            .navigationBarTitleDisplayMode(.inline)
+            .navigationSubtitle(Text("Generate a 6-digit code to invite a new pet sitter to your home."))
             .task {
                 await generate()
             }
-            .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Button {
-                        dismiss()
-                    } label: {
-                        Image(systemName: "xmark")
-                            .imageScale(.large)
-                            .bold(true)
-                            .foregroundColor(Color.primaryG.opacity(0.8))
-                            .frame(width: 36, height: 36)
-//                            .background(
-//                                ZStack {
-//                                    Circle()
-//                                        .fill(.ultraThinMaterial)
-//                                    
-//                                    Circle()
-//                                        .fill(
-//                                            LinearGradient(
-//                                                colors: [Color.white.opacity(0.6), Color.white.opacity(0.05)],
-//                                                startPoint: .topLeading,
-//                                                endPoint: .bottomTrailing
-//                                            )
-//                                        )
-//                                    
-//                                    Circle()
-//                                        .stroke(
-//                                            LinearGradient(
-//                                                colors: [Color.white.opacity(0.7), Color.white.opacity(0.2), Color.black.opacity(0.05)],
-//                                                startPoint: .topLeading,
-//                                                endPoint: .bottomTrailing
-//                                            ),
-//                                            lineWidth: 1
-//                                        )
-//                                }
-//                            )
-//                            .clipShape(Circle()) 
-//                            .shadow(color: Color.black.opacity(0.08), radius: 4, x: 0, y: 2)
-                    }
-//                    .buttonStyle(.plain)                    .frame(width: 44, height: 44)
-                }
-            }
-        
+        }
     }
 
     private func generate() async {

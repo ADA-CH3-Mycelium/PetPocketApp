@@ -5,7 +5,6 @@
 //  Created by Cheisha Amanda on 28/05/26.
 //
 
-
 import SwiftUI
 
 struct Collaborator: Identifiable {
@@ -16,126 +15,137 @@ struct Collaborator: Identifiable {
     let imageName: String
 }
 
-
 struct ManageAccessView: View {
     @Environment(\.dismiss) var dismiss
-    
+
+    // MOCK DB
     let collaborators = [
-        Collaborator(name: "Sarah J.", role: "Active Sitter", isActive: true, imageName: "person.crop.circle.fill"),
-        Collaborator(name: "Tom R.", role: "Past Sitter", isActive: false, imageName: "person.crop.circle.fill")
+        Collaborator(
+            name: "Sarah J.",
+            role: "Active Sitter",
+            isActive: true,
+            imageName: ""
+        ),
+        Collaborator(
+            name: "Tom R.",
+            role: "Past Sitter",
+            isActive: false,
+            imageName: "pet sitter"
+        ),
+        Collaborator(
+            name: "John Q.",
+            role: "Active Sitter",
+            isActive: true,
+            imageName: "pet sitter"
+        ),
     ]
-    
+
     var body: some View {
         ZStack {
             Color.background.ignoresSafeArea()
-            
-            ScrollView {
-                VStack(alignment: .leading, spacing: 20) {
-                    // Explanatory Intro Card Panel
-                    VStack(alignment: .leading, spacing: 8) {
-                        Text("Collaborator Network")
-                            .font(.title3)
-                            .bold()
-                        Text("Manage who has access to your pet's health logs, walking schedules, and medical reminders. Collaborators can view and update records in real-time.")
-                            .font(.callout)
-                            .foregroundColor(.secondary)
-                    }
-                    .padding()
-                    .background(.accent.opacity(0.1))
-                    .cornerRadius(16)
-                    
-                    Text("CONNECTIONS")
-                        .font(.caption)
-                        .bold()
-                        .foregroundColor(.secondary)
-                    
+
+            VStack(alignment: .leading, spacing: 20) {
+
+                
+                List {
                     // List of Connected Sitters
                     ForEach(collaborators) { person in
-                        VStack(spacing: 16) {
-                            HStack(spacing: 12) {
-                                Image("pet sitter")
-                                    .resizable()
-                                    .cornerRadius(30)
-                                    .frame(width: 44, height: 44)
-                                    .foregroundColor(.gray)
-                                
-                                VStack(alignment: .leading) {
-                                    Text(person.name)
-                                        .font(.body)
-                                        .bold()
-                                    Text(person.role)
-                                        .font(.caption)
-                                        .padding(.horizontal, 6)
-                                        .padding(.vertical, 2)
-                                        .background(person.isActive ? Color.green.opacity(0.1) : Color.gray.opacity(0.2))
-                                        .foregroundColor(person.isActive ? .green : .gray)
-                                        .cornerRadius(4)
-                                }
-                                Spacer()
-                            }
-                            
-                            // Contextual Decision Buttons
-                            HStack(spacing: 12) {
-                                Button(action: {}) {
-                                    Text(person.isActive ? "Remove Access" : "Remove Sitter")
-                                        .font(.subheadline)
-                                        .bold()
-                                        .frame(maxWidth: .infinity)
-                                        .padding(.vertical, 10)
-                                        .background(Color.gray.opacity(0.1))
-                                        .cornerRadius(8)
-                                }
-                                
-                                Button(action: {}) {
-                                    Text(person.isActive ? "Regenerate Code" : "Invite Again")
-                                        .font(.subheadline)
-                                        .bold()
-                                        .frame(maxWidth: .infinity)
-                                        .padding(.vertical, 10)
-                                        .background(person.isActive ? .accentColor.opacity(0.2) : Color.primaryG)
-                                        .foregroundColor(person.isActive ? .accentColor : .white)
-                                        .cornerRadius(8)
-                                }
+                        if person.isActive {
+                            Section {
+                                HStack {
+                                    // img
+                                    if person.imageName.isEmpty {
+                                        
+                                        Image(systemName: "person.fill")
+                                            .resizable()
+                                            .scaledToFill()
+                                            .padding(.top, 20)
+                                            .padding(.horizontal, 10)
+                                            .frame(width: 80, height: 80)
+                                            .background(Color.primaryG)
+                                            .foregroundStyle(Color.secondaryG)
+                                            .clipShape(RoundedRectangle(cornerRadius: 12))
+                                        
+                                    } else {
+                                        Image(person.imageName)
+                                            .resizable()
+                                            .scaledToFill()
+                                            .frame(width: 80, height: 80)
+                                            .cornerRadius(12)
+                                    }
+                                    
+                                    // text & actions
+                                    
+                                    VStack(alignment: .leading) {
+                                        // name
+                                        Text(person.name)
+                                            .font(.headline)
+                                        
+                                        Spacer()
+                                        
+                                        // Contextual Decision Buttons
+                                        HStack(spacing: 12) {
+                                            Button(action: {}) {
+                                                Text(
+                                                    person.isActive
+                                                    ? "Remove"
+                                                    : "Remove Sitter"
+                                                )
+                                                .padding(.horizontal, 10)
+                                                .padding(.vertical, 3)
+                                                .foregroundStyle(Color.secondary)
+                                            }
+                                            .buttonStyle(.glass)
+                                            
+                                            
+                                            Button(action: {}) {
+                                                Text(
+                                                    person.isActive
+                                                    ? "New Code"
+                                                    : "Invite Again"
+                                                )
+                                                .padding(.horizontal, 10)
+                                                .padding(.vertical, 3)
+                                                
+                                            }
+                                            .buttonStyle(.glassProminent)
+                                            .tint(Color.primaryG)
+                                        }
+                                        
+                                    }
+                                    
+                                }.listRowBackground(Color.secondaryG.opacity(0.5))
                             }
                         }
-                        .padding()
-                        .background(Color.accent.opacity(0.05))
-                        .cornerRadius(16)
                     }
                     
-                    // Call to Action Help Block
-                    VStack(spacing: 12) {
-                        Text("Need more help?")
-                            .font(.headline)
-                        Text("Generate a secure temporary code to allow a new sitter or family member to sync with your pet's profile.")
-                            .font(.caption)
-                            .multilineTextAlignment(.center)
-                            .foregroundColor(.secondary)
-                        
-                        Button(action: {}) {
-                            Text("Generate New Code")
-                                .font(.subheadline)
-                                .bold()
-                                .foregroundColor(.white)
-                                .frame(maxWidth: .infinity)
-                                .padding()
-                                .background(Color.primaryG)
-                                .cornerRadius(12)
-                        }
-                    }
-                    .padding()
-                    .frame(maxWidth: .infinity)
-                    .background(
-                        RoundedRectangle(cornerRadius: 16)
-                            .stroke(style: StrokeStyle(lineWidth: 1.5, dash: [6]))
-                            .foregroundColor(Color.gray.opacity(0.4))
-                    )
+                    
                 }
-                .padding()
+                .scrollContentBackground(.hidden)
+                .listSectionSpacing(.compact)
+                
+                // lookng for past sitter?
+                
+                // DONT HAVE ACC?
+                HStack(spacing: 5) {
+                    Text("Looking for a")
+                    Button("Past Sitter?") {
+                        print("sign up btn pressed")
+                    }
+                    .foregroundColor(.primaryG)
+                    .fontWeight(.semibold)
+                    
+                }.font(.caption)
+                    .padding(.top, 30)
+                    .frame(maxWidth: .infinity, alignment: .center)
             }
+
+            .navigationTitle("Manage Access")
+            .navigationBarTitleDisplayMode(.inline)
         }
-        .navigationTitle("Manage Access")
-        .navigationBarTitleDisplayMode(.inline)
     }
 }
 
+#Preview {
+    ManageAccessView()
+}

@@ -16,8 +16,6 @@ struct AlertCardStyle: View {
         ZStack(alignment: .leading) {
             Color.accentColor.opacity(0.3)
                 .clipShape(RoundedRectangle(cornerRadius: 16))
-//            LinearGradient(gradient: Gradient(colors: [.accentColor.opacity(0.4), .accentColor.opacity(0.1)]), startPoint: .leading, endPoint: .trailing)
-//                .clipShape(.rect(cornerRadius: 16))
             
             VStack(alignment: .leading, spacing: 6) {
                 //HEADER

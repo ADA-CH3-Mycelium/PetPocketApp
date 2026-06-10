@@ -114,20 +114,20 @@ struct RoutineCard: View {
                     }
                 }
 
-                // clarify btn
-                if isEmergency != true {
-                    ClarifyButtonStyle(action: { showClarifySheet = true })
-                        .offset(y: 2)
-                }
+//                // clarify btn
+//                if isEmergency != true {
+//                    ClarifyButtonStyle(action: { showClarifySheet = true })
+//                        .offset(y: 2)
+//                }
             }
         }
-        .padding(20)
+        .padding()
         .frame(maxWidth: .infinity)
-        .clipShape(RoundedRectangle(cornerRadius: 16))
-        .glassEffect(
-            //            .regular.tint(colorScheme == .dark ? .clear : .white),
-            in: .rect(cornerRadius: 16)
-        )
+        .modifier(greenEdgeCard())
+//        .clipShape(RoundedRectangle(cornerRadius: 16))
+//        .glassEffect(
+//            in: .rect(cornerRadius: 16)
+//        )
         .sheet(isPresented: $showClarifySheet) {
             ClarifySheetView(pet: detail.pet, routineTitle: item.title)
         }

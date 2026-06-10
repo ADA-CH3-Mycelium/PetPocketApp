@@ -74,20 +74,20 @@ struct PetListCard: View {
 
     @ViewBuilder
     private var petImage: some View {
-//        if let urlString = item.photoUrl, let url = URL(string: urlString) {
-//            AsyncImage(url: url) { phase in
-//                switch phase {
-//                case .success(let image):
-//                    image.resizable()
-//                case .failure, .empty:
-//                    photoPlaceholder
-//                @unknown default:
-//                    photoPlaceholder
-//                }
-//            }
-//        } else {
+        if let urlString = item.photoUrl, let url = URL(string: urlString) {
+            AsyncImage(url: url) { phase in
+                switch phase {
+                case .success(let image):
+                    image.resizable()
+                case .failure, .empty:
+                    photoPlaceholder
+                @unknown default:
+                    photoPlaceholder
+                }
+            }
+        } else {
             photoPlaceholder
-        //}
+        }
     }
 
     private var photoPlaceholder: some View {

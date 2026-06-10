@@ -16,79 +16,51 @@ struct PetCodeInput: View {
     @State private var isJoining = false
 
     var body: some View {
-        ScrollView {
-            VStack(spacing: 20) {
-                // Header text
-                VStack(spacing: 6) {
-                    Text("Connect with Pet Owner")
-                        .font(.title2)
-                        .fontWeight(.bold)
-                        .foregroundColor(.primary)
-                        .frame(maxWidth: .infinity, alignment: .leading)
+        ZStack {
+            Color.background.ignoresSafeArea()
 
-                    Text("Start caring for their pet friend together")
-                        .font(.subheadline)
-                        .foregroundColor(.secondary)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                }
+            VStack(alignment: .leading, spacing: 40) {
 
-                // Code input card
-                VStack(alignment: .leading, spacing: 12) {
-                    Text("PawPocket Code")
-                        .font(.subheadline)
-                        .fontWeight(.medium)
-                        .foregroundColor(.primary)
-
-                    HStack(spacing: 10) {
+                Section {
+                    HStack(spacing: 0) {
+                        // code
                         TextField("000 000", text: $code)
-                            .font(.system(size: 22, weight: .semibold, design: .monospaced))
-                            .keyboardType(.numberPad)
-                            .padding(12)
-                            .background(Color(.systemGray6))
-                            .clipShape(RoundedRectangle(cornerRadius: 10))
+                            .font(.system(.title, design: .monospaced))
+                            .bold()
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                            .background(Color.gray.opacity(0.05))
+                            .cornerRadius(10)
 
+                        // copy btn
                         Button(action: {
                             if let clipboard = UIPasteboard.general.string {
                                 code = clipboard
                             }
                         }) {
-                            HStack(spacing: 6) {
+                            VStack(spacing: 4) {
                                 Image(systemName: "doc.on.clipboard")
-                                    .font(.system(size: 15, weight: .medium))
                                 Text("Paste")
-                                    .font(.system(size: 15, weight: .medium))
+                                    .font(.caption2)
+                                    .bold()
                             }
-                            .foregroundColor(.primaryG)
-                            .padding(.horizontal, 14)
-                            .padding(.vertical, 12)
-                            .background(Color.accentColor.opacity(0.1))
-                            .clipShape(RoundedRectangle(cornerRadius: 10))
+                            .padding(8)
+                            
                         }
+                        .buttonStyle(.glassProminent)
+                        .tint(.accent)
+                        .buttonBorderShape(.roundedRectangle(radius: 12))
+                        .padding(.leading, 8)
+                        
+                        
                     }
 
-                    Text("Enter the 6-digit code shared by the pet owner.")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
+                } header: {
+                    Text("Enter 6-Digit Code from Owner")
+                        .modifier(onBoardingSectionHeaderStyle())
                 }
-                .padding(16)
-                .background(Color(.systemBackground))
-                .clipShape(RoundedRectangle(cornerRadius: 18))
-                .shadow(color: .black.opacity(0.05), radius: 10, x: 0, y: 3)
 
-                // Join button
-                Button(action: { Task { await join() } }) {
-                    Text(isJoining ? "Joining…" : "Join Pet Profile")
-                        .font(.system(size: 16, weight: .semibold))
-                        .frame(maxWidth: 220)
-                        .foregroundColor(.white)
-                        .padding(.horizontal, 28)
-                        .padding(.vertical, 14)
-                        .background(Color.primaryG)
-                        .clipShape(RoundedRectangle(cornerRadius: 14))
-                }
-                .frame(maxWidth: .infinity, alignment: .center)
-                .disabled(isJoining || code.trimmingCharacters(in: .whitespaces).isEmpty)
-
+                // error msg
                 if let error = store.errorMessage {
                     Text(error)
                         .font(.caption)
@@ -97,8 +69,8 @@ struct PetCodeInput: View {
                         .frame(maxWidth: .infinity)
                 }
 
-                Spacer(minLength: 40)
-
+                Spacer()
+                
                 // Help card
                 VStack(alignment: .leading, spacing: 6) {
                     HStack(spacing: 8) {
@@ -110,41 +82,37 @@ struct PetCodeInput: View {
                             .foregroundColor(.primaryG)
                     }
 
-                    Text("The pet owner can generate this code in their Pet Settings > Share Access. Codes are valid for 24 hours.")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                        .lineSpacing(3)
+                    Text(
+                        "The pet owner can generate this code in their Pet Settings -> Invitation code. Codes are valid for 24 hours."
+                    )
+                    .font(.caption)
+                    .foregroundColor(.secondary)
                 }
                 .padding(16)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .background(Color(.systemBackground))
                 .clipShape(RoundedRectangle(cornerRadius: 18))
                 .shadow(color: .black.opacity(0.05), radius: 10, x: 0, y: 3)
+                
+                //Spacer()
             }
-            .padding(20)
-        }
-        .background(Color(.systemGroupedBackground))
-        .navigationBarBackButtonHidden(true)
-        .toolbar {
-            ToolbarItem(placement: .topBarLeading) {
-                Button(action: { dismiss() }) {
-                    HStack(spacing: 4) {
-                        Image(systemName: "chevron.left")
-                            .font(.system(size: 16, weight: .semibold))
-                            .foregroundStyle(Color.primaryG)
-                        Text("Back")
-                            .font(.system(size: 16))
-                            .foregroundStyle(Color.primaryG)
-                        
+            .padding()
+            // title
+            .navigationTitle(Text("Connect with Pet"))
+            .navigationBarTitleDisplayMode(.inline)
+            .navigationSubtitle(Text("Get to know your pet friend!"))
+            // toolbar
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button(action: { Task { await join() } }) {
+
+                        Image(systemName: "checkmark")
                     }
-                    .foregroundColor(.accentColor)
+                    .disabled(
+                        isJoining
+                            || code.trimmingCharacters(in: .whitespaces).isEmpty
+                    )
                 }
-            }
-            ToolbarItem(placement: .principal) {
-                Text("PawPocket")
-                    .font(.headline)
-                    .fontWeight(.bold)
-                    .foregroundStyle(Color.primaryG)
             }
         }
     }

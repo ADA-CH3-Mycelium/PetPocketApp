@@ -38,7 +38,7 @@ struct EmergencyView: View {
                     firstAidSection
                     contactsSection
                     clinicsSection
-                }.padding(20)
+                }.padding()
             }
         }
         .navigationTitle("My Emergency Guidelines")
@@ -47,6 +47,7 @@ struct EmergencyView: View {
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 EditMenuButton(isEditing: $isEditing)
+                    .tint(.black)
             }
         }
         // First aid sheets
@@ -110,7 +111,7 @@ struct EmergencyView: View {
         }
     }
 
-    // MARK: Contacts
+    // MARK: - Contacts
     private var contactsSection: some View {
         VStack(alignment: .leading, spacing: 10) {
             CategoryHeader(item: headers[1])
@@ -137,7 +138,7 @@ struct EmergencyView: View {
 
     }
 
-    // MARK: Clinics
+    // MARK: - Clinics
     private var clinicsSection: some View {
         VStack(alignment: .leading, spacing: 10) {
             CategoryHeader(item: headers[2])

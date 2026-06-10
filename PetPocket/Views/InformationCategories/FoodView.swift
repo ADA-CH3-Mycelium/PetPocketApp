@@ -80,13 +80,14 @@ struct FoodView: View {
                     }
 
                     Spacer()
-                }.padding(20)
+                }.padding()
             }
             .navigationTitle("My Food Routine")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     EditMenuButton(isEditing: $isEditing)
+                        .tint(.black)
                 }
             }
             // Add new meal

@@ -52,7 +52,7 @@ struct WasteView: View {
                     }
 
                     Spacer()
-                }.padding(20)
+                }.padding()
             }
             .navigationTitle(" My Waste Routine")
             .navigationBarTitleDisplayMode(.inline)
@@ -60,6 +60,7 @@ struct WasteView: View {
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     EditMenuButton(isEditing: $isEditing)
+                        .tint(.black)
                 }
             }
             .sheet(isPresented: $showAddItem) {

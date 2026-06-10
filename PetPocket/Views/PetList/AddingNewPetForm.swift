@@ -5,48 +5,41 @@
 //  Created by Michel Pierce on 28/05/26.
 //
 
-import SwiftUI
 import PhotosUI
+import SwiftUI
 
 struct AddingNewPetForm: View {
-    
+
     @Environment(\.dismiss) private var dismiss
 
     let store: PetStore
 
     @State private var petName = ""
     @State private var selectedGender = "Male"
-    @State private var age = ""
+    @State private var age = "1"
+    @State private var showAgePicker: Bool = false
     @State private var species = ""
     @State private var breed = ""
     @State private var selectedImage: UIImage? = nil
     @State private var pickedItem: PhotosPickerItem? = nil
     @State private var imageData: Data? = nil
     @State private var isSaving = false
-    
-    
+
     let genders = ["Male", "Female"]
-    
+
     var body: some View {
-        ScrollView {
-            VStack(spacing: 20) {
-                // Card
-                VStack(spacing: 20) {
-                    // Title
-                    VStack(spacing: 4) {
-                        Text("Add New Pet")
-                            .font(.title2)
-                            .fontWeight(.bold)
-                            .foregroundColor(.primary)
-                        
-                        Text("Tell us about your furry companion")
-                            .font(.subheadline)
-                            .foregroundColor(.secondary)
-                    }
-                    .frame(maxWidth: .infinity, alignment: .center)
-                    
+        ZStack {
+            Color.background.ignoresSafeArea()
+
+            VStack {
+
+                Form {
                     // Photo picker
-                    PhotosPicker(selection: $pickedItem, matching: .images, photoLibrary: .shared()) {
+                    PhotosPicker(
+                        selection: $pickedItem,
+                        matching: .images,
+                        photoLibrary: .shared()
+                    ) {
                         ZStack {
                             if let image = selectedImage {
                                 Image(uiImage: image)
@@ -55,16 +48,13 @@ struct AddingNewPetForm: View {
                                     .frame(width: 96, height: 96)
                                     .clipShape(Circle())
                             } else {
-                                VStack(spacing: -16) {
-                                    Image("AddPetProfileImg")
-                                        .resizable()
-                                        .scaledToFit()
-                                        .frame(width: 128, height: 128)
-                                        .foregroundColor(.secondary)
-                                    Text("Add Photo")
-                                        .font(.caption)
-                                        .foregroundColor(.secondary)
-                                }
+                                Image(systemName: "plus")
+                                    .resizable()
+                                    .padding(35)
+                                    .frame(width: 120, height: 120)
+                                    .background(Color.secondaryG)
+                                    .foregroundStyle(Color.primaryG)
+                                    .clipShape(Circle())
                             }
                         }
                     }
@@ -72,154 +62,132 @@ struct AddingNewPetForm: View {
                         Task { await loadPicked(newItem) }
                     }
                     .frame(maxWidth: .infinity, alignment: .center)
-                    
-                    // Pet Name
-                    VStack(alignment: .leading, spacing: 6) {
-                        Text("Pet Name")
-                            .font(.subheadline)
-                            .fontWeight(.medium)
-                            .foregroundColor(.primary)
-                        
-                        TextField("e.g. Buddy", text: $petName)
-                            .padding(12)
-                            .background(Color(.systemGray6))
-                            .clipShape(RoundedRectangle(cornerRadius: 10))
+                    .listRowBackground(Color.clear)
+
+                    // Pet Name ------------------------------------
+
+                    Section {
+                        TextField("Buddy", text: $petName)
+
+                    } header: {
+                        Text("Name")
+                            .modifier(onBoardingSectionHeaderStyle())
+
                     }
-                    
-                    // Gender toggle
-                    VStack(alignment: .leading, spacing: 6) {
-                        Text("Gender")
-                            .font(.subheadline)
-                            .fontWeight(.medium)
-                            .foregroundColor(.primary)
-                        
-                        HStack(spacing: 0) {
-                            ForEach(genders, id: \.self) { gender in
-                                Button(action: { selectedGender = gender }) {
-                                    HStack(spacing: 6) {
-                                        Text(gender)
-                                            .font(.system(size: 15, weight: .medium))
-                                    }
-                                    .frame(maxWidth: .infinity)
-                                    .padding(.vertical, 10)
-                                    .background(
-                                        selectedGender == gender
-                                        ? Color.primaryG
-                                        : Color(.systemGray6)
-                                    )
-                                    .foregroundColor(
-                                        selectedGender == gender ? .white : .secondary
-                                    )
+
+                    // SPECIES ------------------------------------
+                    Section {
+
+                        TextField("Breed", text: $breed)
+                        TextField("Species (optional)", text: $species)
+
+                    } header: {
+                        Text("Breed")
+                            .modifier(onBoardingSectionHeaderStyle())
+                    }
+
+                    // AGE ------------------------------------
+                    Section {
+                        HStack {
+                            Text(age)
+                            Spacer()
+                            Text("years old")
+                                .foregroundStyle(Color.secondary)
+                        }
+                        .onTapGesture {
+                            withAnimation {
+                                showAgePicker.toggle()
+                            }
+                        }
+
+                        if showAgePicker {
+                            Picker("Age", selection: $age) {
+
+                                ForEach(1...100, id: \.self) { number in
+                                    Text("\(number)")
+                                }
+                            }
+                            .pickerStyle(.wheel)
+                            .padding()
+                            .transition(
+                                .move(edge: .bottom).combined(
+                                    with: .opacity
+                                )
+                            )
+                            .onChange(of: age) {
+                                DispatchQueue.main.asyncAfter(
+                                    deadline: .now() + 0.8
+                                ) {
+                                    withAnimation { showAgePicker = false }
                                 }
                             }
                         }
-                        .clipShape(RoundedRectangle(cornerRadius: 10))
+                    } header: {
+                        Text("Age")
+                            .modifier(onBoardingSectionHeaderStyle())
                     }
-                    
-                    // Age + Species
-                    HStack(spacing: 12) {
-                        VStack(alignment: .leading, spacing: 6) {
-                            Text("Age")
-                                .font(.subheadline)
-                                .fontWeight(.medium)
-                                .foregroundColor(.primary)
-                            
-                            TextField("e.g. 3 yrs", text: $age)
-                                .padding(12)
-                                .background(Color(.systemGray6))
-                                .clipShape(RoundedRectangle(cornerRadius: 10))
-                        }
-                        
-                        VStack(alignment: .leading, spacing: 6) {
-                            Text("Species")
-                                .font(.subheadline)
-                                .fontWeight(.medium)
-                                .foregroundColor(.primary)
-                            
-                            TextField("e.g. Dog", text: $species)
-                                .padding(12)
-                                .background(Color(.systemGray6))
-                                .clipShape(RoundedRectangle(cornerRadius: 10))
-                        }
-                    }
-                    
-                    // Breed
-                    VStack(alignment: .leading, spacing: 6) {
-                        Text("Breed")
-                            .font(.subheadline)
-                            .fontWeight(.medium)
-                            .foregroundColor(.primary)
-                        
-                        TextField("e.g. Golden Retriever", text: $breed)
-                            .padding(12)
-                            .background(Color(.systemGray6))
-                            .clipShape(RoundedRectangle(cornerRadius: 10))
-                    }
-                    
-                    // Save button
-                    Button(action: { Task { await save() } }) {
-                        Text(isSaving ? "Saving…" : "Save Pet")
-                            .font(.system(size: 16, weight: .semibold))
-                            .frame(maxWidth: 220)
-                            .foregroundColor(.white)
-                            .padding(.horizontal, 28)
-                            .padding(.vertical, 14)
-                            .background(Color.primaryG)
-                            .clipShape(RoundedRectangle(cornerRadius: 14))
-                    }
-                    .frame(maxWidth: .infinity, alignment: .center)
-                    .padding(.top, 4)
-                    .disabled(isSaving || petName.trimmingCharacters(in: .whitespaces).isEmpty)
 
-                    if let error = store.errorMessage {
-                        Text(error)
-                            .font(.caption)
-                            .foregroundColor(.red)
-                            .multilineTextAlignment(.center)
+                    .animation(
+                        .easeInOut(duration: 0.25),
+                        value: showAgePicker
+                    )
+
+                    // GENDER ------------------------------------
+                    Section {
+                        Picker(
+                            selection: $selectedGender,
+                            label: Text("Gender")
+                        ) {
+                            ForEach(genders, id: \.self) {
+                                Text($0)
+                            }
+                        }
+                        .pickerStyle(.segmented)
+                        .labelsHidden()
+
+                    } header: {
+                        Text("Gender")
+                            .modifier(onBoardingSectionHeaderStyle())
+                    }.listRowInsets(EdgeInsets())
+                        .listRowBackground(Color.clear)
+
+                }
+                .listStyle(.plain)
+                .listSectionSpacing(10)
+                .scrollContentBackground(.hidden)
+
+                if let error = store.errorMessage {
+                    Text(error)
+                        .font(.caption)
+                        .foregroundColor(.red)
+                        .multilineTextAlignment(.center)
+                }
+
+            }
+            //title
+            .navigationTitle("Add a new pet")
+            .navigationBarTitleDisplayMode(.inline)
+            .navigationSubtitle("Tell us about your companion")
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button(action: { Task { await save() } }) {
+                        //                        Text(isSaving ? "Saving…" : "Save")
+                        //                            .fontWeight(.semibold)
+                        //                            .foregroundStyle(.primary)
+
+                        Image(systemName: "checkmark")
                     }
+                    .disabled(
+                        isSaving
+                            || petName.trimmingCharacters(in: .whitespaces)
+                                .isEmpty
+                    )
                 }
-                .padding(20)
-                .background(Color(.systemBackground))
-                .clipShape(RoundedRectangle(cornerRadius: 24))
-                .shadow(color: .black.opacity(0.06), radius: 12, x: 0, y: 4)
-            }
-            .padding(20)
-        }
-        .background(Color(.systemGroupedBackground))
-        .navigationBarBackButtonHidden(true)
-        .toolbar {
-            ToolbarItem(placement: .topBarLeading) {
-                Button(action: { dismiss() }) {
-                    HStack(spacing: 4) {
-                        Image(systemName: "chevron.left")
-                            .font(.system(size: 16, weight: .semibold))
-                            .foregroundStyle(Color.primaryG)
-                        Text("Back")
-                            .font(.system(size: 16))
-                            .foregroundStyle(Color.primaryG)
-                        
-                    }
-                    .foregroundColor(.accentColor)
-                }
-            }
-            ToolbarItem(placement: .principal) {
-                Text("PawPocket")
-                    .font(.headline)
-                    .fontWeight(.bold)
-                    .foregroundStyle(Color.primaryG)
-                
-            }
-            ToolbarItem(placement: .topBarTrailing) {
-                Button(action: { Task { await save() } }) {
-                    Text(isSaving ? "Saving…" : "Save")
-                        .fontWeight(.semibold)
-                        .foregroundStyle(.primary)
-                }
-                .disabled(isSaving || petName.trimmingCharacters(in: .whitespaces).isEmpty)
             }
         }
+
     }
-    
+
     private func save() async {
         isSaving = true
         let ok = await store.addPet(
@@ -237,21 +205,25 @@ struct AddingNewPetForm: View {
     /// Loads the picked photo, downscales it, and keeps JPEG data for upload.
     private func loadPicked(_ item: PhotosPickerItem?) async {
         guard let item,
-              let data = try? await item.loadTransferable(type: Data.self),
-              let uiImage = UIImage(data: data) else { return }
+            let data = try? await item.loadTransferable(type: Data.self),
+            let uiImage = UIImage(data: data)
+        else { return }
         let resized = uiImage.downscaled(maxDimension: 1024)
         selectedImage = resized
         imageData = resized.jpegData(compressionQuality: 0.8)
     }
 }
 
-private extension UIImage {
+extension UIImage {
     /// Aspect-fit downscale so the longest side <= maxDimension. No upscaling.
-    func downscaled(maxDimension: CGFloat) -> UIImage {
+    fileprivate func downscaled(maxDimension: CGFloat) -> UIImage {
         let longest = max(size.width, size.height)
         guard longest > maxDimension else { return self }
         let scale = maxDimension / longest
-        let newSize = CGSize(width: size.width * scale, height: size.height * scale)
+        let newSize = CGSize(
+            width: size.width * scale,
+            height: size.height * scale
+        )
         let renderer = UIGraphicsImageRenderer(size: newSize)
         return renderer.image { _ in
             draw(in: CGRect(origin: .zero, size: newSize))

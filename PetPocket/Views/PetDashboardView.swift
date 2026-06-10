@@ -93,11 +93,13 @@ struct PetDashboardView: View {
                             petPhotoPlaceholder
                         }
                     }
-                    .frame(width: 400, height: 500)
+                    
+                    .frame(width: 402, height: 400)
                     .mask(
                         LinearGradient(
                             gradient: Gradient(stops: [
-                                .init(color: .black, location: 0.0),
+                                .init(color: .clear, location: 0.0),
+                                .init(color: .black, location: 0.25),
                                 .init(color: .black, location: 0.75),
                                 .init(color: .clear, location: 1),
                             ]),
@@ -119,24 +121,25 @@ struct PetDashboardView: View {
                         Text(subtitle)
                             .foregroundColor(.gray)
                     }
-                    .padding(20)
+                    .padding()
                     .offset(y: 30)
                     
                 }
                 .offset(y: -100)
                 
-                // Categori es
+                // Categories
                 
                 VStack(alignment: .leading, spacing: 10) {
-                    Text("Here are my habits and needs 🐾")
+                    Text("Here are my habits and needs!")
                         .font(.headline)
+
                     
                     TwCoColGrid(catItem: catItem)
                     { screen in
                         selectedScreen = screen
                     }
                 }
-                .padding(20)
+                .padding()
                 .offset(y: -65)
             }
 
@@ -165,17 +168,19 @@ struct PetDashboardView: View {
             }
             .sheet(isPresented: $showingGenerateCode) {
                 GenerateCodeView(petId: pet.id)
+                    .presentationDetents([.height(300)])
+                    .presentationDragIndicator(.visible)
             }
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                // clarify chat
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button(action: {}) {
-                        Image(systemName: "bubble.left.and.bubble.right.fill")
-                            .imageScale(.large)
-                        
-                    }
-                }
+//                // clarify chat
+//                ToolbarItem(placement: .navigationBarTrailing) {
+//                    Button(action: {}) {
+//                        Image(systemName: "bubble.left.and.bubble.right.fill")
+//                            .imageScale(.large)
+//                        
+//                    }
+//                }
                 
                 // menu
                 ToolbarItem(placement: .navigationBarTrailing) {
@@ -203,7 +208,7 @@ struct PetDashboardView: View {
                             .imageScale(.large)
                             .rotationEffect(Angle(degrees: 90))
                         
-                    }
+                    }.tint(.black)
                 }
                 
             }
@@ -236,6 +241,4 @@ struct PetDashboardView: View {
             )
     }
 }
-
-
 

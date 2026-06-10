@@ -28,7 +28,8 @@ struct AddNotesStyle: View {
         .fixedSize(horizontal: false, vertical: true)
         .frame(maxWidth: .infinity, alignment: .leading)
         .clipped()
-        .glassEffect(in: .rect(cornerRadius: 16))
+//        .glassEffect(in: .rect(cornerRadius: 16))
+        .modifier(greenEdgeCard())
     }
 }
 

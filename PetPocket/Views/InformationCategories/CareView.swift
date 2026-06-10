@@ -52,7 +52,7 @@ struct CareView: View {
                     }
 
                     Spacer()
-                }.padding(20)
+                }.padding()
             }
             .navigationTitle("Care Notes")
             .navigationBarTitleDisplayMode(.inline)
@@ -60,6 +60,7 @@ struct CareView: View {
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     EditMenuButton(isEditing: $isEditing)
+                        .tint(.black)
                 }
             }
             .sheet(isPresented: $showAddItem) {

@@ -22,7 +22,6 @@ struct PrimaryButton: View {
                 .padding(.vertical, 10)
                 .padding(.horizontal, 40)
                 .cornerRadius(50)
-                //.glassEffect()
         }
         .buttonStyle(.glassProminent)
         .disabled(!isEnabled)

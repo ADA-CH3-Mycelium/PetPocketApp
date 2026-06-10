@@ -67,29 +67,37 @@ struct GhostRoutineCard: View {
 
 struct GhostAlertCard: View {
     var body: some View {
-        VStack(alignment: .leading, spacing: 6) {
-            HStack(spacing: 4) {
-                Image(systemName: "exclamationmark.triangle.fill")
-                Text("NO DIETARY RESTRICTIONS")
-                    .font(.caption)
-                    .bold()
-            }
-            .foregroundColor(Color.alertRed.opacity(0.3))
-
-            Text("No allergies or restricted items recorded.")
-                .font(.caption)
-                .foregroundColor(.secondary.opacity(0.6))
+        ZStack(alignment: .leading) {
+            Color.accentColor.opacity(0.3)
+                .clipShape(RoundedRectangle(cornerRadius: 16))
+            
+            VStack(alignment: .leading, spacing: 6) {
+                //HEADER
+                HStack(spacing: 2) {
+                    Image(systemName: "exclamationmark.triangle.fill")
+                    Text("DIETARY RESTRICTIONS")
+                        .font(.subheadline)
+                        .bold()
+                }.foregroundColor(Color.accent.opacity(0.35))
+                
+                Text("No allergies recorded.")
+                    .opacity(0.25)
+                Text("No restricted items recorded.")
+                    .opacity(0.25)
+            }.padding(20)
         }
-        .padding()
+        
+        .fixedSize(horizontal: false, vertical: true)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .glassEffect(.regular.tint(Color.alertRed.opacity(0.04)), in: .rect(cornerRadius: 16))
+        .glassEffect(/*.regular.tint(Color.accent.opacity(0.25)),*/ in: .rect(cornerRadius: 16))
         .overlay(
             RoundedRectangle(cornerRadius: 16)
                 .strokeBorder(
-                    Color.alertRed.opacity(0.2),
+                    Color.accent.opacity(0.2),
                     style: StrokeStyle(lineWidth: 1.5, dash: [6, 4])
                 )
         )
+        .opacity(0.7)
     }
 }
 
@@ -101,25 +109,11 @@ struct AddCardButton: View {
 
     var body: some View {
         Button(action: action) {
-            HStack(spacing: 8) {
-                Image(systemName: "plus.circle.fill")
-                    .font(.system(size: 18, weight: .semibold))
-                Text("Add")
-                    .font(.system(size: 15, weight: .semibold))
-            }
-            .foregroundColor(Color.primaryG)
-            .frame(maxWidth: .infinity)
-            .padding(.vertical, 14)
-            .background(Color.primaryG.opacity(0.08))
-            .clipShape(RoundedRectangle(cornerRadius: 14))
-            .overlay(
-                RoundedRectangle(cornerRadius: 14)
-                    .strokeBorder(
-                        Color.primaryG.opacity(0.35),
-                        style: StrokeStyle(lineWidth: 1.5, dash: [6, 4])
-                    )
-            )
+            Image(systemName: "plus")
+                .font(.headline)
         }
+        .buttonStyle(.glassProminent)
+        .frame(width: 36, height: 36)
         .transition(.opacity.combined(with: .scale(scale: 0.95)))
     }
 }
@@ -141,7 +135,6 @@ struct EditMenuButton: View {
             Image(systemName: "ellipsis")
                 .imageScale(.large)
                 .rotationEffect(.degrees(90))
-                .foregroundColor(Color.primaryG)
         }
     }
 }
@@ -184,7 +177,7 @@ struct EditHintBanner: View {
         .padding(.horizontal, 12)
         .padding(.vertical, 8)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(Color.primaryG.opacity(0.08))
+        //.background(Color.primaryG.opacity(0.08))
         .clipShape(RoundedRectangle(cornerRadius: 10))
         .transition(.move(edge: .top).combined(with: .opacity))
     }
