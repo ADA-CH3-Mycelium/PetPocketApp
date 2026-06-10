@@ -28,7 +28,7 @@ struct PetRepository {
             .eq("id", value: uid.uuidString)
             .single()
             .execute()
-            .value
+            .value 
     }
 
     // MARK: Pets

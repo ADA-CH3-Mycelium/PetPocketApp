@@ -14,6 +14,7 @@ struct AddingNewPetForm: View {
 
     @State private var vm: AddNewPetViewModel
     @State private var pickedItem: PhotosPickerItem? = nil
+    @State private var showAgePicker: Bool = false
 
     init(store: PetStore) {
         _vm = State(initialValue: AddNewPetViewModel(store: store))
@@ -130,7 +131,7 @@ struct AddingNewPetForm: View {
                             selection: $vm.selectedGender,
                             label: Text("Gender")
                         ) {
-                            ForEach(genders, id: \.self) {
+                            ForEach(vm.genders, id: \.self) {
                                 Text($0)
                             }
                         }
@@ -148,7 +149,7 @@ struct AddingNewPetForm: View {
                 .listSectionSpacing(10)
                 .scrollContentBackground(.hidden)
 
-                if let error = store.errorMessage {
+                if let error = vm.errorMessage {
                     Text(error)
                         .font(.caption)
                         .foregroundColor(.red)
@@ -187,8 +188,8 @@ struct AddingNewPetForm: View {
             let uiImage = UIImage(data: data)
         else { return }
         let resized = uiImage.downscaled(maxDimension: 1024)
-        selectedImage = resized
-        imageData = resized.jpegData(compressionQuality: 0.8)
+        vm.selectedImage = resized
+        vm.imageData = resized.jpegData(compressionQuality: 0.8)
     }
 }
 

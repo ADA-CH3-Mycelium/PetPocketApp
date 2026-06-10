@@ -14,7 +14,6 @@ struct PetListView: View {
     @State private var navigateToDashboard = false
     @State private var searchPet: String = ""
     @State private var selectedPet: PetRow? = nil
-    @State private var store: PetStore
     @State private var vm: PetListViewModel
     
     init(store: PetStore = PetStore()) {
@@ -58,14 +57,14 @@ struct PetListView: View {
                         
                         // Pet cards
                         VStack(spacing: 16) {
-                            ForEach(store.ownedPets) { row in
+                            ForEach(vm.ownedPets) { row in
                                 PetListCard(item: vm.card(for: row, type: .owning))
                                     .onTapGesture {
                                         selectedPet = row
                                         navigateToDashboard = true
                                     }
                             }
-                            ForEach(store.sittingPets) { row in
+                            ForEach(vm.sittingPets) { row in
                                 PetListCard(item: vm.card(for: row, type: .sitting(sitter: "", sitterImage: "", dateRange: "")))
                                     .onTapGesture {
                                         selectedPet = row
@@ -101,7 +100,7 @@ struct PetListView: View {
                                 } label: {
                                     Image(systemName: "rectangle.portrait.and.arrow.right")
                                         .font(.title3)
-                                        .foregroundColor(.alertRed)
+                                        .foregroundColor(.red)
                                 }
                             }
                             

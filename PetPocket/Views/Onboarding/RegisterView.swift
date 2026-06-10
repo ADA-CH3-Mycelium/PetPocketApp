@@ -86,7 +86,7 @@ struct RegisterView: View {
                             Text("Confirm password")
                                 .modifier(onBoardingSectionHeaderStyle())
                         } footer: {
-                            if password == confirmPassword {
+                            if vm.password == vm.confirmPassword {
                                 
                                 Text("Passwords do not match")
                                     .foregroundColor(.red)

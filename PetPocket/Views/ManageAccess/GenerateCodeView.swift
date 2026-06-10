@@ -68,17 +68,11 @@ struct GenerateCodeView: View {
                     }
                     
                     Button("Generate a new code") {
-                        Task { await generate() }
+                        Task { await vm.generate() }
                     }
                     .buttonStyle(.glassProminent)
                     .tint(Color.primaryG)
                     .padding(.top, 30)
-                    
-                    if let errorMessage {
-                        Text(errorMessage)
-                            .font(.caption)
-                            .foregroundColor(.red)
-                    }
                     
                     
                 }
