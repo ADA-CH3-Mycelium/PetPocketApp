@@ -14,6 +14,7 @@ struct LoginView: View {
     @Binding var navigateToPetList: Bool
     @Binding var navigateToRegister: Bool
     @State private var vm = AuthViewModel()
+    @State private var showPassword = false
 
     var body: some View {
         ZStack {
@@ -33,6 +34,7 @@ struct LoginView: View {
                                     Text("email@example.com")
                                         .foregroundColor(Color(uiColor: .placeholderText))
                                     )
+                                        .opacity(0.3)
                                         .textContentType(.emailAddress)
                                         .autocapitalization(.none)
                                         .keyboardType(.emailAddress)
@@ -53,26 +55,32 @@ struct LoginView: View {
                                         .font(.caption)
                                         .foregroundStyle(Color.secondary)
 
-                                    TextField("Enter password", text: $vm.password)
-                                        .textContentType(.emailAddress)
-                                        .autocapitalization(.none)
-                                        .keyboardType(.emailAddress)
-                                        .disableAutocorrection(true)
-                                        .textContentType(.emailAddress)
-                                        .foregroundColor(.secondary)
+                                    if showPassword {
+                                        TextField("Enter password", text: $vm.password)
+                                            .textContentType(.password)
+                                            .autocapitalization(.none)
+                                            .disableAutocorrection(true)
+                                            .foregroundColor(.primary)
+                                    } else {
+                                        SecureField("Enter password", text: $vm.password)
+                                            .textContentType(.password)
+                                            .autocapitalization(.none)
+                                            .disableAutocorrection(true)
+                                            .foregroundColor(.primary)
+                                    }
+
+                                    Button {
+                                        showPassword.toggle()
+                                    } label: {
+                                        Image(systemName: showPassword ? "eye.slash" : "eye")
+                                            .foregroundColor(.secondary)
+                                    }
+                                    .buttonStyle(.plain)
                                 }
                             } header: {
                                 Text("Password")
                                     .textCase(.uppercase)
                                     .font(.caption)
-                            } footer: {
-                                // forgot password
-                                Text("Forgot Password?")
-                                    .foregroundColor(.secondary)
-                                    .onTapGesture {
-                                        print("forgot password btn pressed")
-                                    }
-
                             }
 
                         }
@@ -90,7 +98,7 @@ struct LoginView: View {
                     ) {
                         Task {
                             if await vm.login() {
-                                navigateToLogin = false   // dismiss; root gate swaps to PetListView
+                                navigateToLogin = false
                             }
                         }
                     }
